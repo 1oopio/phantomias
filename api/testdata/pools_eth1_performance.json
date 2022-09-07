@@ -1,0 +1,204 @@
+{
+  "stats": [
+    {
+      "poolHashrate": 17219870000,
+      "connectedMiners": 11,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 954977813371257.4,
+      "networkDifficulty": 11772280101278718,
+      "created": "2022-07-11T02:00:00Z"
+    },
+    {
+      "poolHashrate": 17408696000,
+      "connectedMiners": 11,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 891230224745734.2,
+      "networkDifficulty": 11735339630169550,
+      "created": "2022-07-11T03:00:00Z"
+    },
+    {
+      "poolHashrate": 17801208000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 830435291253685.1,
+      "networkDifficulty": 11620105857176642,
+      "created": "2022-07-11T04:00:00Z"
+    },
+    {
+      "poolHashrate": 17672479000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 880810976764617.1,
+      "networkDifficulty": 11630558503047890,
+      "created": "2022-07-11T05:00:00Z"
+    },
+    {
+      "poolHashrate": 17723183000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 870508806044752,
+      "networkDifficulty": 11647041026914374,
+      "created": "2022-07-11T06:00:00Z"
+    },
+    {
+      "poolHashrate": 17387817000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 848775514718355.4,
+      "networkDifficulty": 11557297209905422,
+      "created": "2022-07-11T07:00:00Z"
+    },
+    {
+      "poolHashrate": 17317667000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 814154734131510.5,
+      "networkDifficulty": 11440341253471626,
+      "created": "2022-07-11T08:00:00Z"
+    },
+    {
+      "poolHashrate": 17390799000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 865379487029316.4,
+      "networkDifficulty": 11432335114332648,
+      "created": "2022-07-11T09:00:00Z"
+    },
+    {
+      "poolHashrate": 19397265000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 945403515420937.9,
+      "networkDifficulty": 11622709442675328,
+      "created": "2022-07-11T10:00:00Z"
+    },
+    {
+      "poolHashrate": 19281540000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 918578914338269.5,
+      "networkDifficulty": 11687089673984322,
+      "created": "2022-07-11T11:00:00Z"
+    },
+    {
+      "poolHashrate": 18003070000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 793147119189247.8,
+      "networkDifficulty": 11471885314205090,
+      "created": "2022-07-11T12:00:00Z"
+    },
+    {
+      "poolHashrate": 17630722000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 751734415560359.5,
+      "networkDifficulty": 11274270181267658,
+      "created": "2022-07-11T13:00:00Z"
+    },
+    {
+      "poolHashrate": 17611395000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 832158573421037.5,
+      "networkDifficulty": 11252470741750130,
+      "created": "2022-07-11T14:00:00Z"
+    },
+    {
+      "poolHashrate": 17986847000,
+      "connectedMiners": 13,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 792692280456817.4,
+      "networkDifficulty": 11128912802692402,
+      "created": "2022-07-11T15:00:00Z"
+    },
+    {
+      "poolHashrate": 17599703000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 860419193755715.9,
+      "networkDifficulty": 11188207204299016,
+      "created": "2022-07-11T16:00:00Z"
+    },
+    {
+      "poolHashrate": 17389130000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 845191016857206.5,
+      "networkDifficulty": 11192520416091668,
+      "created": "2022-07-11T17:00:00Z"
+    },
+    {
+      "poolHashrate": 18080740000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 913927294320713.6,
+      "networkDifficulty": 11303202335325354,
+      "created": "2022-07-11T18:00:00Z"
+    },
+    {
+      "poolHashrate": 17961554000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 905695566814086.8,
+      "networkDifficulty": 11398351744698406,
+      "created": "2022-07-11T19:00:00Z"
+    },
+    {
+      "poolHashrate": 17940793000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 879738578624725.6,
+      "networkDifficulty": 11458931219092794,
+      "created": "2022-07-11T20:00:00Z"
+    },
+    {
+      "poolHashrate": 18309569000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 867257052714737.9,
+      "networkDifficulty": 11486085555438206,
+      "created": "2022-07-11T21:00:00Z"
+    },
+    {
+      "poolHashrate": 23774534000,
+      "connectedMiners": 13,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 829223241156230.4,
+      "networkDifficulty": 11417065644762846,
+      "created": "2022-07-11T22:00:00Z"
+    },
+    {
+      "poolHashrate": 28426664000,
+      "connectedMiners": 13,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 900983542353700.8,
+      "networkDifficulty": 11461254540753692,
+      "created": "2022-07-11T23:00:00Z"
+    },
+    {
+      "poolHashrate": 21470250000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 901512510431661.6,
+      "networkDifficulty": 11582242624266358,
+      "created": "2022-07-12T00:00:00Z"
+    },
+    {
+      "poolHashrate": 20818750000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 900345740579323.1,
+      "networkDifficulty": 11656633899151544,
+      "created": "2022-07-12T01:00:00Z"
+    },
+    {
+      "poolHashrate": 22248552000,
+      "connectedMiners": 12,
+      "validSharesPerSecond": 0,
+      "networkHashrate": 919302880959246.6,
+      "networkDifficulty": 11716444131379380,
+      "created": "2022-07-12T02:00:00Z"
+    }
+  ]
+}

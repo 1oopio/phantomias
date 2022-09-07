@@ -1,0 +1,58 @@
+{
+  "pageCount": 0,
+  "success": true,
+  "result": {
+    "coin": "ETH",
+    "id": "eth1",
+    "algorithm": "Ethhash",
+    "name": "Ethereum",
+    "hashrate": 21990055936,
+    "miners": 12,
+    "fee": 1,
+    "feeType": "PPLNS",
+    "blockHeight": 15124659,
+    "ports": {
+      "14000": {
+        "listenAddress": "*",
+        "name": "NH / MRR",
+        "difficulty": 4,
+        "varDiff": {
+          "minDiff": 2,
+          "maxDiff": 0,
+          "maxDelta": 0,
+          "targetTime": 15,
+          "retargetTime": 90,
+          "variancePercent": 30
+        },
+        "tls": false,
+        "tlsAuto": false
+      },
+      "4000": {
+        "listenAddress": "*",
+        "name": "8.6G",
+        "difficulty": 2,
+        "varDiff": null,
+        "tls": true,
+        "tlsAuto": true
+      },
+      "4001": {
+        "listenAddress": "*",
+        "name": "4.3G",
+        "difficulty": 1,
+        "varDiff": null,
+        "tls": true,
+        "tlsAuto": true
+      }
+    },
+    "totalBlocksFound": 14,
+    "totalPayments": 27.869811679885,
+    "lastBlockFoundTime": 0,
+    "networkHashrate": 896685529364821.6,
+    "prices": {
+      "chf": {
+        "price": 1612.88,
+        "priceChangePercentage24H": 2.3
+      }
+    }
+  }
+}

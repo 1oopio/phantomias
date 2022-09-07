@@ -1,0 +1,60 @@
+{
+  "pageCount": 0,
+  "success": true,
+  "result": [
+    {
+      "coin": "ETH",
+      "id": "eth1",
+      "algorithm": "Ethhash",
+      "name": "Ethereum",
+      "hashrate": 21550561280,
+      "miners": 12,
+      "fee": 1,
+      "feeType": "PPLNS",
+      "blockHeight": 15124653,
+      "networkHashrate": 896685529364821.6,
+      "prices": {
+        "chf": {
+          "price": 1612.88,
+          "priceChangePercentage24H": 2.3
+        }
+      }
+    },
+    {
+      "coin": "XMR",
+      "id": "xmr1",
+      "algorithm": "RandomX",
+      "name": "Monero",
+      "hashrate": 749,
+      "miners": 1,
+      "fee": 1,
+      "feeType": "PPLNS",
+      "blockHeight": 2662908,
+      "networkHashrate": 2527827640.7083335,
+      "prices": {
+        "chf": {
+          "price": 1612.88,
+          "priceChangePercentage24H": 2.3
+        }
+      }
+    },
+    {
+      "coin": "ERG",
+      "id": "ergo1",
+      "algorithm": "Autolykos",
+      "name": "Ergo",
+      "hashrate": 97317371904,
+      "miners": 3,
+      "fee": 1,
+      "feeType": "PPLNS",
+      "blockHeight": 791403,
+      "networkHashrate": 2365.025,
+      "prices": {
+        "chf": {
+          "price": 1612.88,
+          "priceChangePercentage24H": 2.3
+        }
+      }
+    }
+  ]
+}

@@ -1,0 +1,39 @@
+---
+proxy:
+  listen: 0.0.0.0:3000
+  enable_metrics: true
+  cache_ttl: 1m
+  cert_file: ./cert.pem
+  cert_key: ./cert.key
+  trusted_proxy_check: false
+  trusted_proxies: false
+
+miningcore:
+  url: http://localhost:5000
+  ws: ws://localhost:5000/notifications
+  ignore_tls: true
+  timeout: 5s
+
+price:
+  coins: ["ethereum", "ergo"]
+  vs_currencies: ["usd", "eur", "chf"]
+
+metrics:
+  enabled: true
+  listen: 0.0.0.0:3001
+  endpoint: /metrics
+  user: metrics
+  password: metricspasswd
+
+db:
+  host: postgreshost
+  port: 5432
+  user: postgresuser
+  password: postgrespassword
+  dbname: postgresdb
+
+pools:
+  - 
+    id: dero1
+    type: dero
+    rpc: ws://deronode:10102/ws

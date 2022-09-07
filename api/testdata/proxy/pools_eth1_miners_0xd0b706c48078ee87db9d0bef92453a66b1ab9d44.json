@@ -1,0 +1,44 @@
+{
+  "pageCount": 0,
+  "success": true,
+  "result": {
+    "pendingShares": 79555679223808,
+    "pendingBalance": 0.075525830456,
+    "totalPaid": 0,
+    "todayPaid": 0,
+    "lastPayment": "",
+    "lastPaymentLink": "",
+    "performance": {
+      "created": "2022-07-12T18:19:56.125522Z",
+      "workers": {
+        "worker1": {
+          "hashrate": 71582788,
+          "reportedHashrate": 120450009,
+          "sharesPerSecond": 0.017
+        }
+      }
+    },
+    "performanceSamples": [
+      {
+        "created": "2022-07-11T17:00:00Z",
+        "workers": {
+          "worker1": {
+            "hashrate": 129045642.4,
+            "reportedHashrate": 120449375.86666666,
+            "sharesPerSecond": 0.030000000000000006
+          }
+        }
+      },
+      {
+        "created": "2022-07-11T17:10:00Z",
+        "workers": {
+          "worker1": {
+            "hashrate": 88905576.8,
+            "reportedHashrate": 120450279.86666666,
+            "sharesPerSecond": 0.020800000000000003
+          }
+        }
+      }
+    ]
+  }
+}

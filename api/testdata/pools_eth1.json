@@ -1,0 +1,161 @@
+{
+  "pool": {
+    "id": "eth1",
+    "coin": {
+      "type": "ETH",
+      "name": "Ethereum",
+      "symbol": "ETH",
+      "website": "",
+      "market": "",
+      "family": "ethereum",
+      "algorithm": "Ethhash",
+      "twitter": "",
+      "discord": "",
+      "telegram": "",
+      "canonicalName": "Ethereum"
+    },
+    "ports": {
+      "14000": {
+        "listenAddress": "*",
+        "name": "NH / MRR",
+        "difficulty": 4,
+        "varDiff": {
+          "minDiff": 2,
+          "targetTime": 15,
+          "retargetTime": 90,
+          "variancePercent": 30
+        },
+        "tls": false,
+        "tlsAuto": false
+      },
+      "4000": {
+        "listenAddress": "*",
+        "name": "8.6G",
+        "difficulty": 2,
+        "tls": true,
+        "tlsAuto": true
+      },
+      "4001": {
+        "listenAddress": "*",
+        "name": "4.3G",
+        "difficulty": 1,
+        "tls": true,
+        "tlsAuto": true
+      }
+    },
+    "paymentProcessing": {
+      "enabled": false,
+      "minimumPayment": 0.1,
+      "payoutScheme": "PPLNS",
+      "payoutSchemeConfig": [[[]]],
+      "extra": {
+        "gas": 21000,
+        "keepTransactionFees": false,
+        "keepUncles": false,
+        "maxFeePerGas": 50000000000
+      }
+    },
+    "clientConnectionTimeout": 600,
+    "jobRebroadcastTimeout": 10,
+    "blockRefreshInterval": 0,
+    "poolFeePercent": 1,
+    "address": "0xDCC624A68b14E49140567b2A4F1cA9F09431235F",
+    "addressInfoLink": "https://etherscan.io/address/0xDCC624A68b14E49140567b2A4F1cA9F09431235F",
+    "poolStats": {
+      "connectedMiners": 12,
+      "poolHashrate": 21990055936,
+      "sharesPerSecond": 4
+    },
+    "networkStats": {
+      "networkType": "Ethereum-Mainnet",
+      "networkHashrate": 896685529364821.6,
+      "networkDifficulty": 11624178909267392,
+      "nextNetworkTarget": "0x0000000000000632edc4a1b378ad581f1a48f7627c31791363fb6eb48e00a831",
+      "nextNetworkBits": "",
+      "lastNetworkBlockTime": "2022-07-12T00:40:09.6751368Z",
+      "blockHeight": 15124659,
+      "connectedPeers": 77,
+      "rewardType": "POW"
+    },
+    "topMiners": [
+      {
+        "miner": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+        "hashrate": 10637202319,
+        "sharesPerSecond": 2.476
+      },
+      {
+        "miner": "0x649562ab5cf14532904abcc655e1cee74ea4a806",
+        "hashrate": 10457311677,
+        "sharesPerSecond": 0.609
+      },
+      {
+        "miner": "0x4c4a072ac71616a1034894ced54daf564f16274e",
+        "hashrate": 6277259894,
+        "sharesPerSecond": 0.731
+      },
+      {
+        "miner": "0x8f5a896028635f79fc81aacbd1fd527433bc8641",
+        "hashrate": 2605613490,
+        "sharesPerSecond": 0.30300000000000005
+      },
+      {
+        "miner": "0xfc946536984b4c74fac57adaba9046d83a6a2eb9",
+        "hashrate": 2569822095,
+        "sharesPerSecond": 0.597
+      },
+      {
+        "miner": "0x5c8236db14880d3b56d00fd4c58a234317a40ac2",
+        "hashrate": 2476764470,
+        "sharesPerSecond": 0.576
+      },
+      {
+        "miner": "0x8be3e5f239840de981e83d5473e61a5d8769c9cf",
+        "hashrate": 1360072975,
+        "sharesPerSecond": 0.317
+      },
+      {
+        "miner": "0x7bbb22729acd3586889303701d3f678fc689fe40",
+        "hashrate": 909101410,
+        "sharesPerSecond": 0.212
+      },
+      {
+        "miner": "0x48949eeaa5358d48c7a306231b59d73af34668f1",
+        "hashrate": 522554354,
+        "sharesPerSecond": 0.122
+      },
+      {
+        "miner": "0xec3ad44fbb27a05f95c82a577ffb16b25d8ee575",
+        "hashrate": 393705335,
+        "sharesPerSecond": 0.092
+      },
+      {
+        "miner": "0x4abc79e6f62ea92eb19701e1995e58ea79a6d094",
+        "hashrate": 390451572,
+        "sharesPerSecond": 0.045
+      },
+      {
+        "miner": "0x96301129d44da38c07ff08cbaa68016e32c708e2",
+        "hashrate": 379388777,
+        "sharesPerSecond": 0.088
+      },
+      {
+        "miner": "0x3e9f9eb3947826cbdba4d182e23a1bd2c35decec",
+        "hashrate": 362954982,
+        "sharesPerSecond": 0.042
+      },
+      {
+        "miner": "0x9675f3d042ae542c20995592a3086a4af9f2d4da",
+        "hashrate": 336439104,
+        "sharesPerSecond": 0.078
+      },
+      {
+        "miner": "0xd0b706c48078ee87db9d0bef92453a66b1ab9d44",
+        "hashrate": 237553500,
+        "sharesPerSecond": 0.055
+      }
+    ],
+    "totalPaid": 27.869811679885,
+    "totalBlocks": 14,
+    "lastPoolBlockTime": "2022-07-07T21:04:47.671246Z"
+  }
+}

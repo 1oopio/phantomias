@@ -1,0 +1,1208 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "description": "This is the public pool api from stratum.farm",
+        "title": "StratumFarm Pool API",
+        "termsOfService": "https://stratum.farm/terms/",
+        "contact": {
+            "name": "StratumFarm Support",
+            "email": "pool@stratum.farm"
+        },
+        "version": "1.0"
+    },
+    "host": "152.228.229.130:3000",
+    "basePath": "/",
+    "paths": {
+        "/api/v1/pools": {
+            "get": {
+                "description": "Get a list of all available pools",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "Get all pools",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "type": "array",
+                            "items": {
+                                "$ref": "#/definitions/api.PoolsRes"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}": {
+            "get": {
+                "description": "Get a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "Get a pool",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.PoolExtendedRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/blocks": {
+            "get": {
+                "description": "Get a list of blocks from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "Get a list of blocks",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page (default=0)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "PageSize (default=15)",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.BlocksRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/miners": {
+            "get": {
+                "description": "Get a list of all miners from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Miners"
+                ],
+                "summary": "Get a list of all miners",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page (default=0)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "PageSize (default=15)",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.MinersRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/miners/{miner_addr}": {
+            "get": {
+                "description": "Get a specific miner from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Miners"
+                ],
+                "summary": "Get a miner",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address of the miner",
+                        "name": "miner_addr",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page (default=0)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "PageSize (default=15)",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.MinerRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/miners/{miner_addr}/balancechanges": {
+            "get": {
+                "description": "Get a list of balance changes from a specific miner from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Miners"
+                ],
+                "summary": "Get balance changes",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address of the miner",
+                        "name": "miner_addr",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page (default=0)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "PageSize (default=15)",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.BalanceChangesRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/miners/{miner_addr}/earnings/daily": {
+            "get": {
+                "description": "Get a list of daily earnings from a specific miner from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Miners"
+                ],
+                "summary": "Get daily earnings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address of the miner",
+                        "name": "miner_addr",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page (default=0)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "PageSize (default=15)",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.DailyEarningRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/miners/{miner_addr}/payments": {
+            "get": {
+                "description": "Get a list of payments from a specific miner from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Miners"
+                ],
+                "summary": "Get payments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address of the miner",
+                        "name": "miner_addr",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page (default=0)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "PageSize (default=15)",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.PaymentsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/miners/{miner_addr}/performance": {
+            "get": {
+                "description": "Get a list of performance samples from a specific miner from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Miners"
+                ],
+                "summary": "Get performance",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address of the miner",
+                        "name": "miner_addr",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Specify the sample range (default=Daily)",
+                        "name": "sampleRange",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.MinerPerformanceRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/miners/{miner_addr}/settings": {
+            "get": {
+                "description": "Get the settings from a specific miner from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Miners"
+                ],
+                "summary": "Get settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address of the miner",
+                        "name": "miner_addr",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.MinerSettingsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            },
+            "post": {
+                "description": "Update the settings from a specific miner from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Miners"
+                ],
+                "summary": "Update settings",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address of the miner",
+                        "name": "miner_addr",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Updated settings incl. the IP of the highest worker",
+                        "name": "settings",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/api.MinerSettingsReq"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.MinerSettingsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/payments": {
+            "get": {
+                "description": "Get a list of payments from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "Get a list of payments",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Page (default=0)",
+                        "name": "page",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "PageSize (default=15)",
+                        "name": "pageSize",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.PaymentsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/performance": {
+            "get": {
+                "description": "Get a list of performance samples from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "Get a list of performance samples",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "sample interval (default=Hour)",
+                        "name": "i",
+                        "in": "query"
+                    },
+                    {
+                        "type": "string",
+                        "description": "sample range (default=Day)",
+                        "name": "r",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.PoolPerformanceRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/teapot": {
+            "get": {
+                "produces": [
+                    "text/plain"
+                ],
+                "tags": [
+                    "Teapot"
+                ],
+                "summary": "Teapot",
+                "responses": {
+                    "418": {
+                        "description": "I'm a teapot",
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "api.BalanceChange": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "created": {
+                    "type": "string"
+                },
+                "poolId": {
+                    "type": "string"
+                },
+                "usage": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.BalanceChangesRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.BalanceChange"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.Block": {
+            "type": "object",
+            "properties": {
+                "blockHeight": {
+                    "type": "integer"
+                },
+                "confirmationProgress": {
+                    "type": "number"
+                },
+                "created": {
+                    "type": "string"
+                },
+                "effort": {
+                    "type": "number"
+                },
+                "hash": {
+                    "type": "string"
+                },
+                "infoLink": {
+                    "type": "string"
+                },
+                "miner": {
+                    "type": "string"
+                },
+                "networkDifficulty": {
+                    "type": "number"
+                },
+                "poolId": {
+                    "type": "string"
+                },
+                "reward": {
+                    "type": "number"
+                },
+                "source": {
+                    "type": "string"
+                },
+                "status": {
+                    "type": "string"
+                },
+                "transactionConfirmationData": {
+                    "type": "string"
+                },
+                "type": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.BlocksRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Block"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.DailyEarning": {
+            "type": "object",
+            "properties": {
+                "amount": {
+                    "type": "number"
+                },
+                "date": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.DailyEarningRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.DailyEarning"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.Miner": {
+            "type": "object",
+            "properties": {
+                "lastPayment": {
+                    "type": "string"
+                },
+                "lastPaymentLink": {
+                    "type": "string"
+                },
+                "pendingBalance": {
+                    "type": "number"
+                },
+                "pendingShares": {
+                    "type": "integer"
+                },
+                "performance": {
+                    "$ref": "#/definitions/api.WorkerStats"
+                },
+                "performanceSamples": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.WorkerStats"
+                    }
+                },
+                "todayPaid": {
+                    "type": "number"
+                },
+                "totalPaid": {
+                    "type": "number"
+                }
+            }
+        },
+        "api.MinerPerformanceRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.WorkerStats"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.MinerRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "$ref": "#/definitions/api.Miner"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.MinerSettings": {
+            "type": "object",
+            "properties": {
+                "paymentThreshold": {
+                    "type": "number"
+                }
+            }
+        },
+        "api.MinerSettingsReq": {
+            "type": "object",
+            "properties": {
+                "ipAddress": {
+                    "type": "string"
+                },
+                "settings": {
+                    "$ref": "#/definitions/api.MinerSettings"
+                }
+            }
+        },
+        "api.MinerSettingsRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "$ref": "#/definitions/api.MinerSettings"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.MinerSimple": {
+            "type": "object",
+            "properties": {
+                "hashrate": {
+                    "type": "number"
+                },
+                "miner": {
+                    "type": "string"
+                },
+                "sharesPerSecond": {
+                    "type": "number"
+                }
+            }
+        },
+        "api.MinersRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.MinerSimple"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.Payment": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "addressInfoLink": {
+                    "type": "string"
+                },
+                "amount": {
+                    "type": "number"
+                },
+                "coin": {
+                    "type": "string"
+                },
+                "created": {
+                    "type": "string"
+                },
+                "transactionConfirmationData": {
+                    "type": "string"
+                },
+                "transactionInfoLink": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.PaymentsRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Payment"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.Pool": {
+            "type": "object",
+            "properties": {
+                "algorithm": {
+                    "type": "string"
+                },
+                "blockHeight": {
+                    "type": "integer"
+                },
+                "coin": {
+                    "type": "string"
+                },
+                "fee": {
+                    "type": "number"
+                },
+                "feeType": {
+                    "type": "string"
+                },
+                "hashrate": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "miners": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "networkHashrate": {
+                    "type": "number"
+                },
+                "prices": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/api.Price"
+                    }
+                }
+            }
+        },
+        "api.PoolEndpoint": {
+            "type": "object",
+            "properties": {
+                "difficulty": {
+                    "type": "number"
+                },
+                "listenAddress": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "tls": {
+                    "type": "boolean"
+                },
+                "tlsAuto": {
+                    "type": "boolean"
+                },
+                "varDiff": {
+                    "$ref": "#/definitions/api.VarDiffConfig"
+                }
+            }
+        },
+        "api.PoolExtended": {
+            "type": "object",
+            "properties": {
+                "algorithm": {
+                    "type": "string"
+                },
+                "blockHeight": {
+                    "type": "integer"
+                },
+                "coin": {
+                    "type": "string"
+                },
+                "fee": {
+                    "type": "number"
+                },
+                "feeType": {
+                    "type": "string"
+                },
+                "hashrate": {
+                    "type": "integer"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "lastBlockFoundTime": {
+                    "type": "integer"
+                },
+                "miners": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "networkHashrate": {
+                    "type": "number"
+                },
+                "ports": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/api.PoolEndpoint"
+                    }
+                },
+                "prices": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/api.Price"
+                    }
+                },
+                "totalBlocksFound": {
+                    "type": "integer"
+                },
+                "totalPayments": {
+                    "type": "number"
+                }
+            }
+        },
+        "api.PoolExtendedRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "$ref": "#/definitions/api.PoolExtended"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.PoolPerformance": {
+            "type": "object",
+            "properties": {
+                "connectedMiners": {
+                    "type": "integer"
+                },
+                "created": {
+                    "type": "string"
+                },
+                "networkDifficulty": {
+                    "type": "number"
+                },
+                "networkHashrate": {
+                    "type": "number"
+                },
+                "poolHashrate": {
+                    "type": "number"
+                },
+                "validSharesPerSecond": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.PoolPerformanceRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.PoolPerformance"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.PoolsRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.Pool"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.Price": {
+            "type": "object",
+            "properties": {
+                "price": {
+                    "type": "number"
+                },
+                "priceChangePercentage24H": {
+                    "type": "number"
+                }
+            }
+        },
+        "api.VarDiffConfig": {
+            "type": "object",
+            "properties": {
+                "maxDelta": {
+                    "type": "number"
+                },
+                "maxDiff": {
+                    "type": "number"
+                },
+                "minDiff": {
+                    "type": "number"
+                },
+                "retargetTime": {
+                    "type": "number"
+                },
+                "targetTime": {
+                    "type": "number"
+                },
+                "variancePercent": {
+                    "type": "number"
+                }
+            }
+        },
+        "api.WorkerPerformanceStats": {
+            "type": "object",
+            "properties": {
+                "hashrate": {
+                    "type": "number"
+                },
+                "reportedHashrate": {
+                    "type": "number"
+                },
+                "sharesPerSecond": {
+                    "type": "number"
+                }
+            }
+        },
+        "api.WorkerStats": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "workers": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/api.WorkerPerformanceStats"
+                    }
+                }
+            }
+        },
+        "utils.APIError": {
+            "type": "object",
+            "properties": {
+                "code": {
+                    "type": "integer"
+                },
+                "error": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

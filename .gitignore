@@ -1,1 +1,6 @@
-config.yml
+/config.yml
+tmp/
+todo.txt
+dist/
+__debug_bin
+.vscode

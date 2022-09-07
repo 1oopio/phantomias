@@ -1,0 +1,81 @@
+{
+  "pageCount": 0,
+  "success": true,
+  "result": [
+    {
+      "miner": "0x649562ab5cf14532904abcc655e1cee74ea4a806",
+      "hashrate": 10457311677,
+      "sharesPerSecond": 0.609
+    },
+    {
+      "miner": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "hashrate": 10186230753,
+      "sharesPerSecond": 2.3720000000000003
+    },
+    {
+      "miner": "0x4c4a072ac71616a1034894ced54daf564f16274e",
+      "hashrate": 6285317994,
+      "sharesPerSecond": 0.366
+    },
+    {
+      "miner": "0x4abc79e6f62ea92eb19701e1995e58ea79a6d094",
+      "hashrate": 2863311530,
+      "sharesPerSecond": 0.333
+    },
+    {
+      "miner": "0x8f5a896028635f79fc81aacbd1fd527433bc8641",
+      "hashrate": 2605613491,
+      "sharesPerSecond": 0.303
+    },
+    {
+      "miner": "0x5c8236db14880d3b56d00fd4c58a234317a40ac2",
+      "hashrate": 2476764470,
+      "sharesPerSecond": 0.576
+    },
+    {
+      "miner": "0xfc946536984b4c74fac57adaba9046d83a6a2eb9",
+      "hashrate": 2254857827,
+      "sharesPerSecond": 0.526
+    },
+    {
+      "miner": "0x8be3e5f239840de981e83d5473e61a5d8769c9cf",
+      "hashrate": 1403022649,
+      "sharesPerSecond": 0.326
+    },
+    {
+      "miner": "0x7bbb22729acd3586889303701d3f678fc689fe40",
+      "hashrate": 930576246,
+      "sharesPerSecond": 0.217
+    },
+    {
+      "miner": "0x48949eeaa5358d48c7a306231b59d73af34668f1",
+      "hashrate": 565504027,
+      "sharesPerSecond": 0.132
+    },
+    {
+      "miner": "0xec3ad44fbb27a05f95c82a577ffb16b25d8ee575",
+      "hashrate": 465288123,
+      "sharesPerSecond": 0.108
+    },
+    {
+      "miner": "0x3e9f9eb3947826cbdba4d182e23a1bd2c35decec",
+      "hashrate": 388374702,
+      "sharesPerSecond": 0.045
+    },
+    {
+      "miner": "0x9675f3d042ae542c20995592a3086a4af9f2d4da",
+      "hashrate": 314964268,
+      "sharesPerSecond": 0.073
+    },
+    {
+      "miner": "0x96301129d44da38c07ff08cbaa68016e32c708e2",
+      "hashrate": 306207799,
+      "sharesPerSecond": 0.071
+    },
+    {
+      "miner": "0xd0b706c48078ee87db9d0bef92453a66b1ab9d44",
+      "hashrate": 221906643,
+      "sharesPerSecond": 0.052
+    }
+  ]
+}

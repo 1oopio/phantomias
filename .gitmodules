@@ -1,0 +1,4 @@
+[submodule "submodules/fiberprometheus"]
+	path = submodules/fiberprometheus
+	url = git@github.com:jon4hz/fiberprometheus
+	branch = refactor-constructor

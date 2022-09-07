@@ -1,46 +1,116 @@
 package config
 
 import (
+	"errors"
 	"os"
+	"time"
 
-	"gopkg.in/yaml.v3"
+	"github.com/spf13/viper"
 )
 
 const defaultConfigFile = "config.yml"
 
+// Config represents the config
 type Config struct {
-	Pools    []Pool   `yaml:"pools"`
-	DB       DB       `yaml:"db"`
-	Telegram Telegram `yaml:"telegram"`
+	Pools      []*Pool     `mapstructure:"pools"`
+	DB         *DB         `mapstructure:"db"`
+	Proxy      *Proxy      `mapstructure:"proxy"`
+	Miningcore *Miningcore `mapstructure:"miningcore"`
+	Price      *Price      `mapstructure:"price"`
+	Metrics    *Metrics    `mapstructure:"metrics"`
 }
 
+// DB represents the database config
 type DB struct {
-	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
-	User     string `yaml:"user"`
-	Password string `yaml:"password"`
-	Dbname   string `yaml:"dbname"`
+	Host     string `mapstructure:"host"`     // database host
+	Port     int    `mapstructure:"port"`     // database port
+	User     string `mapstructure:"user"`     // database user
+	Password string `mapstructure:"password"` // database password
+	Dbname   string `mapstructure:"dbname"`   // database name
 }
 
+// Pool represents the config for a single pool
 type Pool struct {
-	ID   string `yaml:"id"`
-	Type string `yaml:"type"`
-	RPC  string `yaml:"rpc"`
+	ID   string `mapstructure:"id"`   // pool id
+	Type string `mapstructure:"type"` // coinfamily
+	RPC  string `mapstructure:"rpc"`  // rpc url
 }
 
-type Telegram struct {
-	Token string `yaml:"token"`
-	Chat  int64  `yaml:"chat"`
+// ProxyConfig represents the configuration for the proxy.
+type Proxy struct {
+	Listen            string        `mapstructure:"listen"`              // listening address e.g. 127.0.0.1:8080
+	CacheTTL          time.Duration `mapstructure:"cache_ttl"`           // cache TTL
+	CertFile          string        `mapstructure:"cert_file"`           // path to the tls certificate
+	CertKey           string        `mapstructure:"cert_key"`            // path to the tls key
+	TrustedProxyCheck bool          `mapstructure:"trusted_proxy_check"` // allow requests only from trusted proxies
+	TrustedProxies    []string      `mapstructure:"trusted_proxies"`     // a list of trusted proxy IPs
 }
 
-func Load() (*Config, error) {
-	data, err := os.ReadFile(defaultConfigFile)
-	if err != nil {
-		return nil, err
+// MiningcoreConfig represents the configuration for the miningcore client.
+type Miningcore struct {
+	URL       string        `mapstructure:"url"`        // url of the miningcore api server
+	WS        string        `mapstructure:"ws"`         // url of the miningcore websocket server
+	IgnoreTLS bool          `mapstructure:"ignore_tls"` // ignore invalid tls certificates
+	Timeout   time.Duration `mapstructure:"timeout"`    // timeout for the api client
+}
+
+// PriceConfig represents the configuration for the price service.
+type Price struct {
+	Coins        []string `mapstructure:"coins"`
+	VSCurrencies []string `mapstructure:"vs_currencies"`
+}
+
+// MetricsConfig represents the configuration for the metrics service.
+type Metrics struct {
+	Enabled  bool   `mapstructure:"enabled"`  // enable metrics service
+	Listen   string `mapstructure:"listen"`   // listening address
+	Endpoint string `mapstructure:"endpoint"` // endpoint for the metrics server
+	User     string `mapstructure:"user"`     // user for metrics
+	Password string `mapstructure:"password"` // password for metrics
+}
+
+// Load loads the config file.
+// It searches in the following locations:
+//
+// /etc/phantomias/config.yml,
+// $HOME/.config/phantomias/config.yml,
+// config.yml
+//
+// command arguments will overwrite the value from the config
+func Load(path string) (cfg *Config, err error) {
+	if path != "" {
+		return load(path)
 	}
-	var cfg Config
-	if err := yaml.Unmarshal(data, &cfg); err != nil {
-		return nil, err
+	for _, f := range [4]string{
+		".config.yml",
+		"config.yml",
+	} {
+		cfg, err = load(f)
+		if err != nil && os.IsNotExist(err) {
+			err = nil
+			continue
+		} else if err != nil && errors.As(err, &viper.ConfigFileNotFoundError{}) {
+			err = nil
+			continue
+		}
 	}
-	return &cfg, nil
+	if cfg == nil {
+		return cfg, viper.Unmarshal(&cfg)
+	}
+	return
+}
+
+func load(file string) (cfg *Config, err error) {
+	viper.SetConfigName(file)
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath(".")
+	viper.AddConfigPath("$HOME/.config/phantomias")
+	viper.AddConfigPath("/etc/phantomias/")
+	if err = viper.ReadInConfig(); err != nil {
+		return
+	}
+	if err = viper.Unmarshal(&cfg); err != nil {
+		return
+	}
+	return
 }

@@ -1,0 +1,111 @@
+{
+  "pageCount": 1,
+  "result": [
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": -1.942341454944,
+      "usage": "Balance reset after payment",
+      "created": "2022-07-07T21:11:02.417216Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": 0.987676029686,
+      "usage": "Reward for 2.91P shares for block 15097734",
+      "created": "2022-07-07T21:09:51.758185Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": 0.954665425258,
+      "usage": "Reward for 3.44P shares for block 15021521",
+      "created": "2022-06-25T02:50:06.121763Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": -1.298481454007,
+      "usage": "Balance reset after payment",
+      "created": "2022-06-19T10:52:59.495378Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": 1.298481454007,
+      "usage": "Reward for 4.16P shares for block 14990388",
+      "created": "2022-06-19T10:52:58.468026Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": -1.253000745184,
+      "usage": "Balance reset after payment",
+      "created": "2022-06-19T07:11:37.15073Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": 1.253000745184,
+      "usage": "Reward for 4.18P shares for block 14989504",
+      "created": "2022-06-19T07:11:22.519561Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": -2.141146562291,
+      "usage": "Balance reset after payment",
+      "created": "2022-06-15T22:14:52.542149Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": 1.276529879757,
+      "usage": "Reward for 4.44P shares for block 14969869",
+      "created": "2022-06-15T22:14:33.299042Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": 0.864616682534,
+      "usage": "Reward for 3.1P shares for block 14946332",
+      "created": "2022-06-11T20:51:19.058255Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": -1.191743361859,
+      "usage": "Balance reset after payment",
+      "created": "2022-06-06T05:51:45.879809Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": 1.191743361859,
+      "usage": "Reward for 4.41P shares for block 14913298",
+      "created": "2022-06-06T05:51:14.400378Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": -1.476019413546,
+      "usage": "Balance reset after payment",
+      "created": "2022-05-30T23:26:24.403112Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": 1.476019413546,
+      "usage": "Reward for 5.26P shares for block 14875375",
+      "created": "2022-05-30T23:26:12.505799Z"
+    },
+    {
+      "poolId": "eth1",
+      "address": "0x017b67b81340634bbc2145946a9e99c63dd9696c",
+      "amount": -1.266347108594,
+      "usage": "Balance reset after payment",
+      "created": "2022-05-27T09:04:01.380416Z"
+    }
+  ],
+  "success": true
+}

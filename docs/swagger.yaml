@@ -1,0 +1,797 @@
+basePath: /
+definitions:
+  api.BalanceChange:
+    properties:
+      address:
+        type: string
+      amount:
+        type: number
+      created:
+        type: string
+      poolId:
+        type: string
+      usage:
+        type: string
+    type: object
+  api.BalanceChangesRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.BalanceChange'
+        type: array
+      success:
+        type: boolean
+    type: object
+  api.Block:
+    properties:
+      blockHeight:
+        type: integer
+      confirmationProgress:
+        type: number
+      created:
+        type: string
+      effort:
+        type: number
+      hash:
+        type: string
+      infoLink:
+        type: string
+      miner:
+        type: string
+      networkDifficulty:
+        type: number
+      poolId:
+        type: string
+      reward:
+        type: number
+      source:
+        type: string
+      status:
+        type: string
+      transactionConfirmationData:
+        type: string
+      type:
+        type: string
+    type: object
+  api.BlocksRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.Block'
+        type: array
+      success:
+        type: boolean
+    type: object
+  api.DailyEarning:
+    properties:
+      amount:
+        type: number
+      date:
+        type: string
+    type: object
+  api.DailyEarningRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.DailyEarning'
+        type: array
+      success:
+        type: boolean
+    type: object
+  api.Miner:
+    properties:
+      lastPayment:
+        type: string
+      lastPaymentLink:
+        type: string
+      pendingBalance:
+        type: number
+      pendingShares:
+        type: integer
+      performance:
+        $ref: '#/definitions/api.WorkerStats'
+      performanceSamples:
+        items:
+          $ref: '#/definitions/api.WorkerStats'
+        type: array
+      todayPaid:
+        type: number
+      totalPaid:
+        type: number
+    type: object
+  api.MinerPerformanceRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.WorkerStats'
+        type: array
+      success:
+        type: boolean
+    type: object
+  api.MinerRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        $ref: '#/definitions/api.Miner'
+      success:
+        type: boolean
+    type: object
+  api.MinerSettings:
+    properties:
+      paymentThreshold:
+        type: number
+    type: object
+  api.MinerSettingsReq:
+    properties:
+      ipAddress:
+        type: string
+      settings:
+        $ref: '#/definitions/api.MinerSettings'
+    type: object
+  api.MinerSettingsRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        $ref: '#/definitions/api.MinerSettings'
+      success:
+        type: boolean
+    type: object
+  api.MinerSimple:
+    properties:
+      hashrate:
+        type: number
+      miner:
+        type: string
+      sharesPerSecond:
+        type: number
+    type: object
+  api.MinersRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.MinerSimple'
+        type: array
+      success:
+        type: boolean
+    type: object
+  api.Payment:
+    properties:
+      address:
+        type: string
+      addressInfoLink:
+        type: string
+      amount:
+        type: number
+      coin:
+        type: string
+      created:
+        type: string
+      transactionConfirmationData:
+        type: string
+      transactionInfoLink:
+        type: string
+    type: object
+  api.PaymentsRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.Payment'
+        type: array
+      success:
+        type: boolean
+    type: object
+  api.Pool:
+    properties:
+      algorithm:
+        type: string
+      blockHeight:
+        type: integer
+      coin:
+        type: string
+      fee:
+        type: number
+      feeType:
+        type: string
+      hashrate:
+        type: integer
+      id:
+        type: string
+      miners:
+        type: integer
+      name:
+        type: string
+      networkHashrate:
+        type: number
+      prices:
+        additionalProperties:
+          $ref: '#/definitions/api.Price'
+        type: object
+    type: object
+  api.PoolEndpoint:
+    properties:
+      difficulty:
+        type: number
+      listenAddress:
+        type: string
+      name:
+        type: string
+      tls:
+        type: boolean
+      tlsAuto:
+        type: boolean
+      varDiff:
+        $ref: '#/definitions/api.VarDiffConfig'
+    type: object
+  api.PoolExtended:
+    properties:
+      algorithm:
+        type: string
+      blockHeight:
+        type: integer
+      coin:
+        type: string
+      fee:
+        type: number
+      feeType:
+        type: string
+      hashrate:
+        type: integer
+      id:
+        type: string
+      lastBlockFoundTime:
+        type: integer
+      miners:
+        type: integer
+      name:
+        type: string
+      networkHashrate:
+        type: number
+      ports:
+        additionalProperties:
+          $ref: '#/definitions/api.PoolEndpoint'
+        type: object
+      prices:
+        additionalProperties:
+          $ref: '#/definitions/api.Price'
+        type: object
+      totalBlocksFound:
+        type: integer
+      totalPayments:
+        type: number
+    type: object
+  api.PoolExtendedRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        $ref: '#/definitions/api.PoolExtended'
+      success:
+        type: boolean
+    type: object
+  api.PoolPerformance:
+    properties:
+      connectedMiners:
+        type: integer
+      created:
+        type: string
+      networkDifficulty:
+        type: number
+      networkHashrate:
+        type: number
+      poolHashrate:
+        type: number
+      validSharesPerSecond:
+        type: integer
+    type: object
+  api.PoolPerformanceRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.PoolPerformance'
+        type: array
+      success:
+        type: boolean
+    type: object
+  api.PoolsRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.Pool'
+        type: array
+      success:
+        type: boolean
+    type: object
+  api.Price:
+    properties:
+      price:
+        type: number
+      priceChangePercentage24H:
+        type: number
+    type: object
+  api.VarDiffConfig:
+    properties:
+      maxDelta:
+        type: number
+      maxDiff:
+        type: number
+      minDiff:
+        type: number
+      retargetTime:
+        type: number
+      targetTime:
+        type: number
+      variancePercent:
+        type: number
+    type: object
+  api.WorkerPerformanceStats:
+    properties:
+      hashrate:
+        type: number
+      reportedHashrate:
+        type: number
+      sharesPerSecond:
+        type: number
+    type: object
+  api.WorkerStats:
+    properties:
+      created:
+        type: string
+      workers:
+        additionalProperties:
+          $ref: '#/definitions/api.WorkerPerformanceStats'
+        type: object
+    type: object
+  utils.APIError:
+    properties:
+      code:
+        type: integer
+      error:
+        type: string
+    type: object
+host: 152.228.229.130:3000
+info:
+  contact:
+    email: pool@stratum.farm
+    name: StratumFarm Support
+  description: This is the public pool api from stratum.farm
+  termsOfService: https://stratum.farm/terms/
+  title: StratumFarm Pool API
+  version: "1.0"
+paths:
+  /api/v1/pools:
+    get:
+      description: Get a list of all available pools
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/api.PoolsRes'
+            type: array
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get all pools
+      tags:
+      - Pools
+  /api/v1/pools/{pool_id}:
+    get:
+      description: Get a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.PoolExtendedRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get a pool
+      tags:
+      - Pools
+  /api/v1/pools/{pool_id}/blocks:
+    get:
+      description: Get a list of blocks from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Page (default=0)
+        in: query
+        name: page
+        type: integer
+      - description: PageSize (default=15)
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.BlocksRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get a list of blocks
+      tags:
+      - Pools
+  /api/v1/pools/{pool_id}/miners:
+    get:
+      description: Get a list of all miners from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Page (default=0)
+        in: query
+        name: page
+        type: integer
+      - description: PageSize (default=15)
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.MinersRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get a list of all miners
+      tags:
+      - Miners
+  /api/v1/pools/{pool_id}/miners/{miner_addr}:
+    get:
+      description: Get a specific miner from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Address of the miner
+        in: path
+        name: miner_addr
+        required: true
+        type: string
+      - description: Page (default=0)
+        in: query
+        name: page
+        type: integer
+      - description: PageSize (default=15)
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.MinerRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get a miner
+      tags:
+      - Miners
+  /api/v1/pools/{pool_id}/miners/{miner_addr}/balancechanges:
+    get:
+      description: Get a list of balance changes from a specific miner from a specific
+        pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Address of the miner
+        in: path
+        name: miner_addr
+        required: true
+        type: string
+      - description: Page (default=0)
+        in: query
+        name: page
+        type: integer
+      - description: PageSize (default=15)
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.BalanceChangesRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get balance changes
+      tags:
+      - Miners
+  /api/v1/pools/{pool_id}/miners/{miner_addr}/earnings/daily:
+    get:
+      description: Get a list of daily earnings from a specific miner from a specific
+        pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Address of the miner
+        in: path
+        name: miner_addr
+        required: true
+        type: string
+      - description: Page (default=0)
+        in: query
+        name: page
+        type: integer
+      - description: PageSize (default=15)
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.DailyEarningRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get daily earnings
+      tags:
+      - Miners
+  /api/v1/pools/{pool_id}/miners/{miner_addr}/payments:
+    get:
+      description: Get a list of payments from a specific miner from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Address of the miner
+        in: path
+        name: miner_addr
+        required: true
+        type: string
+      - description: Page (default=0)
+        in: query
+        name: page
+        type: integer
+      - description: PageSize (default=15)
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.PaymentsRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get payments
+      tags:
+      - Miners
+  /api/v1/pools/{pool_id}/miners/{miner_addr}/performance:
+    get:
+      description: Get a list of performance samples from a specific miner from a
+        specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Address of the miner
+        in: path
+        name: miner_addr
+        required: true
+        type: string
+      - description: Specify the sample range (default=Daily)
+        in: query
+        name: sampleRange
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.MinerPerformanceRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get performance
+      tags:
+      - Miners
+  /api/v1/pools/{pool_id}/miners/{miner_addr}/settings:
+    get:
+      description: Get the settings from a specific miner from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Address of the miner
+        in: path
+        name: miner_addr
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.MinerSettingsRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get settings
+      tags:
+      - Miners
+    post:
+      description: Update the settings from a specific miner from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Address of the miner
+        in: path
+        name: miner_addr
+        required: true
+        type: string
+      - description: Updated settings incl. the IP of the highest worker
+        in: body
+        name: settings
+        required: true
+        schema:
+          $ref: '#/definitions/api.MinerSettingsReq'
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.MinerSettingsRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Update settings
+      tags:
+      - Miners
+  /api/v1/pools/{pool_id}/payments:
+    get:
+      description: Get a list of payments from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Page (default=0)
+        in: query
+        name: page
+        type: integer
+      - description: PageSize (default=15)
+        in: query
+        name: pageSize
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.PaymentsRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get a list of payments
+      tags:
+      - Pools
+  /api/v1/pools/{pool_id}/performance:
+    get:
+      description: Get a list of performance samples from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: sample interval (default=Hour)
+        in: query
+        name: i
+        type: string
+      - description: sample range (default=Day)
+        in: query
+        name: r
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.PoolPerformanceRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get a list of performance samples
+      tags:
+      - Pools
+  /teapot:
+    get:
+      produces:
+      - text/plain
+      responses:
+        "418":
+          description: I'm a teapot
+          schema:
+            type: string
+      summary: Teapot
+      tags:
+      - Teapot
+swagger: "2.0"
