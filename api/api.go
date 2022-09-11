@@ -7,6 +7,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/stratumfarm/go-miningcore-client"
 	"github.com/stratumfarm/phantomias/config"
+	"github.com/stratumfarm/phantomias/database"
 	"github.com/stratumfarm/phantomias/price"
 	"github.com/stratumfarm/phantomias/version"
 )
@@ -17,14 +18,16 @@ type Server struct {
 	cancel           context.CancelFunc
 	cfg              *config.Proxy
 	mc               *miningcore.Client
+	db               *database.DB
 	api              *fiber.App
 	wsRelay          *wsRelay
 	price            price.Client
 	metricsCollector fiber.Handler
+	pools            []*config.Pool
 }
 
 // New creates a new server.
-func New(ctx context.Context, cfg *config.Proxy, mc *miningcore.Client, price price.Client, metricsCollector fiber.Handler) *Server {
+func New(ctx context.Context, cfg *config.Proxy, pools []*config.Pool, mc *miningcore.Client, db *database.DB, price price.Client, metricsCollector fiber.Handler) *Server {
 	ctxc, cancel := context.WithCancel(ctx)
 	s := &Server{
 		ctx:    ctxc,
@@ -37,7 +40,9 @@ func New(ctx context.Context, cfg *config.Proxy, mc *miningcore.Client, price pr
 			DisableStartupMessage:   version.Version != version.Development,
 		}),
 		mc:               mc,
+		db:               db,
 		cfg:              cfg,
+		pools:            pools,
 		wsRelay:          newWSRelay(ctx),
 		price:            price,
 		metricsCollector: metricsCollector,
