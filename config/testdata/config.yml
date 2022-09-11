@@ -35,5 +35,12 @@ db:
 pools:
   - 
     id: dero1
+    enabled: true
     type: dero
     rpc: ws://deronode:10102/ws
+    algorithm: AstroBWT/v3
+    fee: 4
+    fee_type: PPLNS
+    name: Dero
+    coin: DERO
+    info_link: https://explorer.dero.io/block/%d

@@ -31,9 +31,16 @@ type DB struct {
 
 // Pool represents the config for a single pool
 type Pool struct {
-	ID   string `mapstructure:"id"`   // pool id
-	Type string `mapstructure:"type"` // coinfamily
-	RPC  string `mapstructure:"rpc"`  // rpc url
+	ID        string  `mapstructure:"id"`        // pool id
+	Enabled   bool    `mapstructure:"enabled"`   // pool enabled
+	Type      string  `mapstructure:"type"`      // coinfamily
+	RPC       string  `mapstructure:"rpc"`       // rpc url
+	Algorithm string  `mapstructure:"algorithm"` // algorithm
+	Name      string  `mapstructure:"name"`      // pool name
+	Coin      string  `mapstructure:"coin"`      // coin name
+	Fee       float64 `mapstructure:"fee"`       // pool fee
+	FeeType   string  `mapstructure:"fee_type"`  // pool fee type
+	InfoLink  string  `mapstructure:"info_link"` // pool info link (explorer)
 }
 
 // ProxyConfig represents the configuration for the proxy.

@@ -43,6 +43,12 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, "dero1", cfg.Pools[0].ID)
 	assert.Equal(t, "dero", cfg.Pools[0].Type)
 	assert.Equal(t, "ws://deronode:10102/ws", cfg.Pools[0].RPC)
+	assert.Equal(t, "AstroBWT/v3", cfg.Pools[0].Algorithm)
+	assert.Equal(t, float64(4), cfg.Pools[0].Fee)
+	assert.Equal(t, "PPLNS", cfg.Pools[0].FeeType)
+	assert.Equal(t, "Dero", cfg.Pools[0].Name)
+	assert.Equal(t, "DERO", cfg.Pools[0].Coin)
+	assert.Equal(t, "https://explorer.dero.io/block/%d", cfg.Pools[0].InfoLink)
 
 }
 
