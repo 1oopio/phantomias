@@ -52,9 +52,9 @@ func (s *Server) wsRoute(middleware ...fiber.Handler) {
 		return fiber.ErrUpgradeRequired
 	})
 
-	s.api.Get("/ws", websocket.New(s.wsHandler, websocket.Config{
+	s.api.Get("/ws", append(middleware, websocket.New(s.wsHandler, websocket.Config{
 		HandshakeTimeout: wsHandshakeTimeout,
-	}))
+	}))...)
 }
 
 func (s *Server) swaggerRoute(middleware ...fiber.Handler) {
