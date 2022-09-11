@@ -47,9 +47,9 @@ const (
 	BlockStatusOrphaned  BlockStatus = "orphaned"
 )
 
-func (d *DB) PageBlocks(ctx context.Context, poolID string, status []BlockStatus, page int, pageSize int) ([]Block, error) {
+func (d *DB) PageBlocks(ctx context.Context, poolID string, status []BlockStatus, page int, pageSize int) ([]*Block, error) {
 	var (
-		blocks []Block
+		blocks []*Block
 		s      strings.Builder
 	)
 	s.WriteString("SELECT * FROM blocks WHERE ")
