@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net"
@@ -13,11 +14,14 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/stratumfarm/go-miningcore-client"
+	"github.com/stratumfarm/phantomias/api"
 	"github.com/stratumfarm/phantomias/config"
 	"github.com/stratumfarm/phantomias/database"
 	"github.com/stratumfarm/phantomias/metrics"
 	"github.com/stratumfarm/phantomias/price"
 	"github.com/stratumfarm/phantomias/version"
+	"github.com/stratumfarm/phantomias/ws"
 )
 
 var rootCmdFlags struct {
@@ -212,4 +216,41 @@ func root(cmd *cobra.Command, args []string) {
 	go func() {
 		priceClient.Start()
 	}()
+
+	// create the miningcore client
+	mcOpts := []miningcore.ClientOpts{
+		miningcore.WithJSONEncoder(json.Marshal),
+		miningcore.WithJSONDecoder(json.Unmarshal),
+		miningcore.WithTimeout(cfg.Miningcore.Timeout),
+	}
+	if cfg.Miningcore.IgnoreTLS {
+		mcOpts = append(mcOpts, miningcore.WithoutTLSVerfiy())
+	}
+	mc := miningcore.New(
+		cfg.Miningcore.URL,
+		mcOpts...,
+	)
+
+	// start the api server
+	api := api.New(context.Background(), cfg.Proxy, cfg.Pools, mc, db, priceClient, metricsMiddleware)
+	defer api.Close()
+
+	go func() {
+		if err := api.Start(); err != nil {
+			log.Fatalln(err)
+		}
+	}()
+
+	// start the websocket relay
+	wsc := ws.New(cfg.Miningcore.WS, api.BroadcastChan())
+	defer wsc.Close()
+
+	go func() {
+		if err := wsc.Listen(done); err != nil {
+			log.Fatalln(err)
+		}
+	}()
+
+	<-done
+	log.Println("shutting down...")
 }
