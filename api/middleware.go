@@ -2,6 +2,7 @@ package api
 
 import (
 	"time"
+	"unsafe"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cache"
@@ -34,5 +35,9 @@ func (s *Server) cache() fiber.Handler {
 		Expiration:   s.cfg.CacheTTL,
 		CacheControl: true,
 		MaxBytes:     10000000,
+		KeyGenerator: func(c *fiber.Ctx) string {
+			q := c.Context().QueryArgs().QueryString()
+			return c.Path() + *(*string)(unsafe.Pointer(&q))
+		},
 	})
 }
