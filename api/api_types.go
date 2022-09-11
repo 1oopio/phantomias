@@ -1,8 +1,15 @@
 package api
 
+import (
+	"time"
+
+	"github.com/shopspring/decimal"
+	"github.com/stratumfarm/phantomias/database"
+)
+
 type Meta struct {
-	PageCount int64 `json:"pageCount"`
-	Success   bool  `json:"success"`
+	PageCount uint `json:"pageCount"`
+	Success   bool `json:"success"`
 }
 
 type PoolsRes struct {
@@ -15,7 +22,7 @@ type Pool struct {
 	ID              string           `json:"id"`
 	Algorithm       string           `json:"algorithm"`
 	Name            string           `json:"name"`
-	Hashrate        int64            `json:"hashrate"`
+	Hashrate        float64          `json:"hashrate"`
 	Miners          int32            `json:"miners"`
 	Fee             float64          `json:"fee"`
 	FeeType         string           `json:"feeType"`
@@ -31,10 +38,11 @@ type PoolExtendedRes struct {
 
 type PoolExtended struct {
 	*Pool
-	Ports              map[string]*PoolEndpoint `json:"ports"`
-	TotalBlocksFound   int32                    `json:"totalBlocksFound"`
-	TotalPayments      float64                  `json:"totalPayments"`
-	LastBlockFoundTime int64                    `json:"lastBlockFoundTime"`
+	Ports              map[string]*PoolEndpoint         `json:"ports"`
+	TotalBlocksFound   uint                             `json:"totalBlocksFound"`
+	TotalPayments      float64                          `json:"totalPayments"`
+	LastBlockFoundTime time.Time                        `json:"lastBlockFoundTime"`
+	TopMiners          []database.MinerPerformanceStats `json:"topMiners"`
 }
 
 type Price struct {
@@ -66,20 +74,19 @@ type BlocksRes struct {
 }
 
 type Block struct {
-	PoolID                      string  `json:"poolId"`
-	BlockHeight                 int64   `json:"blockHeight"`
-	NetworkDifficulty           float64 `json:"networkDifficulty"`
-	Status                      string  `json:"status"`
-	Type                        string  `json:"type"`
-	ConfirmationProgress        float64 `json:"confirmationProgress"`
-	Effort                      float64 `json:"effort"`
-	TransactionConfirmationData string  `json:"transactionConfirmationData"`
-	Reward                      float64 `json:"reward"`
-	InfoLink                    string  `json:"infoLink"`
-	Hash                        string  `json:"hash"`
-	Miner                       string  `json:"miner"`
-	Source                      string  `json:"source"`
-	Created                     string  `json:"created"`
+	PoolID                      string          `json:"poolId"`
+	BlockHeight                 int64           `json:"blockHeight"`
+	NetworkDifficulty           float64         `json:"networkDifficulty"`
+	Status                      string          `json:"status"`
+	ConfirmationProgress        float64         `json:"confirmationProgress"`
+	Effort                      *float64        `json:"effort"`
+	TransactionConfirmationData string          `json:"transactionConfirmationData"`
+	Reward                      decimal.Decimal `json:"reward"`
+	InfoLink                    string          `json:"infoLink"`
+	Hash                        string          `json:"hash"`
+	Miner                       string          `json:"miner"`
+	Source                      string          `json:"source"`
+	Created                     time.Time       `json:"created"`
 }
 
 type PaymentsRes struct {

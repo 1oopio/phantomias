@@ -64,7 +64,7 @@ func TestMain(m *testing.M) {
 		fmt.Println(err)
 		os.Exit(1)
 	}
-	apiServer = api.New(context.Background(), cfg.Proxy, newClient(), &priceClient{}, nil)
+	apiServer = api.New(context.Background(), cfg.Proxy, cfg.Pools, newClient(), nil, &priceClient{}, nil)
 
 	code := m.Run()
 	os.Exit(code)

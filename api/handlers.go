@@ -1,12 +1,17 @@
 package api
 
 import (
+	"context"
+	"fmt"
 	"net/http"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stratumfarm/go-miningcore-client"
+	"github.com/stratumfarm/phantomias/config"
+	"github.com/stratumfarm/phantomias/database"
 	"github.com/stratumfarm/phantomias/utils"
 )
 
@@ -18,24 +23,19 @@ import (
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools [get]
 func (s *Server) getPoolsHandler(c *fiber.Ctx) error {
-	poolInfo, code, err := s.mc.GetPools(c.Context())
-	if err != nil {
-		return handleAPIError(c, code, err)
-	}
-	result := poolsInfosToAPIPools(poolInfo)
-
-	for _, p := range result {
-		prices := s.price.GetPrices(strings.ToLower(p.Name))
-		if prices != nil {
-			priceRes := make(map[string]Price)
-			for _, p := range prices {
-				priceRes[p.VSCurrency] = Price{p.Price, p.PriceChangePercentage24H}
-			}
-			p.Prices = priceRes
+	result := make([]*Pool, 0)
+	for _, p := range s.pools {
+		if !p.Enabled {
+			continue
 		}
+		pool, err := s.gatherPoolStats(c.Context(), p)
+		if err != nil {
+			return handleAPIError(c, http.StatusInternalServerError, err)
+		}
+		result = append(result, pool)
 	}
 
-	return c.Status(code).JSON(&PoolsRes{
+	return c.JSON(&PoolsRes{
 		Meta: &Meta{
 			Success: true,
 		},
@@ -43,34 +43,39 @@ func (s *Server) getPoolsHandler(c *fiber.Ctx) error {
 	})
 }
 
+func (s *Server) gatherPoolStats(ctx context.Context, p *config.Pool) (*Pool, error) {
+	var pool Pool
+	stats, err := s.db.GetLastPoolStats(ctx, p.ID)
+	if err != nil {
+		return nil, err
+	}
+	pool.ID = stats.PoolID
+	pool.Algorithm = p.Algorithm
+	pool.Name = p.Name
+	pool.Coin = p.Coin
+	pool.Fee = p.Fee
+	pool.FeeType = p.FeeType
+	pool.Miners = stats.ConnectedMiners
+	pool.Hashrate = stats.PoolHashrate
+	pool.BlockHeight = stats.BlockHeight
+	pool.NetworkHashrate = stats.NetworkHashrate
+
+	prices := s.price.GetPrices(strings.ToLower(p.Name))
+	if prices != nil {
+		priceRes := make(map[string]Price)
+		for _, p := range prices {
+			priceRes[p.VSCurrency] = Price{p.Price, p.PriceChangePercentage24H}
+		}
+		pool.Prices = priceRes
+	}
+	return &pool, nil
+}
+
 func handleAPIError(c *fiber.Ctx, code int, err error) error {
 	if code == 0 {
 		return utils.HandleMCError(c, err)
 	}
 	return utils.SendAPIError(c, code, err)
-}
-
-func poolsInfosToAPIPools(info []*miningcore.PoolInfo) []*Pool {
-	pools := make([]*Pool, len(info))
-	for i, p := range info {
-		pools[i] = poolInfoToAPIPool(p)
-	}
-	return pools
-}
-
-func poolInfoToAPIPool(p *miningcore.PoolInfo) *Pool {
-	return &Pool{
-		Coin:            p.Coin.Symbol,
-		ID:              p.ID,
-		Algorithm:       p.Coin.Algorithm,
-		Name:            p.Coin.Name,
-		Hashrate:        p.PoolStats.PoolHashrate,
-		Miners:          p.PoolStats.ConnectedMiners,
-		Fee:             p.PoolFeePercent,
-		FeeType:         p.PaymentProcessing.PayoutScheme,
-		BlockHeight:     p.NetworkStats.BlockHeight,
-		NetworkHashrate: p.NetworkStats.NetworkHashrate,
-	}
 }
 
 // @Summary Get a pool
@@ -82,15 +87,55 @@ func poolInfoToAPIPool(p *miningcore.PoolInfo) *Pool {
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id} [get]
 func (s *Server) getPoolHandler(c *fiber.Ctx) error {
-	poolInfo, code, err := s.mc.GetPool(c.Context(), c.Params("id"))
+	topMinersRangeString := c.Query("topMinersRange", "1")
+	topMinersRange, err := strconv.Atoi(topMinersRangeString)
 	if err != nil {
-		return handleAPIError(c, code, err)
+		return handleAPIError(c, http.StatusBadRequest, err)
 	}
+	if topMinersRange < 1 || topMinersRange > 24 {
+		topMinersRange = 1
+	}
+
+	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
+	if poolCfg == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
+	}
+
+	poolStats, err := s.gatherPoolStats(c.Context(), poolCfg)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	from := time.Now().Add(-time.Duration(topMinersRange) * time.Hour)
+	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.Context(), c.Params("id"), from, 0, 15)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+	poolExtended := PoolExtended{Pool: poolStats, TopMiners: minersByHashrate}
+
+	totalPaid, err := s.db.GetTotalPoolPayments(c.Context(), c.Params("id"))
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+	poolExtended.TotalPayments = totalPaid.InexactFloat64()
+
+	totalBlocks, err := s.db.GetPoolBlockCount(c.Context(), c.Params("id"))
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+	poolExtended.TotalBlocksFound = totalBlocks
+
+	lastPoolBlockTime, err := s.db.GetLastPoolBlockTime(c.Context(), c.Params("id"))
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+	poolExtended.LastBlockFoundTime = lastPoolBlockTime
+
 	res := &PoolExtendedRes{
 		Meta: &Meta{
 			Success: true,
 		},
-		Result: poolInfoToAPIPoolExtended(poolInfo),
+		Result: &poolExtended,
 	}
 
 	prices := s.price.GetPrices(strings.ToLower(res.Result.Name))
@@ -101,18 +146,16 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 		}
 		res.Result.Prices = priceRes
 	}
-	return c.Status(code).JSON(res)
+	return c.JSON(res)
 }
 
-func poolInfoToAPIPoolExtended(p *miningcore.PoolInfo) *PoolExtended {
-	lastBlockFound, _ := strconv.ParseInt(p.LastPoolBlockTime, 10, 64)
-	return &PoolExtended{
-		Pool:               poolInfoToAPIPool(p),
-		TotalBlocksFound:   p.TotalBlocks,
-		TotalPayments:      p.TotalPaid,
-		LastBlockFoundTime: lastBlockFound,
-		Ports:              poolPortsToAPIPoolPorts(p.Ports),
+func getPoolCfgByID(id string, pools []*config.Pool) *config.Pool {
+	for _, p := range pools {
+		if p.ID == id {
+			return p
+		}
 	}
+	return nil
 }
 
 func poolPortsToAPIPoolPorts(p map[string]miningcore.PoolEndpoint) map[string]*PoolEndpoint {
@@ -138,6 +181,10 @@ func poolPortToAPIPoolPort(p miningcore.PoolEndpoint) *PoolEndpoint {
 	return e
 }
 
+type BlocksParams struct {
+	BlockStatus []database.BlockStatus `query:"blockStatus"`
+}
+
 // @Summary Get a list of blocks
 // @Description Get a list of blocks from a specific pool
 // @Tags Pools
@@ -149,12 +196,77 @@ func poolPortToAPIPoolPort(p miningcore.PoolEndpoint) *PoolEndpoint {
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id}/blocks [get]
 func (s *Server) getBlocksHandler(c *fiber.Ctx) error {
-	var blocks BlocksRes
-	code, err := s.mc.UnmarshalPoolBlocks(c.Context(), c.Params("id"), &blocks, handlePaginationQueries(c))
-	if err != nil {
-		return handleAPIError(c, code, err)
+	params := new(BlocksParams)
+	if err := c.QueryParser(params); err != nil {
+		// TODO: log error
+		return handleAPIError(c, http.StatusBadRequest, fmt.Errorf("failed to parse params"))
 	}
-	return c.Status(code).JSON(blocks)
+	if len(params.BlockStatus) == 0 {
+		params.BlockStatus = []database.BlockStatus{database.BlockStatusConfirmed, database.BlockStatusOrphaned, database.BlockStatusPending}
+	}
+
+	pool := getPoolCfgByID(c.Params("id"), s.pools)
+	if pool == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
+	}
+
+	pageCount, err := s.db.GetPoolBlockCount(c.Context(), pool.ID)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	page, pageSize := getPageParams(c)
+	blocks, err := s.db.PageBlocks(c.Context(), c.Params("id"), params.BlockStatus, page, pageSize)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	res := &BlocksRes{
+		Meta: &Meta{
+			Success:   true,
+			PageCount: pageCount,
+		},
+		Result: dbBlocksToAPIBlocks(pool, blocks),
+	}
+	return c.JSON(res)
+}
+
+func dbBlocksToAPIBlocks(p *config.Pool, b []*database.Block) []*Block {
+	blocks := make([]*Block, len(b))
+	for i, block := range b {
+		blocks[i] = dbBlockToAPIBlock(p, block)
+	}
+	return blocks
+}
+
+func dbBlockToAPIBlock(p *config.Pool, b *database.Block) *Block {
+	return &Block{
+		PoolID:                      b.PoolID,
+		BlockHeight:                 b.BlockHeight,
+		NetworkDifficulty:           b.NetworkDifficulty,
+		Status:                      b.Status,
+		ConfirmationProgress:        b.ConfirmationProgress,
+		Effort:                      b.Effort,
+		TransactionConfirmationData: b.TransactionConfirmationData,
+		Reward:                      b.Reward,
+		InfoLink:                    fmt.Sprintf(p.InfoLink, b.BlockHeight),
+		Hash:                        b.Hash,
+		Miner:                       b.Miner,
+		Source:                      b.Source,
+		Created:                     b.Created,
+	}
+}
+
+func getPageParams(c *fiber.Ctx) (int, int) {
+	page, err := strconv.Atoi(c.Query("page", "0"))
+	if err != nil || page < 0 {
+		page = 0
+	}
+	pageSize, err := strconv.Atoi(c.Query("pageSize", "15"))
+	if err != nil || pageSize <= 0 {
+		pageSize = 15
+	}
+	return page, pageSize
 }
 
 func handlePaginationQueries(c *fiber.Ctx) map[string]string {
