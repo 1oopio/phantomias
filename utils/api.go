@@ -1,9 +1,14 @@
 package utils
 
 import (
+	"errors"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
+)
+
+var (
+	ErrPoolNotFound = errors.New("pool not found")
 )
 
 type APIError struct {
