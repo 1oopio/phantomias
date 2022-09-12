@@ -25,8 +25,8 @@ type AmountByDate struct {
 	Date   time.Time
 }
 
-func (d *DB) PagePayments(ctx context.Context, poolID, address string, page int, pageSize int) ([]Payment, error) {
-	var payments []Payment
+func (d *DB) PagePayments(ctx context.Context, poolID, address string, page int, pageSize int) ([]*Payment, error) {
+	var payments []*Payment
 	var s strings.Builder
 
 	s.WriteString("SELECT * FROM payments WHERE poolid = $1")
