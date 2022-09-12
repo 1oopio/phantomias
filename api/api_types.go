@@ -82,7 +82,7 @@ type Block struct {
 	Effort                      *float64        `json:"effort"`
 	TransactionConfirmationData string          `json:"transactionConfirmationData"`
 	Reward                      decimal.Decimal `json:"reward"`
-	InfoLink                    string          `json:"infoLink"`
+	InfoLink                    string          `json:"infoLink,omitempty"`
 	Hash                        string          `json:"hash"`
 	Miner                       string          `json:"miner"`
 	Source                      string          `json:"source"`
@@ -95,13 +95,13 @@ type PaymentsRes struct {
 }
 
 type Payment struct {
-	Coin                        string  `json:"coin"`
-	Address                     string  `json:"address"`
-	AddressInfoLink             string  `json:"addressInfoLink"`
-	Amount                      float64 `json:"amount"`
-	TransactionConfirmationData string  `json:"transactionConfirmationData"`
-	TransactionInfoLink         string  `json:"transactionInfoLink"`
-	Created                     string  `json:"created"`
+	Coin                        string          `json:"coin"`
+	Address                     string          `json:"address"`
+	AddressInfoLink             string          `json:"addressInfoLink,omitempty"`
+	Amount                      decimal.Decimal `json:"amount"`
+	TransactionConfirmationData string          `json:"transactionConfirmationData"`
+	TransactionInfoLink         string          `json:"transactionInfoLink,omitempty"`
+	Created                     time.Time       `json:"created"`
 }
 
 type PoolPerformanceRes struct {

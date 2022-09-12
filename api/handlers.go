@@ -249,7 +249,7 @@ func dbBlockToAPIBlock(p *config.Pool, b *database.Block) *Block {
 		Effort:                      b.Effort,
 		TransactionConfirmationData: b.TransactionConfirmationData,
 		Reward:                      b.Reward,
-		InfoLink:                    fmt.Sprintf(p.InfoLink, b.BlockHeight),
+		InfoLink:                    sprintfOrEmpty(p.BlockLink, b.BlockHeight),
 		Hash:                        b.Hash,
 		Miner:                       b.Miner,
 		Source:                      b.Source,
@@ -307,12 +307,57 @@ const (
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id}/payments [get]
 func (s *Server) getPaymentsHandler(c *fiber.Ctx) error {
-	var payments PaymentsRes
-	code, err := s.mc.UnmarshalPoolPayments(c.Context(), c.Params("id"), &payments, handlePaginationQueries(c))
-	if err != nil {
-		return handleAPIError(c, code, err)
+	pool := getPoolCfgByID(c.Params("id"), s.pools)
+	if pool == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	return c.Status(code).JSON(payments)
+
+	pageCount, err := s.db.GetPaymentsCount(c.Context(), pool.ID, "")
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	page, pageSize := getPageParams(c)
+	payments, err := s.db.PagePayments(c.Context(), pool.ID, "", page, pageSize)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	res := &PaymentsRes{
+		Meta: &Meta{
+			Success:   true,
+			PageCount: pageCount,
+		},
+		Result: dbPaymentsToAPIPayments(pool, payments),
+	}
+	return c.JSON(res)
+}
+
+func dbPaymentsToAPIPayments(p *config.Pool, pmts []*database.Payment) []*Payment {
+	payments := make([]*Payment, len(pmts))
+	for i, pmt := range pmts {
+		payments[i] = dbPaymentToAPIPayment(p, pmt)
+	}
+	return payments
+}
+
+func dbPaymentToAPIPayment(p *config.Pool, pmt *database.Payment) *Payment {
+	return &Payment{
+		Coin:                        pmt.Coin,
+		Address:                     pmt.Address,
+		AddressInfoLink:             sprintfOrEmpty(p.AddressLink, pmt.Address),
+		Amount:                      pmt.Amount,
+		TransactionConfirmationData: pmt.TransactionConfirmationData,
+		TransactionInfoLink:         sprintfOrEmpty(p.TxLink, pmt.TransactionConfirmationData),
+		Created:                     pmt.Created,
+	}
+}
+
+func sprintfOrEmpty(s string, args ...any) string {
+	if s != "" {
+		return fmt.Sprintf(s, args...)
+	}
+	return ""
 }
 
 // @Summary Get a list of performance samples
