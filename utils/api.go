@@ -9,6 +9,7 @@ import (
 
 var (
 	ErrPoolNotFound = errors.New("pool not found")
+	ErrInvalidRange = errors.New("invalid range")
 )
 
 type APIError struct {

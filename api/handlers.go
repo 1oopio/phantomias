@@ -241,15 +241,6 @@ func dbBlockToAPIBlock(p *config.Pool, b *database.Block) *Block {
 	}
 }
 
-/* type Blockstatus int
-
-const (
-	BlockStatusUnknown Blockstatus = iota
-	BlockStatusPending
-	BlockStatusOrphaned
-	BlockStatusConfirmed
-) */
-
 // @Summary Get a list of payments
 // @Description Get a list of payments from a specific pool
 // @Tags Pools
@@ -318,37 +309,47 @@ func dbPaymentToAPIPayment(p *config.Pool, pmt *database.Payment) *Payment {
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id}/performance [get]
 func (s *Server) getPoolPerformanceHandler(c *fiber.Ctx) error {
-	var performance struct {
-		Stats []*PoolPerformance `json:"stats"`
+	performanceRange := c.Query("r", string(database.RangeDay))
+	performanceInterval := c.Query("i", string(database.IntervalHour))
+
+	pool := getPoolCfgByID(c.Params("id"), s.pools)
+	if pool == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	code, err := s.mc.UnmarshalPoolPerformance(c.Context(), c.Params("id"), &performance, handlePerformanceQueries(c))
+
+	end := time.Now()
+	var start time.Time
+
+	switch database.SampleRange(performanceRange) {
+	case database.RangeHour:
+		start = end.Add(-1 * time.Hour)
+	case database.RangeDay:
+		start = end.Add(-24 * time.Hour)
+	case database.RangeMonth:
+		start = end.Add(-30 * 24 * time.Hour)
+	default:
+		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidRange)
+	}
+
+	stats, err := s.db.GetPoolPerformanceBetween(c.Context(), pool.ID, database.SampleInterval(performanceInterval), start, end)
 	if err != nil {
-		return handleAPIError(c, code, err)
+		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
-	return c.Status(code).JSON(&PoolPerformanceRes{
+	return c.JSON(&PoolPerformanceRes{
 		Meta: &Meta{
 			Success: true,
 		},
-		Result: performance.Stats,
+		Result: dbPoolPerformanceToAPIPerformance(stats),
 	})
 }
 
-func handlePerformanceQueries(c *fiber.Ctx) map[string]string {
-	i := c.Query("i")
-	r := c.Query("r")
-
-	if i == "" && r == "" {
-		return nil
+func dbPoolPerformanceToAPIPerformance(stats []*database.AggregatedPoolStats) []*PoolPerformance {
+	perfStats := make([]*PoolPerformance, len(stats))
+	for i, stat := range stats {
+		s := PoolPerformance(*stat)
+		perfStats[i] = &s
 	}
-
-	params := make(map[string]string)
-	if i != "" {
-		params["i"] = i
-	}
-	if r != "" {
-		params["r"] = r
-	}
-	return params
+	return perfStats
 }
 
 // @Summary Get a list of all miners

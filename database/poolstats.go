@@ -56,9 +56,17 @@ const (
 	IntervalDay  SampleInterval = "day"
 )
 
+type SampleRange string
+
+const (
+	RangeHour  SampleRange = "hour"
+	RangeDay   SampleRange = "day"
+	RangeMonth SampleRange = "month"
+)
+
 var ErrInvalidSampleInterval = fmt.Errorf("invalid sample interval")
 
-func (d *DB) GetPoolPerformanceBetween(ctx context.Context, poolID string, interval SampleInterval, start, end time.Time) ([]AggregatedPoolStats, error) {
+func (d *DB) GetPoolPerformanceBetween(ctx context.Context, poolID string, interval SampleInterval, start, end time.Time) ([]*AggregatedPoolStats, error) {
 	var trunc string
 	switch i := interval; i {
 	case IntervalHour, IntervalDay:
@@ -66,7 +74,7 @@ func (d *DB) GetPoolPerformanceBetween(ctx context.Context, poolID string, inter
 	default:
 		trunc = string(IntervalHour)
 	}
-	var stats []AggregatedPoolStats
+	var stats []*AggregatedPoolStats
 	err := d.sql.SelectContext(ctx, &stats, fmt.Sprintf(`
 		SELECT date_trunc('%s', created) AS created,
 		AVG(poolhashrate) AS poolhashrate, AVG(networkhashrate) AS networkhashrate, AVG(networkdifficulty) AS networkdifficulty,
