@@ -48,7 +48,8 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, "PPLNS", cfg.Pools[0].FeeType)
 	assert.Equal(t, "Dero", cfg.Pools[0].Name)
 	assert.Equal(t, "DERO", cfg.Pools[0].Coin)
-	assert.Equal(t, "https://explorer.dero.io/block/%d", cfg.Pools[0].InfoLink)
+	assert.Equal(t, "https://explorer.dero.io/block/%d", cfg.Pools[0].BlockLink)
+	assert.Equal(t, "https://explorer.dero.io/tx/%s", cfg.Pools[0].TxLink)
 
 }
 

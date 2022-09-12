@@ -43,4 +43,5 @@ pools:
     fee_type: PPLNS
     name: Dero
     coin: DERO
-    info_link: https://explorer.dero.io/block/%d
+    block_link: https://explorer.dero.io/block/%d
+    tx_link: https://explorer.dero.io/tx/%s
