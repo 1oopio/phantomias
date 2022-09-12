@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 
@@ -80,14 +79,7 @@ func (s *Server) gatherPoolStats(ctx context.Context, p *config.Pool) (*Pool, er
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id} [get]
 func (s *Server) getPoolHandler(c *fiber.Ctx) error {
-	topMinersRangeString := c.Query("topMinersRange", "1")
-	topMinersRange, err := strconv.Atoi(topMinersRangeString)
-	if err != nil {
-		return handleAPIError(c, http.StatusBadRequest, err)
-	}
-	if topMinersRange < 1 || topMinersRange > 24 {
-		topMinersRange = 1
-	}
+	topMinersRange := getTopMinersRange(c)
 
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
 	if poolCfg == nil {
@@ -363,17 +355,35 @@ func dbPoolPerformanceToAPIPerformance(stats []*database.AggregatedPoolStats) []
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id}/miners [get]
 func (s *Server) getMinersHandler(c *fiber.Ctx) error {
-	var miners []*MinerSimple
-	code, err := s.mc.UnmarshalMiners(c.Context(), c.Params("id"), &miners, handlePaginationQueries(c))
-	if err != nil {
-		return handleAPIError(c, code, err)
+	topMinersRange := getTopMinersRange(c)
+
+	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
+	if poolCfg == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	return c.Status(code).JSON(&MinersRes{
+
+	page, pageSize := getPageParams(c)
+	from := time.Now().Add(-time.Duration(topMinersRange) * time.Hour)
+	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.Context(), c.Params("id"), from, page, pageSize)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	res := &MinersRes{
 		Meta: &Meta{
 			Success: true,
 		},
-		Result: miners,
-	})
+		Result: dbMinersToAPIMiners(minersByHashrate),
+	}
+	return c.JSON(res)
+}
+
+func dbMinersToAPIMiners(miners []database.MinerPerformanceStats) []MinerSimple {
+	apiMiners := make([]MinerSimple, len(miners))
+	for i, miner := range miners {
+		apiMiners[i] = MinerSimple(miner)
+	}
+	return apiMiners
 }
 
 // @Summary Get a miner

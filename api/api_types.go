@@ -120,7 +120,7 @@ type PoolPerformance struct {
 
 type MinersRes struct {
 	*Meta
-	Result []*MinerSimple `json:"result"`
+	Result []MinerSimple `json:"result"`
 }
 
 type MinerSimple struct {

@@ -61,3 +61,15 @@ func sprintfOrEmpty(s string, args ...any) string {
 	}
 	return ""
 }
+
+func getTopMinersRange(c *fiber.Ctx) int {
+	topMinersRangeString := c.Query("topMinersRange", "1")
+	topMinersRange, err := strconv.Atoi(topMinersRangeString)
+	if err != nil {
+		return 1
+	}
+	if topMinersRange < 1 || topMinersRange > 24 {
+		topMinersRange = 1
+	}
+	return topMinersRange
+}
