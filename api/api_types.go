@@ -135,7 +135,7 @@ type MinerRes struct {
 }
 
 type Miner struct {
-	PendingShares      int64          `json:"pendingShares"`
+	PendingShares      float64        `json:"pendingShares"`
 	PendingBalance     float64        `json:"pendingBalance"`
 	TotalPaid          float64        `json:"totalPaid"`
 	TodayPaid          float64        `json:"todayPaid"`
