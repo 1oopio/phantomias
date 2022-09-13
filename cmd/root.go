@@ -171,7 +171,7 @@ func root(cmd *cobra.Command, args []string) {
 	log.Println(db.GetMinerPaymentsByDayCount(context.Background(), "dero1", "dero1qyg454q3fqj607x8yayfkvznftf4kfk3hdu2206n289znj5d4rqfcqg8v4gqf"))
 	log.Println(db.PageMinerPaymentsByDay(context.Background(), "dero1", "dero1qyg454q3fqj607x8yayfkvznftf4kfk3hdu2206n289znj5d4rqfcqg8v4gqf", 1, 15))
 	log.Println(db.GetSettings(context.Background(), "dero1", "dero1qyg454q3fqj607x8yayfkvznftf4kfk3hdu2206n289znj5d4rqfcqg8v4gqf")) */
-	ips, err := db.GetRecentyUsedIpAddresses(context.Background(), "dero1", "dero1qyg454q3fqj607x8yayfkvznftf4kfk3hdu2206n289znj5d4rqfcqg8v4gqf")
+	ips, err := db.GetRecentyUsedIPAddresses(context.Background(), "dero1", "dero1qyg454q3fqj607x8yayfkvznftf4kfk3hdu2206n289znj5d4rqfcqg8v4gqf")
 	if err != nil {
 		log.Fatalln(err)
 	}

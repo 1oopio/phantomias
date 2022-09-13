@@ -111,12 +111,11 @@ type PoolPerformanceRes struct {
 }
 
 type PoolPerformance struct {
-	PoolHashrate         float64   `json:"poolHashrate"`
-	ConnectedMiners      int       `json:"connectedMiners"`
-	ValidSharesPerSecond int       `json:"validSharesPerSecond"`
-	NetworkHashrate      float64   `json:"networkHashrate"`
-	NetworkDifficulty    float64   `json:"networkDifficulty"`
-	Created              time.Time `json:"created"`
+	PoolHashrate      float64   `json:"poolHashrate"`
+	ConnectedMiners   int       `json:"connectedMiners"`
+	NetworkHashrate   float64   `json:"networkHashrate"`
+	NetworkDifficulty float64   `json:"networkDifficulty"`
+	Created           time.Time `json:"created"`
 }
 
 type MinersRes struct {

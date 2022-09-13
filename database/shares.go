@@ -19,7 +19,7 @@ type Share struct {
 	Created           time.Time
 }
 
-func (d *DB) GetRecentyUsedIpAddresses(ctx context.Context, poolID, miner string) ([]string, error) {
+func (d *DB) GetRecentyUsedIPAddresses(ctx context.Context, poolID, miner string) ([]string, error) {
 	var ips []string
 	err := d.sql.SelectContext(ctx, &ips, `
 		SELECT DISTINCT s.ipaddress 

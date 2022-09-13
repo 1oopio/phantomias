@@ -23,12 +23,11 @@ type PoolStats struct {
 }
 
 type AggregatedPoolStats struct {
-	PoolHashrate         float64
-	ConnectedMiners      int
-	ValidSharesPerSecond int
-	NetworkHashrate      float64
-	NetworkDifficulty    float64
-	Created              time.Time
+	PoolHashrate      float64
+	ConnectedMiners   int
+	NetworkHashrate   float64
+	NetworkDifficulty float64
+	Created           time.Time
 }
 
 func (d *DB) GetLastPoolStats(ctx context.Context, poolID string) (*PoolStats, error) {
