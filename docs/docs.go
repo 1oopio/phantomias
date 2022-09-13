@@ -1107,9 +1107,6 @@ const docTemplate = `{
                 },
                 "poolHashrate": {
                     "type": "number"
-                },
-                "validSharesPerSecond": {
-                    "type": "integer"
                 }
             }
         },

@@ -300,8 +300,6 @@ definitions:
         type: number
       poolHashrate:
         type: number
-      validSharesPerSecond:
-        type: integer
     type: object
   api.PoolPerformanceRes:
     properties:
