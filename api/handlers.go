@@ -58,6 +58,7 @@ func (s *Server) gatherPoolStats(ctx context.Context, p *config.Pool) (*Pool, er
 	pool.Hashrate = stats.PoolHashrate
 	pool.BlockHeight = stats.BlockHeight
 	pool.NetworkHashrate = stats.NetworkHashrate
+	pool.NetworkDifficulty = stats.NetworkDifficulty
 
 	prices := s.price.GetPrices(strings.ToLower(p.Name))
 	if prices != nil {

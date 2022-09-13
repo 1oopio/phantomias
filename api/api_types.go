@@ -18,17 +18,18 @@ type PoolsRes struct {
 }
 
 type Pool struct {
-	Coin            string           `json:"coin"`
-	ID              string           `json:"id"`
-	Algorithm       string           `json:"algorithm"`
-	Name            string           `json:"name"`
-	Hashrate        float64          `json:"hashrate"`
-	Miners          int32            `json:"miners"`
-	Fee             float64          `json:"fee"`
-	FeeType         string           `json:"feeType"`
-	BlockHeight     int64            `json:"blockHeight"`
-	NetworkHashrate float64          `json:"networkHashrate"`
-	Prices          map[string]Price `json:"prices"`
+	Coin              string           `json:"coin"`
+	ID                string           `json:"id"`
+	Algorithm         string           `json:"algorithm"`
+	Name              string           `json:"name"`
+	Hashrate          float64          `json:"hashrate"`
+	Miners            int32            `json:"miners"`
+	Fee               float64          `json:"fee"`
+	FeeType           string           `json:"feeType"`
+	BlockHeight       int64            `json:"blockHeight"`
+	NetworkHashrate   float64          `json:"networkHashrate"`
+	NetworkDifficulty float64          `json:"networkDifficulty"`
+	Prices            map[string]Price `json:"prices"`
 }
 
 type PoolExtendedRes struct {
