@@ -1,6 +1,6 @@
 package api_test
 
-import (
+/* import (
 	"context"
 	"fmt"
 	"io/ioutil"
@@ -248,3 +248,4 @@ func mustFile(path string) []byte {
 	}
 	return data
 }
+*/
