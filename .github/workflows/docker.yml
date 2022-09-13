@@ -36,14 +36,14 @@ jobs:
         uses: docker/metadata-action@v3
         with:
           images: |
-            ${{ secrets.HARBOR_URL }}/stratumfarm/miningcore-api-proxy
+            ${{ secrets.HARBOR_URL }}/stratumfarm/phantomias
           tags: |
             type=raw,event=tag,value=latest,enable=${{ github.ref == format('refs/heads/{0}', 'main') }}
             type=semver,event=tag,pattern={{version}}
             type=semver,event=tag,pattern={{major}}.{{minor}}
             type=ref,event=pr
       -
-        name: Build and push miningcore-api-proxy
+        name: Build and push phantomias
         uses: docker/build-push-action@v3
         with:
           file: Dockerfile
