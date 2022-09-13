@@ -1,0 +1,54 @@
+---
+
+builds:
+  -
+    main: ./main.go
+    binary: phantomias
+    ldflags: -s -w -X github.com/stratumfarm/phantomias/version/version.Version={{ .Version }} -X github.com/stratumfarm/phantomias/version/version.Commit={{ .Commit }} -X github.com/stratumfarm/phantomias/version/version.Date={{ .Date }} -X github.com/stratumfarm/phantomias/version/version.BuiltBy=goreleaser
+    flags:
+      - -trimpath
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+
+archives:
+  - 
+    name_template: "phantomias-v{{ .Version }}-{{ .Os }}-{{ .Arch }}{{ if .Arm }}v{{ .Arm }}{{ end }}{{ if .Mips }}-{{ .Mips }}{{ end }}"
+    format_overrides:
+      - goos: windows
+        format: zip
+    replacements:
+      darwin: macOS
+    files:
+      - LICENSE*
+      - README*
+      - CHANGELOG*
+
+checksum:
+  name_template: checksums.txt
+
+source:
+  enabled: true
+
+snapshot:
+  name_template: "{{ incpatch .Version }}-devel"
+
+changelog:
+  sort: asc
+  use: github
+  filters:
+    exclude:
+      - "^docs:"
+      - "^test:"
+  groups:
+    - title: New Features
+      regexp: "^.*feat[(\\w)]*:+.*$"
+      order: 0
+    - title: Fixes
+      regexp: "^.*fix[(\\w)]*:+.*$"
+      order: 10
+    - title: Others
+      order: 999
