@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"math"
 	"net/http"
 	"strings"
 	"time"
@@ -193,6 +194,8 @@ func (s *Server) getBlocksHandler(c *fiber.Ctx) error {
 	}
 
 	page, pageSize := getPageParams(c)
+	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
+
 	blocks, err := s.db.PageBlocks(c.Context(), c.Params("id"), params.BlockStatus, page, pageSize)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
@@ -256,6 +259,8 @@ func (s *Server) getPaymentsHandler(c *fiber.Ctx) error {
 	}
 
 	page, pageSize := getPageParams(c)
+	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
+
 	payments, err := s.db.PagePayments(c.Context(), pool.ID, "", page, pageSize)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
