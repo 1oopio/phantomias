@@ -52,8 +52,6 @@ definitions:
         type: string
       transactionConfirmationData:
         type: string
-      type:
-        type: string
     type: object
   api.BlocksRes:
     properties:
@@ -207,13 +205,15 @@ definitions:
       feeType:
         type: string
       hashrate:
-        type: integer
+        type: number
       id:
         type: string
       miners:
         type: integer
       name:
         type: string
+      networkDifficulty:
+        type: number
       networkHashrate:
         type: number
       prices:
@@ -249,15 +249,17 @@ definitions:
       feeType:
         type: string
       hashrate:
-        type: integer
+        type: number
       id:
         type: string
       lastBlockFoundTime:
-        type: integer
+        type: string
       miners:
         type: integer
       name:
         type: string
+      networkDifficulty:
+        type: number
       networkHashrate:
         type: number
       ports:
@@ -268,6 +270,10 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/api.Price'
         type: object
+      topMiners:
+        items:
+          $ref: '#/definitions/database.MinerPerformanceStats'
+        type: array
       totalBlocksFound:
         type: integer
       totalPayments:
@@ -358,6 +364,15 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/api.WorkerPerformanceStats'
         type: object
+    type: object
+  database.MinerPerformanceStats:
+    properties:
+      hashrate:
+        type: number
+      miner:
+        type: string
+      sharesPerSecond:
+        type: number
     type: object
   utils.APIError:
     properties:

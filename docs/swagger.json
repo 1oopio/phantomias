@@ -719,9 +719,6 @@
                 },
                 "transactionConfirmationData": {
                     "type": "string"
-                },
-                "type": {
-                    "type": "string"
                 }
             }
         },
@@ -959,7 +956,7 @@
                     "type": "string"
                 },
                 "hashrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "id": {
                     "type": "string"
@@ -969,6 +966,9 @@
                 },
                 "name": {
                     "type": "string"
+                },
+                "networkDifficulty": {
+                    "type": "number"
                 },
                 "networkHashrate": {
                     "type": "number"
@@ -1023,19 +1023,22 @@
                     "type": "string"
                 },
                 "hashrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "id": {
                     "type": "string"
                 },
                 "lastBlockFoundTime": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "miners": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
+                },
+                "networkDifficulty": {
+                    "type": "number"
                 },
                 "networkHashrate": {
                     "type": "number"
@@ -1050,6 +1053,12 @@
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/api.Price"
+                    }
+                },
+                "topMiners": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/database.MinerPerformanceStats"
                     }
                 },
                 "totalBlocksFound": {
@@ -1190,6 +1199,20 @@
                     "additionalProperties": {
                         "$ref": "#/definitions/api.WorkerPerformanceStats"
                     }
+                }
+            }
+        },
+        "database.MinerPerformanceStats": {
+            "type": "object",
+            "properties": {
+                "hashrate": {
+                    "type": "number"
+                },
+                "miner": {
+                    "type": "string"
+                },
+                "sharesPerSecond": {
+                    "type": "number"
                 }
             }
         },

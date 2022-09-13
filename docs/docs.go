@@ -726,9 +726,6 @@ const docTemplate = `{
                 },
                 "transactionConfirmationData": {
                     "type": "string"
-                },
-                "type": {
-                    "type": "string"
                 }
             }
         },
@@ -966,7 +963,7 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "hashrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "id": {
                     "type": "string"
@@ -976,6 +973,9 @@ const docTemplate = `{
                 },
                 "name": {
                     "type": "string"
+                },
+                "networkDifficulty": {
+                    "type": "number"
                 },
                 "networkHashrate": {
                     "type": "number"
@@ -1030,19 +1030,22 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "hashrate": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "id": {
                     "type": "string"
                 },
                 "lastBlockFoundTime": {
-                    "type": "integer"
+                    "type": "string"
                 },
                 "miners": {
                     "type": "integer"
                 },
                 "name": {
                     "type": "string"
+                },
+                "networkDifficulty": {
+                    "type": "number"
                 },
                 "networkHashrate": {
                     "type": "number"
@@ -1057,6 +1060,12 @@ const docTemplate = `{
                     "type": "object",
                     "additionalProperties": {
                         "$ref": "#/definitions/api.Price"
+                    }
+                },
+                "topMiners": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/database.MinerPerformanceStats"
                     }
                 },
                 "totalBlocksFound": {
@@ -1197,6 +1206,20 @@ const docTemplate = `{
                     "additionalProperties": {
                         "$ref": "#/definitions/api.WorkerPerformanceStats"
                     }
+                }
+            }
+        },
+        "database.MinerPerformanceStats": {
+            "type": "object",
+            "properties": {
+                "hashrate": {
+                    "type": "number"
+                },
+                "miner": {
+                    "type": "string"
+                },
+                "sharesPerSecond": {
+                    "type": "number"
                 }
             }
         },
