@@ -787,7 +787,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "pendingShares": {
-                    "type": "integer"
+                    "type": "number"
                 },
                 "performance": {
                     "$ref": "#/definitions/api.WorkerStats"
