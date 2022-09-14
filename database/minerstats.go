@@ -58,8 +58,8 @@ type MinerStats struct {
 	PendingBalance *float64
 	TotalPaid      *float64
 	TodayPaid      *float64
-	LastPayment    Payment
-	Performance    *MinerWorkerPerformanceStats
+	LastPayment    *Payment
+	Performance    *WorkerPerformanceStatsContainer
 }
 
 func (d *DB) PagePoolMinersByHashrate(ctx context.Context, poolID string, from time.Time, page int, pageSite int) ([]MinerPerformanceStats, error) {
@@ -98,7 +98,8 @@ func (d *DB) GetMinerStats(ctx context.Context, poolID string, miner string) (*M
 		return nil, fmt.Errorf("failed to get miner stats: %w", err)
 	}
 
-	err = d.sql.GetContext(ctx, &stats.LastPayment, `
+	stats.LastPayment = new(Payment)
+	err = d.sql.GetContext(ctx, stats.LastPayment, `
 	SELECT * FROM payments WHERE poolid = $1 AND address = $2 ORDER BY created DESC LIMIT 1;
 	`, poolID, miner)
 	if err != nil {
@@ -119,7 +120,7 @@ func (d *DB) GetMinerStats(ctx context.Context, poolID string, miner string) (*M
 
 	lastReportedUpdate := time.Now().Add(-MinerStatsMaxAge)
 
-	var performanceStats []MinerWorkerPerformanceStats
+	var performanceStats []*MinerWorkerPerformanceStats
 	err = d.sql.SelectContext(ctx, &performanceStats, `
 	SELECT ms.created, ms.poolid, ms.miner, ms.worker,
 		(SELECT hashrate FROM minerstats hms WHERE hms.hashrateType = 'actual' AND hms.worker = ms.worker AND hms.miner = ms.miner AND hms.poolid = ms.poolid AND hms.created = ms.created ORDER BY hms.created DESC LIMIT 1),
@@ -133,9 +134,26 @@ func (d *DB) GetMinerStats(ctx context.Context, poolID string, miner string) (*M
 	if len(performanceStats) <= 0 {
 		return &stats, nil
 	}
-	stats.Performance = &performanceStats[0]
+	stats.Performance = minerWorkerPerformanceStatsToWorkerPerformanceStatsContainer(performanceStats)
 
 	return &stats, err
+}
+
+func minerWorkerPerformanceStatsToWorkerPerformanceStatsContainer(stats []*MinerWorkerPerformanceStats) *WorkerPerformanceStatsContainer {
+	container := &WorkerPerformanceStatsContainer{
+		Created: stats[0].Created,
+		Workers: make(map[string]*WorkerPerformanceStats),
+	}
+
+	for _, stat := range stats {
+		container.Workers[stat.Worker] = &WorkerPerformanceStats{
+			Hashrate:         stat.Hashrate,
+			SharesPerSecond:  stat.SharesPerSecond,
+			ReportedHashrate: stat.ReportedHashrate,
+		}
+	}
+
+	return container
 }
 
 func (d *DB) GetMinerPerformanceBetweenTenMinutely(ctx context.Context, poolID, miner string, start, end time.Time) ([]*WorkerPerformanceStatsContainer, error) {

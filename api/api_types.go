@@ -135,25 +135,25 @@ type MinerRes struct {
 }
 
 type Miner struct {
-	PendingShares      float64        `json:"pendingShares"`
-	PendingBalance     float64        `json:"pendingBalance"`
-	TotalPaid          float64        `json:"totalPaid"`
-	TodayPaid          float64        `json:"todayPaid"`
-	LastPayment        string         `json:"lastPayment"`
+	PendingShares      *float64       `json:"pendingShares"`
+	PendingBalance     *float64       `json:"pendingBalance"`
+	TotalPaid          *float64       `json:"totalPaid"`
+	TodayPaid          *float64       `json:"todayPaid"`
+	LastPayment        time.Time      `json:"lastPayment"`
 	LastPaymentLink    string         `json:"lastPaymentLink"`
 	Performance        *WorkerStats   `json:"performance"`
 	PerformanceSamples []*WorkerStats `json:"performanceSamples"`
 }
 
 type WorkerStats struct {
-	Created string                             `json:"created"`
+	Created time.Time                          `json:"created"`
 	Workers map[string]*WorkerPerformanceStats `json:"workers"`
 }
 
 type WorkerPerformanceStats struct {
-	Hashrate         float64 `json:"hashrate"`
-	ReportedHashrate float64 `json:"reportedHashrate"`
-	SharesPerSecond  float64 `json:"sharesPerSecond"`
+	Hashrate         *float64 `json:"hashrate"`
+	ReportedHashrate *float64 `json:"reportedHashrate"`
+	SharesPerSecond  *float64 `json:"sharesPerSecond"`
 }
 
 type BalanceChangesRes struct {

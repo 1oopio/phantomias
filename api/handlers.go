@@ -398,33 +398,71 @@ func dbMinersToAPIMiners(miners []database.MinerPerformanceStats) []MinerSimple 
 // @Produce json
 // @Param pool_id path string true "ID of the pool"
 // @Param miner_addr path string true "Address of the miner"
-// @Param page query int false "Page (default=0)"
-// @Param pageSize query int false "PageSize (default=15)"
 // @Success 200 {object} api.MinerRes
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id}/miners/{miner_addr} [get]
 func (s *Server) getMinerHandler(c *fiber.Ctx) error {
-	var miner Miner
-	code, err := s.mc.UnmarshalMiner(c.Context(), c.Params("id"), c.Params("miner_addr"), &miner, handlePerformanceModeQuery(c))
-	if err != nil {
-		return handleAPIError(c, code, err)
+	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
+	if poolCfg == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	return c.Status(code).JSON(&MinerRes{
+	addr := c.Params("miner_addr")
+	if addr == "" {
+		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
+	}
+
+	if strings.EqualFold(poolCfg.Type, "ethereum") {
+		addr = strings.ToLower(addr)
+	}
+
+	stats, err := s.db.GetMinerStats(c.Context(), poolCfg.ID, addr)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+	if stats == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrNoStatsFound)
+	}
+
+	// TODO: multiply pendig shares with share multiplier
+
+	miner := dbMinerStatsToAPIMiner(stats)
+	if stats.LastPayment != nil && (stats.LastPayment != &database.Payment{}) {
+		miner.LastPayment = stats.LastPayment.Created
+		miner.LastPaymentLink = sprintfOrEmpty(poolCfg.TxLink, stats.LastPayment.TransactionConfirmationData)
+	}
+	return c.JSON(&MinerRes{
 		Meta: &Meta{
 			Success: true,
 		},
-		Result: &miner,
+		Result: miner,
 	})
 }
 
-func handlePerformanceModeQuery(c *fiber.Ctx) map[string]string {
-	pm := c.Query("perfMode")
-	if pm == "" {
-		return nil
+func dbMinerStatsToAPIMiner(stats *database.MinerStats) *Miner {
+	miner := &Miner{
+		PendingShares:  stats.PendingShares,
+		PendingBalance: stats.PendingBalance,
+		TotalPaid:      stats.TotalPaid,
+		TodayPaid:      stats.TodayPaid,
 	}
-	return map[string]string{
-		"perfMode": pm,
+	workerStats := &WorkerStats{
+		Created: stats.Performance.Created,
+		Workers: dbWorkersStatsToAPIWorkerStats(stats.Performance.Workers),
 	}
+	miner.Performance = workerStats
+	return miner
+}
+
+func dbWorkersStatsToAPIWorkerStats(stats map[string]*database.WorkerPerformanceStats) map[string]*WorkerPerformanceStats {
+	workers := make(map[string]*WorkerPerformanceStats, len(stats))
+	for addr, stat := range stats {
+		workers[addr] = &WorkerPerformanceStats{
+			Hashrate:         stat.Hashrate,
+			ReportedHashrate: stat.ReportedHashrate,
+			SharesPerSecond:  stat.SharesPerSecond,
+		}
+	}
+	return workers
 }
 
 // @Summary Get payments

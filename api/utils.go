@@ -6,6 +6,7 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/stratumfarm/phantomias/config"
+	"github.com/stratumfarm/phantomias/database"
 	"github.com/stratumfarm/phantomias/utils"
 )
 
@@ -72,4 +73,17 @@ func getTopMinersRange(c *fiber.Ctx) int {
 		topMinersRange = 1
 	}
 	return topMinersRange
+}
+
+func getPerformanceModeQuery(c *fiber.Ctx) database.SampleRange {
+	switch c.Query("perfMode", "day") {
+	case "hour":
+		return database.RangeHour
+	case "day":
+		return database.RangeDay
+	case "month":
+		return database.RangeMonth
+	default:
+		return database.RangeDay
+	}
 }
