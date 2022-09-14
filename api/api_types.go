@@ -84,7 +84,7 @@ type Block struct {
 	TransactionConfirmationData string          `json:"transactionConfirmationData"`
 	Reward                      decimal.Decimal `json:"reward"`
 	InfoLink                    string          `json:"infoLink,omitempty"`
-	Hash                        string          `json:"hash"`
+	Hash                        *string         `json:"hash"`
 	Miner                       string          `json:"miner"`
 	Source                      string          `json:"source"`
 	Created                     time.Time       `json:"created"`

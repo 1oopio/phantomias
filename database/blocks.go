@@ -21,7 +21,7 @@ type BlockSchema struct {
 	Miner                       string
 	Reward                      decimal.Decimal
 	Source                      string
-	Hash                        string
+	Hash                        *string
 	Created                     time.Time
 }
 
