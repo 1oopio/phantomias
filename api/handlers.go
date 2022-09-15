@@ -61,15 +61,20 @@ func (s *Server) gatherPoolStats(ctx context.Context, p *config.Pool) (*Pool, er
 	pool.NetworkHashrate = stats.NetworkHashrate
 	pool.NetworkDifficulty = stats.NetworkDifficulty
 
-	prices := s.price.GetPrices(strings.ToLower(p.Name))
+	pool.Prices = s.getPrices(p.Name)
+
+	return &pool, nil
+}
+
+func (s Server) getPrices(name string) (priceRes map[string]Price) {
+	priceRes = make(map[string]Price)
+	prices := s.price.GetPrices(strings.ToLower(name))
 	if prices != nil {
-		priceRes := make(map[string]Price)
 		for _, p := range prices {
 			priceRes[p.VSCurrency] = Price{p.Price, p.PriceChangePercentage24H}
 		}
-		pool.Prices = priceRes
 	}
-	return &pool, nil
+	return
 }
 
 // @Summary Get a pool
@@ -124,15 +129,7 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 		},
 		Result: &poolExtended,
 	}
-
-	prices := s.price.GetPrices(strings.ToLower(res.Result.Name))
-	if prices != nil {
-		priceRes := make(map[string]Price)
-		for _, p := range prices {
-			priceRes[p.VSCurrency] = Price{p.Price, p.PriceChangePercentage24H}
-		}
-		res.Result.Prices = priceRes
-	}
+	res.Result.Prices = s.getPrices(res.Result.Name)
 	return c.JSON(res)
 }
 
@@ -430,6 +427,7 @@ func (s *Server) getMinerHandler(c *fiber.Ctx) error {
 		miner.LastPayment = stats.LastPayment.Created
 		miner.LastPaymentLink = sprintfOrEmpty(poolCfg.TxLink, stats.LastPayment.TransactionConfirmationData)
 	}
+	miner.Prices = s.getPrices(poolCfg.Name)
 	return c.JSON(&MinerRes{
 		Meta: &Meta{
 			Success: true,
