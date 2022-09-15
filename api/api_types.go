@@ -132,6 +132,7 @@ type Miner struct {
 	LastPaymentLink string           `json:"lastPaymentLink"`
 	Performance     *WorkerStats     `json:"performance"`
 	Prices          map[string]Price `json:"prices"`
+	Coin            string           `json:"coin"`
 }
 
 type WorkerStats struct {

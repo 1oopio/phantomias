@@ -423,6 +423,7 @@ func (s *Server) getMinerHandler(c *fiber.Ctx) error {
 		miner.LastPaymentLink = sprintfOrEmpty(poolCfg.TxLink, stats.LastPayment.TransactionConfirmationData)
 	}
 	miner.Prices = s.getPrices(poolCfg.Name)
+	miner.Coin = poolCfg.Coin
 	return c.JSON(&MinerRes{
 		Meta: &Meta{
 			Success: true,
