@@ -94,10 +94,10 @@ definitions:
         type: number
       performance:
         $ref: '#/definitions/api.WorkerStats'
-      performanceSamples:
-        items:
-          $ref: '#/definitions/api.WorkerStats'
-        type: array
+      prices:
+        additionalProperties:
+          $ref: '#/definitions/api.Price'
+        type: object
       todayPaid:
         type: number
       totalPaid:
@@ -225,16 +225,12 @@ definitions:
     properties:
       difficulty:
         type: number
-      listenAddress:
-        type: string
-      name:
-        type: string
       tls:
         type: boolean
       tlsAuto:
         type: boolean
       varDiff:
-        $ref: '#/definitions/api.VarDiffConfig'
+        type: boolean
     type: object
   api.PoolExtended:
     properties:
@@ -328,21 +324,6 @@ definitions:
       price:
         type: number
       priceChangePercentage24H:
-        type: number
-    type: object
-  api.VarDiffConfig:
-    properties:
-      maxDelta:
-        type: number
-      maxDiff:
-        type: number
-      minDiff:
-        type: number
-      retargetTime:
-        type: number
-      targetTime:
-        type: number
-      variancePercent:
         type: number
     type: object
   api.WorkerPerformanceStats:
@@ -507,14 +488,6 @@ paths:
         name: miner_addr
         required: true
         type: string
-      - description: Page (default=0)
-        in: query
-        name: page
-        type: integer
-      - description: PageSize (default=15)
-        in: query
-        name: pageSize
-        type: integer
       produces:
       - application/json
       responses:

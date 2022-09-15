@@ -202,18 +202,6 @@ const docTemplate = `{
                         "name": "miner_addr",
                         "in": "path",
                         "required": true
-                    },
-                    {
-                        "type": "integer",
-                        "description": "Page (default=0)",
-                        "name": "page",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
-                        "description": "PageSize (default=15)",
-                        "name": "pageSize",
-                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -792,10 +780,10 @@ const docTemplate = `{
                 "performance": {
                     "$ref": "#/definitions/api.WorkerStats"
                 },
-                "performanceSamples": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/api.WorkerStats"
+                "prices": {
+                    "type": "object",
+                    "additionalProperties": {
+                        "$ref": "#/definitions/api.Price"
                     }
                 },
                 "todayPaid": {
@@ -994,12 +982,6 @@ const docTemplate = `{
                 "difficulty": {
                     "type": "number"
                 },
-                "listenAddress": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
                 "tls": {
                     "type": "boolean"
                 },
@@ -1007,7 +989,7 @@ const docTemplate = `{
                     "type": "boolean"
                 },
                 "varDiff": {
-                    "$ref": "#/definitions/api.VarDiffConfig"
+                    "type": "boolean"
                 }
             }
         },
@@ -1151,29 +1133,6 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "priceChangePercentage24H": {
-                    "type": "number"
-                }
-            }
-        },
-        "api.VarDiffConfig": {
-            "type": "object",
-            "properties": {
-                "maxDelta": {
-                    "type": "number"
-                },
-                "maxDiff": {
-                    "type": "number"
-                },
-                "minDiff": {
-                    "type": "number"
-                },
-                "retargetTime": {
-                    "type": "number"
-                },
-                "targetTime": {
-                    "type": "number"
-                },
-                "variancePercent": {
                     "type": "number"
                 }
             }
