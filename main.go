@@ -4,7 +4,7 @@ import (
 	"log"
 
 	"github.com/stratumfarm/phantomias/cmd"
-	_ "github.com/stratumfarm/phantomias/docs"
+	_ "github.com/stratumfarm/phantomias/docs" // swagger docs
 )
 
 // @title StratumFarm Pool API
