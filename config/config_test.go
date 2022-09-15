@@ -52,6 +52,12 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, "https://explorer.dero.io/tx/%s", cfg.Pools[0].TxLink)
 	assert.Equal(t, "", cfg.Pools[0].AddressLink)
 
+	assert.Len(t, cfg.Pools[0].Ports, 1)
+	assert.Equal(t, float64(42000), cfg.Pools[0].Ports["4300"].Difficulty)
+	assert.Equal(t, true, cfg.Pools[0].Ports["4300"].VarDiff)
+	assert.Equal(t, true, cfg.Pools[0].Ports["4300"].TLS)
+	assert.Equal(t, true, cfg.Pools[0].Ports["4300"].TLSAuto)
+
 }
 
 func TestLoadNoFileConfig(t *testing.T) {

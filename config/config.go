@@ -31,18 +31,27 @@ type DB struct {
 
 // Pool represents the config for a single pool
 type Pool struct {
-	ID          string  `mapstructure:"id"`           // pool id
-	Enabled     bool    `mapstructure:"enabled"`      // pool enabled
-	Type        string  `mapstructure:"type"`         // coinfamily
-	RPC         string  `mapstructure:"rpc"`          // rpc url
-	Algorithm   string  `mapstructure:"algorithm"`    // algorithm
-	Name        string  `mapstructure:"name"`         // pool name
-	Coin        string  `mapstructure:"coin"`         // coin name
-	Fee         float64 `mapstructure:"fee"`          // pool fee
-	FeeType     string  `mapstructure:"fee_type"`     // pool fee type
-	BlockLink   string  `mapstructure:"block_link"`   // block link (explorer)
-	TxLink      string  `mapstructure:"tx_link"`      // transaction link (explorer)
-	AddressLink string  `mapstructure:"address_link"` // address link (explorer)
+	ID          string          `mapstructure:"id"`           // pool id
+	Enabled     bool            `mapstructure:"enabled"`      // pool enabled
+	Type        string          `mapstructure:"type"`         // coinfamily
+	RPC         string          `mapstructure:"rpc"`          // rpc url
+	Algorithm   string          `mapstructure:"algorithm"`    // algorithm
+	Name        string          `mapstructure:"name"`         // pool name
+	Coin        string          `mapstructure:"coin"`         // coin name
+	Fee         float64         `mapstructure:"fee"`          // pool fee
+	FeeType     string          `mapstructure:"fee_type"`     // pool fee type
+	BlockLink   string          `mapstructure:"block_link"`   // block link (explorer)
+	TxLink      string          `mapstructure:"tx_link"`      // transaction link (explorer)
+	AddressLink string          `mapstructure:"address_link"` // address link (explorer)
+	Ports       map[string]Port `mapstructure:"ports"`        // ports
+}
+
+// Port represents a pool port
+type Port struct {
+	Difficulty float64 `mapstructure:"difficulty"` // difficulty
+	VarDiff    bool    `mapstructure:"var_diff"`   // var diff
+	TLS        bool    `mapstructure:"tls"`        // tls
+	TLSAuto    bool    `mapstructure:"tls_auto"`   // tls auto
 }
 
 // ProxyConfig represents the configuration for the proxy.

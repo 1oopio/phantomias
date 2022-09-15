@@ -45,3 +45,9 @@ pools:
     coin: DERO
     block_link: https://explorer.dero.io/block/%d
     tx_link: https://explorer.dero.io/tx/%s
+    ports:
+      "4300":
+        difficulty: 42000
+        var_diff: true
+        tls: true
+        tls_auto: true

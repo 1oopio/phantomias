@@ -9,7 +9,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/stratumfarm/go-miningcore-client"
 	"github.com/stratumfarm/phantomias/config"
 	"github.com/stratumfarm/phantomias/database"
 	"github.com/stratumfarm/phantomias/utils"
@@ -129,29 +128,25 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 		},
 		Result: &poolExtended,
 	}
+	res.Result.Ports = cfgPortsToAPIPoolPorts(poolCfg.Ports)
 	res.Result.Prices = s.getPrices(res.Result.Name)
 	return c.JSON(res)
 }
 
-func poolPortsToAPIPoolPorts(p map[string]miningcore.PoolEndpoint) map[string]*PoolEndpoint {
+func cfgPortsToAPIPoolPorts(p map[string]config.Port) map[string]*PoolEndpoint {
 	ports := make(map[string]*PoolEndpoint)
 	for k, v := range p {
-		ports[k] = poolPortToAPIPoolPort(v)
+		ports[k] = cfgPortToAPIPoolPort(v)
 	}
 	return ports
 }
 
-func poolPortToAPIPoolPort(p miningcore.PoolEndpoint) *PoolEndpoint {
+func cfgPortToAPIPoolPort(p config.Port) *PoolEndpoint {
 	e := &PoolEndpoint{
-		ListenAddress: p.ListenAddress,
-		Name:          p.Name,
-		Difficulty:    p.Difficulty,
-		TLS:           p.TLS,
-		TLSAuto:       p.TLSAuto,
-	}
-	if p.VarDiff != nil {
-		vd := VarDiffConfig(*p.VarDiff)
-		e.VarDiff = &vd
+		Difficulty: p.Difficulty,
+		VarDiff:    true,
+		TLS:        p.TLS,
+		TLSAuto:    p.TLSAuto,
 	}
 	return e
 }

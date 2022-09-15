@@ -52,21 +52,10 @@ type Price struct {
 }
 
 type PoolEndpoint struct {
-	ListenAddress string         `json:"listenAddress"`
-	Name          string         `json:"name"`
-	Difficulty    float64        `json:"difficulty"`
-	VarDiff       *VarDiffConfig `json:"varDiff"`
-	TLS           bool           `json:"tls"`
-	TLSAuto       bool           `json:"tlsAuto"`
-}
-
-type VarDiffConfig struct {
-	MinDiff         float64 `json:"minDiff"`
-	MaxDiff         float64 `json:"maxDiff"`
-	MaxDelta        float64 `json:"maxDelta"`
-	TargetTime      float64 `json:"targetTime"`
-	RetargetTime    float64 `json:"retargetTime"`
-	VariancePercent float64 `json:"variancePercent"`
+	Difficulty float64 `json:"difficulty"`
+	VarDiff    bool    `json:"varDiff"`
+	TLS        bool    `json:"tls"`
+	TLSAuto    bool    `json:"tlsAuto"`
 }
 
 type BlocksRes struct {
