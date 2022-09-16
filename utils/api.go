@@ -31,3 +31,10 @@ func HandleMCError(c *fiber.Ctx, err error) error {
 	log.Println("error querying miningcore:", err)
 	return SendAPIError(c, 500, fiber.ErrInternalServerError)
 }
+
+func ValueOrZero[T any](v *T) T {
+	if v == nil {
+		return *new(T)
+	}
+	return *v
+}

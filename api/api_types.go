@@ -69,11 +69,11 @@ type Block struct {
 	NetworkDifficulty           float64         `json:"networkDifficulty"`
 	Status                      string          `json:"status"`
 	ConfirmationProgress        float64         `json:"confirmationProgress"`
-	Effort                      *float64        `json:"effort"`
+	Effort                      float64         `json:"effort"`
 	TransactionConfirmationData string          `json:"transactionConfirmationData"`
 	Reward                      decimal.Decimal `json:"reward"`
 	InfoLink                    string          `json:"infoLink,omitempty"`
-	Hash                        *string         `json:"hash"`
+	Hash                        string          `json:"hash"`
 	Miner                       string          `json:"miner"`
 	Source                      string          `json:"source"`
 	Created                     time.Time       `json:"created"`
@@ -124,10 +124,10 @@ type MinerRes struct {
 }
 
 type Miner struct {
-	PendingShares   *float64         `json:"pendingShares"`
-	PendingBalance  *float64         `json:"pendingBalance"`
-	TotalPaid       *float64         `json:"totalPaid"`
-	TodayPaid       *float64         `json:"todayPaid"`
+	PendingShares   float64          `json:"pendingShares"`
+	PendingBalance  float64          `json:"pendingBalance"`
+	TotalPaid       float64          `json:"totalPaid"`
+	TodayPaid       float64          `json:"todayPaid"`
 	LastPayment     *time.Time       `json:"lastPayment"`
 	LastPaymentLink string           `json:"lastPaymentLink"`
 	Performance     *WorkerStats     `json:"performance"`

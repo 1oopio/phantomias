@@ -218,11 +218,11 @@ func dbBlockToAPIBlock(p *config.Pool, b *database.Block) *Block {
 		NetworkDifficulty:           b.NetworkDifficulty,
 		Status:                      b.Status,
 		ConfirmationProgress:        b.ConfirmationProgress,
-		Effort:                      b.Effort,
+		Effort:                      utils.ValueOrZero(b.Effort),
 		TransactionConfirmationData: b.TransactionConfirmationData,
 		Reward:                      b.Reward,
 		InfoLink:                    sprintfOrEmpty(p.BlockLink, b.BlockHeight),
-		Hash:                        b.Hash,
+		Hash:                        utils.ValueOrZero(b.Hash),
 		Miner:                       b.Miner,
 		Source:                      b.Source,
 		Created:                     b.Created,
@@ -434,10 +434,10 @@ func (s *Server) getMinerHandler(c *fiber.Ctx) error {
 
 func dbMinerStatsToAPIMiner(stats *database.MinerStats) *Miner {
 	miner := &Miner{
-		PendingShares:  stats.PendingShares,
-		PendingBalance: stats.PendingBalance,
-		TotalPaid:      stats.TotalPaid,
-		TodayPaid:      stats.TodayPaid,
+		PendingShares:  utils.ValueOrZero(stats.PendingShares),
+		PendingBalance: utils.ValueOrZero(stats.PendingBalance),
+		TotalPaid:      utils.ValueOrZero(stats.TotalPaid),
+		TodayPaid:      utils.ValueOrZero(stats.TodayPaid),
 	}
 	if stats.Performance != nil {
 		workerStats := &WorkerStats{
