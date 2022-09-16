@@ -765,6 +765,9 @@ const docTemplate = `{
         "api.Miner": {
             "type": "object",
             "properties": {
+                "coin": {
+                    "type": "string"
+                },
                 "lastPayment": {
                     "type": "string"
                 },

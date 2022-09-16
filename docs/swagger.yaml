@@ -84,6 +84,8 @@ definitions:
     type: object
   api.Miner:
     properties:
+      coin:
+        type: string
       lastPayment:
         type: string
       lastPaymentLink:
