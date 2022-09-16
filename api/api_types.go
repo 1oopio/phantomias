@@ -124,13 +124,13 @@ type MinerRes struct {
 }
 
 type Miner struct {
-	PendingShares   *float64         `json:"pendingShares"`
-	PendingBalance  *float64         `json:"pendingBalance"`
-	TotalPaid       *float64         `json:"totalPaid"`
-	TodayPaid       *float64         `json:"todayPaid"`
-	LastPayment     *time.Time       `json:"lastPayment"`
-	LastPaymentLink string           `json:"lastPaymentLink"`
-	Performance     *WorkerStats     `json:"performance"`
+	PendingShares   *float64         `json:"pendingShares,omitempty"`
+	PendingBalance  *float64         `json:"pendingBalance,omitempty"`
+	TotalPaid       *float64         `json:"totalPaid,omitempty"`
+	TodayPaid       *float64         `json:"todayPaid,omitempty"`
+	LastPayment     *time.Time       `json:"lastPayment,omitempty"`
+	LastPaymentLink string           `json:"lastPaymentLink,omitempty"`
+	Performance     *WorkerStats     `json:"performance,omitempty"`
 	Prices          map[string]Price `json:"prices"`
 	Coin            string           `json:"coin"`
 }

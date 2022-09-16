@@ -108,6 +108,7 @@ func (d *DB) GetMinerStats(ctx context.Context, poolID string, miner string) (*M
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			log.Println("[db][error] no last payment found for miner", miner)
+			stats.LastPayment = nil
 		} else {
 			return nil, fmt.Errorf("failed to get miner last payment: %w", err)
 		}
