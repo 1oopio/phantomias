@@ -128,7 +128,7 @@ type Miner struct {
 	PendingBalance  *float64         `json:"pendingBalance"`
 	TotalPaid       *float64         `json:"totalPaid"`
 	TodayPaid       *float64         `json:"todayPaid"`
-	LastPayment     time.Time        `json:"lastPayment"`
+	LastPayment     *time.Time       `json:"lastPayment"`
 	LastPaymentLink string           `json:"lastPaymentLink"`
 	Performance     *WorkerStats     `json:"performance"`
 	Prices          map[string]Price `json:"prices"`

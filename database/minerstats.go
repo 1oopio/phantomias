@@ -2,7 +2,10 @@ package database
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
+	"log"
 	"sort"
 	"time"
 )
@@ -103,7 +106,11 @@ func (d *DB) GetMinerStats(ctx context.Context, poolID string, miner string) (*M
 	SELECT * FROM payments WHERE poolid = $1 AND address = $2 ORDER BY created DESC LIMIT 1;
 	`, poolID, miner)
 	if err != nil {
-		return nil, fmt.Errorf("failed to get miner last payment: %w", err)
+		if errors.Is(err, sql.ErrNoRows) {
+			log.Println("[db][error] no last payment found for miner", miner)
+		} else {
+			return nil, fmt.Errorf("failed to get miner last payment: %w", err)
+		}
 	}
 
 	var lastUpdated time.Time

@@ -419,7 +419,7 @@ func (s *Server) getMinerHandler(c *fiber.Ctx) error {
 
 	miner := dbMinerStatsToAPIMiner(stats)
 	if stats.LastPayment != nil && (stats.LastPayment != &database.Payment{}) {
-		miner.LastPayment = stats.LastPayment.Created
+		miner.LastPayment = &stats.LastPayment.Created
 		miner.LastPaymentLink = sprintfOrEmpty(poolCfg.TxLink, stats.LastPayment.TransactionConfirmationData)
 	}
 	miner.Prices = s.getPrices(poolCfg.Name)
@@ -439,11 +439,13 @@ func dbMinerStatsToAPIMiner(stats *database.MinerStats) *Miner {
 		TotalPaid:      stats.TotalPaid,
 		TodayPaid:      stats.TodayPaid,
 	}
-	workerStats := &WorkerStats{
-		Created: stats.Performance.Created,
-		Workers: dbWorkersStatsToAPIWorkerStats(stats.Performance.Workers),
+	if stats.Performance != nil {
+		workerStats := &WorkerStats{
+			Created: stats.Performance.Created,
+			Workers: dbWorkersStatsToAPIWorkerStats(stats.Performance.Workers),
+		}
+		miner.Performance = workerStats
 	}
-	miner.Performance = workerStats
 	return miner
 }
 
