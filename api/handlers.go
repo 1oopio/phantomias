@@ -581,12 +581,50 @@ func dbBalanceChangesToAPI(balanceChanges []*database.BalanceChange) []*BalanceC
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id}/miners/{miner_addr}/earnings/daily [get]
 func (s *Server) getMinerDailyEarningsHandler(c *fiber.Ctx) error {
-	var dailyEarnings DailyEarningRes
-	code, err := s.mc.UnmarshalMinerDailyEarnings(c.Context(), c.Params("id"), c.Params("miner_addr"), &dailyEarnings, handlePaginationQueries(c))
-	if err != nil {
-		return handleAPIError(c, code, err)
+	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
+	if poolCfg == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	return c.Status(code).JSON(dailyEarnings)
+	addr := c.Params("miner_addr")
+	if addr == "" {
+		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
+	}
+	if strings.EqualFold(poolCfg.Type, "ethereum") {
+		addr = strings.ToLower(addr)
+	}
+
+	pageCount, err := s.db.GetMinerPaymentsByDayCount(c.Context(), poolCfg.ID, addr)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	page, pageSize := getPageParams(c)
+	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
+
+	earnings, err := s.db.PageMinerPaymentsByDay(c.Context(), poolCfg.ID, addr, page, pageSize)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	res := DailyEarningRes{
+		Meta: &Meta{
+			Success:   true,
+			PageCount: pageCount,
+		},
+		Result: dbEarningsToAPI(earnings),
+	}
+	return c.JSON(res)
+}
+
+func dbEarningsToAPI(earnings []*database.AmountByDate) []*DailyEarning {
+	res := make([]*DailyEarning, len(earnings))
+	for i, e := range earnings {
+		res[i] = &DailyEarning{
+			Amount: e.Amount,
+			Date:   e.Date,
+		}
+	}
+	return res
 }
 
 // Maybe we should put a higher rate limit on this endpoint.

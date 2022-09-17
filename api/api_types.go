@@ -160,8 +160,8 @@ type BalanceChange struct {
 }
 
 type DailyEarning struct {
-	Amount float64 `json:"amount"`
-	Date   string  `json:"date"`
+	Amount decimal.Decimal `json:"amount"`
+	Date   time.Time       `json:"date"`
 }
 
 type DailyEarningRes struct {

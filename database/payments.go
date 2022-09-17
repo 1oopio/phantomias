@@ -64,8 +64,8 @@ func (d *DB) GetMinerPaymentsByDayCount(ctx context.Context, poolID, miner strin
 	return count, err
 }
 
-func (d *DB) PageMinerPaymentsByDay(ctx context.Context, poolID, address string, page, pageSize int) ([]AmountByDate, error) {
-	var payments []AmountByDate
+func (d *DB) PageMinerPaymentsByDay(ctx context.Context, poolID, address string, page, pageSize int) ([]*AmountByDate, error) {
+	var payments []*AmountByDate
 	err := d.sql.SelectContext(ctx, &payments, `
 	SELECT SUM(amount) AS amount, date_trunc('day', created) AS date FROM payments WHERE poolid = $1
 		AND address = $2 GROUP BY date ORDER BY date DESC OFFSET $3 FETCH NEXT $4 ROWS ONLY;`, poolID, address, page*pageSize, pageSize)
