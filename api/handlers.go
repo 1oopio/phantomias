@@ -473,12 +473,39 @@ func dbWorkersStatsToAPIWorkerStats(stats map[string]*database.WorkerPerformance
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id}/miners/{miner_addr}/payments [get]
 func (s *Server) getMinerPaymentsHandler(c *fiber.Ctx) error {
-	var payments PaymentsRes
-	code, err := s.mc.UnmarshalMinerPayments(c.Context(), c.Params("id"), c.Params("miner_addr"), &payments, handlePaginationQueries(c))
-	if err != nil {
-		return handleAPIError(c, code, err)
+	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
+	if poolCfg == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	return c.Status(code).JSON(payments)
+	addr := c.Params("miner_addr")
+	if addr == "" {
+		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
+	}
+	if strings.EqualFold(poolCfg.Type, "ethereum") {
+		addr = strings.ToLower(addr)
+	}
+
+	pageCount, err := s.db.GetPaymentsCount(c.Context(), poolCfg.ID, addr)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	page, pageSize := getPageParams(c)
+	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
+
+	payments, err := s.db.PagePayments(c.Context(), poolCfg.ID, addr, page, pageSize)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	res := &PaymentsRes{
+		Meta: &Meta{
+			Success:   true,
+			PageCount: pageCount,
+		},
+		Result: dbPaymentsToAPIPayments(poolCfg, payments),
+	}
+	return c.JSON(res)
 }
 
 // @Summary Get balance changes
