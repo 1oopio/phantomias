@@ -3,7 +3,6 @@ package api
 import (
 	"time"
 
-	"github.com/shopspring/decimal"
 	"github.com/stratumfarm/phantomias/database"
 )
 
@@ -64,19 +63,19 @@ type BlocksRes struct {
 }
 
 type Block struct {
-	PoolID                      string          `json:"poolId"`
-	BlockHeight                 int64           `json:"blockHeight"`
-	NetworkDifficulty           float64         `json:"networkDifficulty"`
-	Status                      string          `json:"status"`
-	ConfirmationProgress        float64         `json:"confirmationProgress"`
-	Effort                      float64         `json:"effort"`
-	TransactionConfirmationData string          `json:"transactionConfirmationData"`
-	Reward                      decimal.Decimal `json:"reward"`
-	InfoLink                    string          `json:"infoLink,omitempty"`
-	Hash                        string          `json:"hash"`
-	Miner                       string          `json:"miner"`
-	Source                      string          `json:"source"`
-	Created                     time.Time       `json:"created"`
+	PoolID                      string    `json:"poolId"`
+	BlockHeight                 int64     `json:"blockHeight"`
+	NetworkDifficulty           float64   `json:"networkDifficulty"`
+	Status                      string    `json:"status"`
+	ConfirmationProgress        float64   `json:"confirmationProgress"`
+	Effort                      float64   `json:"effort"`
+	TransactionConfirmationData string    `json:"transactionConfirmationData"`
+	Reward                      float64   `json:"reward"`
+	InfoLink                    string    `json:"infoLink,omitempty"`
+	Hash                        string    `json:"hash"`
+	Miner                       string    `json:"miner"`
+	Source                      string    `json:"source"`
+	Created                     time.Time `json:"created"`
 }
 
 type PaymentsRes struct {
@@ -85,13 +84,13 @@ type PaymentsRes struct {
 }
 
 type Payment struct {
-	Coin                        string          `json:"coin"`
-	Address                     string          `json:"address"`
-	AddressInfoLink             string          `json:"addressInfoLink,omitempty"`
-	Amount                      decimal.Decimal `json:"amount"`
-	TransactionConfirmationData string          `json:"transactionConfirmationData"`
-	TransactionInfoLink         string          `json:"transactionInfoLink,omitempty"`
-	Created                     time.Time       `json:"created"`
+	Coin                        string    `json:"coin"`
+	Address                     string    `json:"address"`
+	AddressInfoLink             string    `json:"addressInfoLink,omitempty"`
+	Amount                      float64   `json:"amount"`
+	TransactionConfirmationData string    `json:"transactionConfirmationData"`
+	TransactionInfoLink         string    `json:"transactionInfoLink,omitempty"`
+	Created                     time.Time `json:"created"`
 }
 
 type PoolPerformanceRes struct {
@@ -152,16 +151,16 @@ type BalanceChangesRes struct {
 }
 
 type BalanceChange struct {
-	PoolID  string          `json:"poolId"`
-	Address string          `json:"address"`
-	Amount  decimal.Decimal `json:"amount"`
-	Usage   string          `json:"usage"`
-	Created time.Time       `json:"created"`
+	PoolID  string    `json:"poolId"`
+	Address string    `json:"address"`
+	Amount  float64   `json:"amount"`
+	Usage   string    `json:"usage"`
+	Created time.Time `json:"created"`
 }
 
 type DailyEarning struct {
-	Amount decimal.Decimal `json:"amount"`
-	Date   time.Time       `json:"date"`
+	Amount float64   `json:"amount"`
+	Date   time.Time `json:"date"`
 }
 
 type DailyEarningRes struct {

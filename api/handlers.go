@@ -220,7 +220,7 @@ func dbBlockToAPIBlock(p *config.Pool, b *database.Block) *Block {
 		ConfirmationProgress:        b.ConfirmationProgress,
 		Effort:                      utils.ValueOrZero(b.Effort),
 		TransactionConfirmationData: b.TransactionConfirmationData,
-		Reward:                      b.Reward,
+		Reward:                      b.Reward.InexactFloat64(),
 		InfoLink:                    sprintfOrEmpty(p.BlockLink, b.BlockHeight),
 		Hash:                        utils.ValueOrZero(b.Hash),
 		Miner:                       b.Miner,
@@ -281,7 +281,7 @@ func dbPaymentToAPIPayment(p *config.Pool, pmt *database.Payment) *Payment {
 		Coin:                        pmt.Coin,
 		Address:                     pmt.Address,
 		AddressInfoLink:             sprintfOrEmpty(p.AddressLink, pmt.Address),
-		Amount:                      pmt.Amount,
+		Amount:                      pmt.Amount.InexactFloat64(),
 		TransactionConfirmationData: pmt.TransactionConfirmationData,
 		TransactionInfoLink:         sprintfOrEmpty(p.TxLink, pmt.TransactionConfirmationData),
 		Created:                     pmt.Created,
@@ -561,7 +561,7 @@ func dbBalanceChangesToAPI(balanceChanges []*database.BalanceChange) []*BalanceC
 		res[i] = &BalanceChange{
 			PoolID:  bc.PoolID,
 			Address: bc.Address,
-			Amount:  bc.Amount,
+			Amount:  bc.Amount.InexactFloat64(),
 			Usage:   bc.Usage,
 			Created: bc.Created,
 		}
@@ -620,7 +620,7 @@ func dbEarningsToAPI(earnings []*database.AmountByDate) []*DailyEarning {
 	res := make([]*DailyEarning, len(earnings))
 	for i, e := range earnings {
 		res[i] = &DailyEarning{
-			Amount: e.Amount,
+			Amount: e.Amount.InexactFloat64(),
 			Date:   e.Date,
 		}
 	}
@@ -642,6 +642,20 @@ func dbEarningsToAPI(earnings []*database.AmountByDate) []*DailyEarning {
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id}/miners/{miner_addr}/performance [get]
 func (s *Server) getMinerPerformanceHandler(c *fiber.Ctx) error {
+	/* poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
+	if poolCfg == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
+	}
+	addr := c.Params("miner_addr")
+	if addr == "" {
+		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
+	}
+	if strings.EqualFold(poolCfg.Type, "ethereum") {
+		addr = strings.ToLower(addr)
+	} */
+
+	// TODO: finish this
+
 	var performance []*WorkerStats
 	code, err := s.mc.UnmarshalMinerPerformance(c.Context(), c.Params("id"), c.Params("miner_addr"), &performance, handleSampleRangeQuery(c))
 	if err != nil {
@@ -715,3 +729,8 @@ func (s *Server) postMinerSettingsHandler(c *fiber.Ctx) error {
 		Result: &settings,
 	})
 }
+
+/* func (s *Server) getMinerPerformanceInternal() {
+	// TODO: implement this
+}
+*/
