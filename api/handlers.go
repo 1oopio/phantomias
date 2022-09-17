@@ -520,12 +520,53 @@ func (s *Server) getMinerPaymentsHandler(c *fiber.Ctx) error {
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id}/miners/{miner_addr}/balancechanges [get]
 func (s *Server) getMinerBalanceChangesHandler(c *fiber.Ctx) error {
-	var balanceChanges BalanceChangesRes
-	code, err := s.mc.UnmarshalMinerBalanceChanges(c.Context(), c.Params("id"), c.Params("miner_addr"), &balanceChanges, handlePaginationQueries(c))
-	if err != nil {
-		return handleAPIError(c, code, err)
+	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
+	if poolCfg == nil {
+		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	return c.Status(code).JSON(balanceChanges)
+	addr := c.Params("miner_addr")
+	if addr == "" {
+		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
+	}
+	if strings.EqualFold(poolCfg.Type, "ethereum") {
+		addr = strings.ToLower(addr)
+	}
+
+	pageCount, err := s.db.GetBalanceChangesCount(c.Context(), poolCfg.ID, addr)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	page, pageSize := getPageParams(c)
+	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
+
+	balanceChanges, err := s.db.PageBalanceChanges(c.Context(), poolCfg.ID, addr, page, pageSize)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	res := BalanceChangesRes{
+		Meta: &Meta{
+			Success:   true,
+			PageCount: pageCount,
+		},
+		Result: dbBalanceChangesToAPI(balanceChanges),
+	}
+	return c.JSON(res)
+}
+
+func dbBalanceChangesToAPI(balanceChanges []*database.BalanceChange) []*BalanceChange {
+	res := make([]*BalanceChange, len(balanceChanges))
+	for i, bc := range balanceChanges {
+		res[i] = &BalanceChange{
+			PoolID:  bc.PoolID,
+			Address: bc.Address,
+			Amount:  bc.Amount,
+			Usage:   bc.Usage,
+			Created: bc.Created,
+		}
+	}
+	return res
 }
 
 // @Summary Get daily earnings

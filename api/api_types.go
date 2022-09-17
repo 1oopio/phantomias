@@ -152,11 +152,11 @@ type BalanceChangesRes struct {
 }
 
 type BalanceChange struct {
-	PoolID  string  `json:"poolId"`
-	Address string  `json:"address"`
-	Amount  float64 `json:"amount"`
-	Usage   string  `json:"usage"`
-	Created string  `json:"created"`
+	PoolID  string          `json:"poolId"`
+	Address string          `json:"address"`
+	Amount  decimal.Decimal `json:"amount"`
+	Usage   string          `json:"usage"`
+	Created time.Time       `json:"created"`
 }
 
 type DailyEarning struct {
