@@ -88,6 +88,27 @@ func (d *DB) PagePoolMinersByHashrate(ctx context.Context, poolID string, from t
 	return miners, err
 }
 
+func (d *DB) GetMinersCount(ctx context.Context, poolID string, from time.Time) (uint, error) {
+	var count uint
+	err := d.sql.GetContext(ctx, &count, `
+		WITH tmp AS
+		(
+			SELECT
+				ms.miner,
+				ms.hashrate,
+				ms.sharespersecond,
+				ROW_NUMBER() OVER(PARTITION BY ms.miner ORDER BY ms.hashrate DESC) AS rk
+			FROM (SELECT miner, SUM(hashrate) AS hashrate, SUM(sharespersecond) AS sharespersecond
+				FROM minerstats
+				WHERE poolid = $1 AND created >= $2 AND hashratetype = 'actual' GROUP BY miner, created) ms
+		)
+		SELECT count(t.miner)
+		FROM tmp t
+		WHERE t.rk = 1;
+	`, poolID, from)
+	return count, err
+}
+
 func (d *DB) GetMinerStats(ctx context.Context, poolID string, miner string) (*MinerStats, error) {
 	var stats MinerStats
 	err := d.sql.GetContext(ctx, &stats, `

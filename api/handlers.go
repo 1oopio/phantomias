@@ -360,16 +360,24 @@ func (s *Server) getMinersHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
 
-	page, pageSize := getPageParams(c)
 	from := time.Now().Add(-time.Duration(topMinersRange) * time.Hour)
-	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.Context(), c.Params("id"), from, page, pageSize)
+	pageCount, err := s.db.GetMinersCount(c.Context(), poolCfg.ID, from)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+
+	page, pageSize := getPageParams(c)
+	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
+
+	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.Context(), poolCfg.ID, from, page, pageSize)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 
 	res := &MinersRes{
 		Meta: &Meta{
-			Success: true,
+			Success:   true,
+			PageCount: pageCount,
 		},
 		Result: dbMinersToAPIMiners(minersByHashrate),
 	}
