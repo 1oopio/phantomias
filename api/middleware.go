@@ -28,16 +28,16 @@ func (s *Server) ratelimiter() fiber.Handler {
 }
 
 func (s *Server) cache() fiber.Handler {
-	return cache.New(cache.Config{
-		Next: func(c *fiber.Ctx) bool {
-			return c.Query("refresh") == "true"
-		},
-		Expiration:   s.cfg.CacheTTL,
-		CacheControl: true,
-		MaxBytes:     10000000,
-		KeyGenerator: func(c *fiber.Ctx) string {
-			q := c.Context().QueryArgs().QueryString()
-			return c.Path() + *(*string)(unsafe.Pointer(&q))
-		},
-	})
+	cfg := cache.ConfigDefault
+	cfg.Next = func(c *fiber.Ctx) bool {
+		return c.Query("refresh") == "true"
+	}
+	cfg.Expiration = s.cfg.CacheTTL
+	cfg.CacheControl = true
+	cfg.MaxBytes = 1000000000
+	cfg.KeyGenerator = func(c *fiber.Ctx) string {
+		q := c.Context().QueryArgs().QueryString()
+		return c.Path() + *(*string)(unsafe.Pointer(&q))
+	}
+	return cache.New(cfg)
 }
