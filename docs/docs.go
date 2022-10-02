@@ -409,8 +409,8 @@ const docTemplate = `{
                     },
                     {
                         "type": "string",
-                        "description": "Specify the sample range (default=Daily)",
-                        "name": "sampleRange",
+                        "description": "Specify the sample range (default=day",
+                        "name": "perfMode",
                         "in": "query"
                     }
                 ],
@@ -510,6 +510,61 @@ const docTemplate = `{
                         "description": "OK",
                         "schema": {
                             "$ref": "#/definitions/api.MinerSettingsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/miners/{miner_addr}/workers/{worker_name}/performance": {
+            "get": {
+                "description": "Get a specific worker from a specific miner from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Workers"
+                ],
+                "summary": "Get a worker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address of the miner",
+                        "name": "miner_addr",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Name of the worker",
+                        "name": "worker_name",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Specify the sample range (default=day",
+                        "name": "perfMode",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.WorkerPerformanceRes"
                         }
                     },
                     "400": {
@@ -1137,6 +1192,23 @@ const docTemplate = `{
                 },
                 "priceChangePercentage24H": {
                     "type": "number"
+                }
+            }
+        },
+        "api.WorkerPerformanceRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.WorkerStats"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },

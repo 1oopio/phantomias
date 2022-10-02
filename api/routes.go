@@ -40,6 +40,7 @@ func (s *Server) apiRoutes(middleware ...fiber.Handler) {
 	v1.Get("pools/:id/miners/:miner_addr/performance", s.getMinerPerformanceHandler)
 	v1.Get("pools/:id/miners/:miner_addr/settings", s.getMinerSettingsHandler)
 	v1.Post("pools/:id/miners/:miner_addr/settings", s.postMinerSettingsHandler)
+	v1.Get("pools/:id/miners/:miner_addr/workers/:worker_name/performance", s.getWorkerHandler)
 }
 
 func (s *Server) wsRoute(middleware ...fiber.Handler) {

@@ -186,3 +186,8 @@ type MinerSettingsReq struct {
 	IPAddress string         `json:"ipAddress"`
 	Settings  *MinerSettings `json:"settings"`
 }
+
+type WorkerPerformanceRes struct {
+	*Meta
+	Result []*WorkerStats `json:"result"`
+}

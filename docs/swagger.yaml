@@ -328,6 +328,17 @@ definitions:
       priceChangePercentage24H:
         type: number
     type: object
+  api.WorkerPerformanceRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.WorkerStats'
+        type: array
+      success:
+        type: boolean
+    type: object
   api.WorkerPerformanceStats:
     properties:
       hashrate:
@@ -629,9 +640,9 @@ paths:
         name: miner_addr
         required: true
         type: string
-      - description: Specify the sample range (default=Daily)
+      - description: Specify the sample range (default=day
         in: query
-        name: sampleRange
+        name: perfMode
         type: string
       produces:
       - application/json
@@ -708,6 +719,43 @@ paths:
       summary: Update settings
       tags:
       - Miners
+  /api/v1/pools/{pool_id}/miners/{miner_addr}/workers/{worker_name}/performance:
+    get:
+      description: Get a specific worker from a specific miner from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Address of the miner
+        in: path
+        name: miner_addr
+        required: true
+        type: string
+      - description: Name of the worker
+        in: path
+        name: worker_name
+        required: true
+        type: string
+      - description: Specify the sample range (default=day
+        in: query
+        name: perfMode
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.WorkerPerformanceRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get a worker
+      tags:
+      - Workers
   /api/v1/pools/{pool_id}/payments:
     get:
       description: Get a list of payments from a specific pool

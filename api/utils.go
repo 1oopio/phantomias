@@ -1,9 +1,12 @@
 package api
 
 import (
-	"fmt"
+	"context"
 	"strconv"
+	"strings"
+	"time"
 
+	"github.com/caarlos0/duration"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stratumfarm/phantomias/config"
 	"github.com/stratumfarm/phantomias/database"
@@ -56,13 +59,6 @@ func handlePaginationQueries(c *fiber.Ctx) map[string]string {
 	return params
 }
 
-func sprintfOrEmpty(s string, args ...any) string {
-	if s != "" {
-		return fmt.Sprintf(s, args...)
-	}
-	return ""
-}
-
 func getTopMinersRange(c *fiber.Ctx) int {
 	topMinersRangeString := c.Query("topMinersRange", "1")
 	topMinersRange, err := strconv.Atoi(topMinersRangeString)
@@ -86,4 +82,59 @@ func getPerformanceModeQuery(c *fiber.Ctx) database.SampleRange {
 	default:
 		return database.RangeDay
 	}
+}
+
+func getMinerAddress(c *fiber.Ctx, poolCfg *config.Pool) string {
+	addr := c.Params("miner_addr")
+	if strings.EqualFold(poolCfg.Type, "ethereum") {
+		addr = strings.ToLower(addr)
+	}
+	return addr
+}
+
+func getWorkerName(c *fiber.Ctx) string {
+	return c.Params("worker_name")
+}
+
+func getPerformanceRange(mode database.SampleRange) (start, end time.Time) {
+	end = time.Now()
+	switch mode {
+	case database.RangeHour:
+		end = end.Add(-time.Second)
+		start = end.Add(-time.Hour)
+		return
+
+	case database.RangeDay:
+		if end.Minute() < 30 {
+			end = end.Add(-time.Hour)
+		}
+		end = end.Add(-time.Minute)
+		end = end.Add(-time.Second)
+		start = end.Add(-time.Hour * 24)
+		return
+
+	case database.RangeMonth:
+		end = end.Add(-time.Second)
+		start = start.Add(-duration.Month)
+		return
+
+	default:
+		if end.Minute() < 30 {
+			end = end.Add(-time.Hour)
+		}
+		end = end.Add(-time.Minute)
+		end = end.Add(-time.Second)
+		start = end.Add(-time.Hour * 24)
+		return
+	}
+}
+
+func (s *Server) getMinerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr string) ([]*database.WorkerPerformanceStatsContainer, error) {
+	start, end := getPerformanceRange(mode)
+	return s.db.GetMinerPerformanceBetweenTenMinutely(ctx, poolCfg.ID, addr, start, end)
+}
+
+func (s *Server) getWorkerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr, worker string) ([]*database.WorkerPerformanceStatsContainer, error) {
+	start, end := getPerformanceRange(mode)
+	return s.db.GetWorkerPerformanceBetweenTenMinutely(ctx, poolCfg.ID, addr, worker, start, end)
 }

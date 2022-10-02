@@ -65,6 +65,13 @@ type MinerStats struct {
 	Performance    *WorkerPerformanceStatsContainer
 }
 
+type WorkerStats struct {
+	Created          time.Time `json:"created"`
+	Hashrate         *float64  `json:"hashrate"`
+	ReportedHashrate *float64  `json:"reportedHashrate"`
+	SharesPerSecond  *float64  `json:"sharesPerSecond"`
+}
+
 func (d *DB) PagePoolMinersByHashrate(ctx context.Context, poolID string, from time.Time, page int, pageSite int) ([]MinerPerformanceStats, error) {
 	var miners []MinerPerformanceStats
 	err := d.sql.SelectContext(ctx, &miners, `
@@ -197,7 +204,7 @@ func (d *DB) GetMinerPerformanceBetweenTenMinutely(ctx context.Context, poolID, 
            SELECT created, null as hs, hashrate as rhs, null as sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND created >= $3 AND created <= $4 AND hashratetype = 'reported'
            ) as x
            GROUP BY 1, 2, worker
-           ORDER BY 1, 2, worker
+           ORDER BY 1, 2, worker;
 		   `, poolID, miner, start, end)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get miner performance stats: %w", err)
@@ -231,4 +238,27 @@ func entitiesByDate(entities []*MinerWorkerPerformanceStatsEntity) []*WorkerPerf
 		return stats[i].Created.Before(stats[j].Created)
 	})
 	return stats
+}
+
+func (d *DB) GetWorkerPerformanceBetweenTenMinutely(ctx context.Context, poolID, miner, worker string, start, end time.Time) ([]*WorkerPerformanceStatsContainer, error) {
+	var stats []*MinerWorkerPerformanceStatsEntity
+	err := d.sql.SelectContext(ctx, &stats, `
+	SELECT date_trunc('hour', x.created) AS created,
+           (extract(minute FROM x.created)::int / 10) AS partition,
+           x.worker, AVG(x.hs) AS hashrate, AVG(x.rhs) AS reportedhashrate, AVG(x.sharespersecond) AS sharespersecond
+           FROM (
+           SELECT created, hashrate as hs, null as rhs, sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND worker = $3 AND created >= $4 AND created <= $5 AND hashratetype = 'actual'
+           UNION 
+           SELECT created, null as hs, hashrate as rhs, null as sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND worker = $3 AND created >= $4 AND created <= $5 AND hashratetype = 'reported'
+           ) as x
+           GROUP BY 1, 2, worker
+           ORDER BY 1, 2, worker;
+		   `, poolID, miner, worker, start, end)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get worker performance stats: %w", err)
+	}
+	for _, stat := range stats {
+		stat.Created = stat.Created.Add(time.Duration(stat.Partition) * 10 * time.Minute)
+	}
+	return entitiesByDate(stats), nil
 }
