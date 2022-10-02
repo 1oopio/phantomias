@@ -11,6 +11,7 @@ var (
 	ErrPoolNotFound        = errors.New("pool not found")
 	ErrInvalidRange        = errors.New("invalid range")
 	ErrInvalidMinerAddress = errors.New("Invalid or missing miner address")
+	ErrInvalidWorkerName   = errors.New("Invalid or missing worker name")
 	ErrNoStatsFound        = errors.New("no stats found")
 )
 
