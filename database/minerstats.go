@@ -65,13 +65,6 @@ type MinerStats struct {
 	Performance    *WorkerPerformanceStatsContainer
 }
 
-type WorkerStats struct {
-	Created          time.Time `json:"created"`
-	Hashrate         *float64  `json:"hashrate"`
-	ReportedHashrate *float64  `json:"reportedHashrate"`
-	SharesPerSecond  *float64  `json:"sharesPerSecond"`
-}
-
 func (d *DB) PagePoolMinersByHashrate(ctx context.Context, poolID string, from time.Time, page int, pageSite int) ([]MinerPerformanceStats, error) {
 	var miners []MinerPerformanceStats
 	err := d.sql.SelectContext(ctx, &miners, `
