@@ -40,7 +40,7 @@ func init() {
 	rootCmd.Flags().StringVarP(&rootCmdFlags.config, "config", "c", "", "path to the config file")
 
 	rootCmd.Flags().String("listen", "0.0.0.0:8080", "listening address")
-	rootCmd.Flags().Duration("cache-ttl", time.Second*5, "TTL for the api cache")
+	rootCmd.Flags().Duration("cache-ttl", time.Second*90, "TTL for the api cache")
 	rootCmd.Flags().String("cert-file", "", "path to the tls certificate")
 	rootCmd.Flags().String("cert-key", "", "path to the tls key")
 	rootCmd.Flags().Bool("trusted-proxy-check", false, "allow requests only from trusted proxies")
