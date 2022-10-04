@@ -323,21 +323,8 @@ func (s *Server) getMinerPerformanceHandler(c *fiber.Ctx) error {
 		Meta: &Meta{
 			Success: true,
 		},
-		Result: dbPerformanceToAPIPerformance(stats),
+		Result: stats,
 	})
-}
-
-func dbPerformanceToAPIPerformance(stats []*database.PerformanceStats) []*PerformanceStats {
-	res := make([]*PerformanceStats, len(stats))
-	for i, s := range stats {
-		res[i] = &PerformanceStats{
-			Created:          s.Created,
-			Hashrate:         s.Hashrate,
-			ReportedHashrate: s.ReportedHashrate,
-			SharesPerSecond:  s.SharesPerSecond,
-		}
-	}
-	return res
 }
 
 // @Summary Get settings

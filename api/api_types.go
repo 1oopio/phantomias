@@ -150,6 +150,7 @@ type PerformanceStats struct {
 	Hashrate         *float64  `json:"hashrate"`
 	ReportedHashrate *float64  `json:"reportedHashrate"`
 	SharesPerSecond  *float64  `json:"sharesPerSecond"`
+	WorkersOnline    uint      `json:"workersOnline,omitempty"`
 }
 
 type BalanceChangesRes struct {

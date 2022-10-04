@@ -6,8 +6,8 @@ import (
 	"time"
 )
 
-func (d *DB) GetWorkerPerformanceBetweenTenMinutely(ctx context.Context, poolID, miner, worker string, start, end time.Time) ([]*PerformanceStats, error) {
-	var stats []*MinerWorkerPerformanceStatsEntity
+func (d *DB) GetWorkerPerformanceBetweenTenMinutely(ctx context.Context, poolID, miner, worker string, start, end time.Time) ([]*PerformanceStatsEntity, error) {
+	var stats []*PerformanceStatsEntity
 	err := d.sql.SelectContext(ctx, &stats, `
 	SELECT date_trunc('hour', x.created) AS created,
 		(extract(minute FROM x.created)::int / 10) AS partition,
@@ -26,5 +26,5 @@ func (d *DB) GetWorkerPerformanceBetweenTenMinutely(ctx context.Context, poolID,
 	for _, stat := range stats {
 		stat.Created = stat.Created.Add(time.Duration(stat.Partition) * 10 * time.Minute)
 	}
-	return entitiesByDate(stats), nil
+	return stats, nil
 }

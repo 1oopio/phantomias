@@ -38,6 +38,15 @@ type MinerWorkerPerformanceStatsEntity struct {
 	Partition int
 }
 
+type PerformanceStatsEntity struct {
+	Partition        int
+	Created          time.Time
+	Hashrate         *float64
+	ReportedHashrate *float64
+	SharesPerSecond  *float64
+	WorkersOnline    uint
+}
+
 type MinerPerformanceStats struct {
 	Miner           string
 	Hashrate        float64
@@ -54,6 +63,7 @@ type PerformanceStats struct {
 	Hashrate         *float64
 	ReportedHashrate *float64
 	SharesPerSecond  *float64
+	WorkersOnline    uint
 	Created          time.Time
 }
 
@@ -191,10 +201,10 @@ func minerWorkerPerformanceStatsToWorkerPerformanceStatsContainer(stats []*Miner
 	return container
 }
 
-func (d *DB) GetMinerPerformanceBetweenTenMinutely(ctx context.Context, poolID, miner string, start, end time.Time) ([]*PerformanceStats, error) {
-	var stats []*MinerWorkerPerformanceStatsEntity
+func (d *DB) GetMinerPerformanceBetweenTenMinutely(ctx context.Context, poolID, miner string, start, end time.Time) ([]*PerformanceStatsEntity, error) {
+	var stats []*PerformanceStatsEntity
 	err := d.sql.SelectContext(ctx, &stats, `
-	SELECT created, partition, SUM(hashrate) AS hashrate, SUM(reportedhashrate) AS reportedhashrate, SUM(sharespersecond) AS sharespersecond FROM (
+	SELECT created, partition, SUM(hashrate) AS hashrate, SUM(reportedhashrate) AS reportedhashrate, SUM(sharespersecond) AS sharespersecond, COUNT(DISTINCT worker) as workersonline FROM (
 		SELECT date_trunc('hour', x.created) AS created,
 			(extract(minute FROM x.created)::int / 10) AS partition,
 			x.worker, AVG(x.hs) AS hashrate, AVG(x.rhs) AS reportedhashrate, AVG(x.sharespersecond) AS sharespersecond
@@ -215,18 +225,5 @@ func (d *DB) GetMinerPerformanceBetweenTenMinutely(ctx context.Context, poolID, 
 	for _, stat := range stats {
 		stat.Created = stat.Created.Add(time.Duration(stat.Partition) * 10 * time.Minute)
 	}
-	return entitiesByDate(stats), nil
-}
-
-func entitiesByDate(entities []*MinerWorkerPerformanceStatsEntity) []*PerformanceStats {
-	var stats []*PerformanceStats
-	for _, entity := range entities {
-		stats = append(stats, &PerformanceStats{
-			Hashrate:         entity.Hashrate,
-			ReportedHashrate: entity.ReportedHashrate,
-			SharesPerSecond:  entity.SharesPerSecond,
-			Created:          entity.Created,
-		})
-	}
-	return stats
+	return stats, nil
 }

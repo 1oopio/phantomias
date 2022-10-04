@@ -204,6 +204,8 @@ definitions:
         type: number
       sharesPerSecond:
         type: number
+      workersOnline:
+        type: integer
     type: object
   api.Pool:
     properties:

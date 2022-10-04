@@ -41,6 +41,6 @@ func (s *Server) getWorkerHandler(c *fiber.Ctx) error {
 		Meta: &Meta{
 			Success: true,
 		},
-		Result: dbPerformanceToAPIPerformance(stats),
+		Result: stats,
 	})
 }

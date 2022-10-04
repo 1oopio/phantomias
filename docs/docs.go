@@ -1004,6 +1004,9 @@ const docTemplate = `{
                 },
                 "sharesPerSecond": {
                     "type": "number"
+                },
+                "workersOnline": {
+                    "type": "integer"
                 }
             }
         },

@@ -129,12 +129,40 @@ func getPerformanceRange(mode database.SampleRange) (start, end time.Time) {
 	}
 }
 
-func (s *Server) getMinerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr string) ([]*database.PerformanceStats, error) {
+func (s *Server) getMinerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr string) ([]*PerformanceStats, error) {
 	start, end := getPerformanceRange(mode)
-	return s.db.GetMinerPerformanceBetweenTenMinutely(ctx, poolCfg.ID, addr, start, end)
+	stats, err := s.db.GetMinerPerformanceBetweenTenMinutely(ctx, poolCfg.ID, addr, start, end)
+	if err != nil {
+		return nil, err
+	}
+	res := make([]*PerformanceStats, len(stats))
+	for i, s := range stats {
+		res[i] = &PerformanceStats{
+			Created:          s.Created,
+			Hashrate:         s.Hashrate,
+			ReportedHashrate: s.ReportedHashrate,
+			SharesPerSecond:  s.SharesPerSecond,
+			WorkersOnline:    s.WorkersOnline,
+		}
+	}
+	return res, nil
 }
 
-func (s *Server) getWorkerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr, worker string) ([]*database.PerformanceStats, error) {
+func (s *Server) getWorkerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr, worker string) ([]*PerformanceStats, error) {
 	start, end := getPerformanceRange(mode)
-	return s.db.GetWorkerPerformanceBetweenTenMinutely(ctx, poolCfg.ID, addr, worker, start, end)
+	stats, err := s.db.GetWorkerPerformanceBetweenTenMinutely(ctx, poolCfg.ID, addr, worker, start, end)
+	if err != nil {
+		return nil, err
+	}
+	res := make([]*PerformanceStats, len(stats))
+	for i, s := range stats {
+		res[i] = &PerformanceStats{
+			Created:          s.Created,
+			Hashrate:         s.Hashrate,
+			ReportedHashrate: s.ReportedHashrate,
+			SharesPerSecond:  s.SharesPerSecond,
+			WorkersOnline:    s.WorkersOnline,
+		}
+	}
+	return res, nil
 }
