@@ -139,9 +139,9 @@ func (s *Server) getMinerPerformanceInternal(ctx context.Context, mode database.
 	for i, s := range stats {
 		res[i] = &PerformanceStats{
 			Created:          s.Created,
-			Hashrate:         s.Hashrate,
-			ReportedHashrate: s.ReportedHashrate,
-			SharesPerSecond:  s.SharesPerSecond,
+			Hashrate:         utils.ValueOrZero(s.Hashrate),
+			ReportedHashrate: utils.ValueOrZero(s.ReportedHashrate),
+			SharesPerSecond:  utils.ValueOrZero(s.SharesPerSecond),
 			WorkersOnline:    s.WorkersOnline,
 		}
 	}
@@ -158,9 +158,9 @@ func (s *Server) getWorkerPerformanceInternal(ctx context.Context, mode database
 	for i, s := range stats {
 		res[i] = &PerformanceStats{
 			Created:          s.Created,
-			Hashrate:         s.Hashrate,
-			ReportedHashrate: s.ReportedHashrate,
-			SharesPerSecond:  s.SharesPerSecond,
+			Hashrate:         utils.ValueOrZero(s.Hashrate),
+			ReportedHashrate: utils.ValueOrZero(s.ReportedHashrate),
+			SharesPerSecond:  utils.ValueOrZero(s.SharesPerSecond),
 			WorkersOnline:    s.WorkersOnline,
 		}
 	}

@@ -147,9 +147,9 @@ type WorkerPerformanceStats struct {
 
 type PerformanceStats struct {
 	Created          time.Time `json:"created"`
-	Hashrate         *float64  `json:"hashrate"`
-	ReportedHashrate *float64  `json:"reportedHashrate"`
-	SharesPerSecond  *float64  `json:"sharesPerSecond"`
+	Hashrate         float64   `json:"hashrate"`
+	ReportedHashrate float64   `json:"reportedHashrate"`
+	SharesPerSecond  float64   `json:"sharesPerSecond"`
 	WorkersOnline    uint      `json:"workersOnline,omitempty"`
 }
 
