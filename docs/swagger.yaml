@@ -95,7 +95,7 @@ definitions:
       pendingShares:
         type: number
       performance:
-        $ref: '#/definitions/api.WorkerStats'
+        $ref: '#/definitions/api.WorkerPerformanceStatsContainer'
       prices:
         additionalProperties:
           $ref: '#/definitions/api.Price'
@@ -111,7 +111,7 @@ definitions:
         type: integer
       result:
         items:
-          $ref: '#/definitions/api.WorkerStats'
+          $ref: '#/definitions/api.PerformanceStats'
         type: array
       success:
         type: boolean
@@ -193,6 +193,17 @@ definitions:
         type: array
       success:
         type: boolean
+    type: object
+  api.PerformanceStats:
+    properties:
+      created:
+        type: string
+      hashrate:
+        type: number
+      reportedHashrate:
+        type: number
+      sharesPerSecond:
+        type: number
     type: object
   api.Pool:
     properties:
@@ -334,7 +345,7 @@ definitions:
         type: integer
       result:
         items:
-          $ref: '#/definitions/api.WorkerStats'
+          $ref: '#/definitions/api.PerformanceStats'
         type: array
       success:
         type: boolean
@@ -348,7 +359,7 @@ definitions:
       sharesPerSecond:
         type: number
     type: object
-  api.WorkerStats:
+  api.WorkerPerformanceStatsContainer:
     properties:
       created:
         type: string

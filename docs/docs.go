@@ -836,7 +836,7 @@ const docTemplate = `{
                     "type": "number"
                 },
                 "performance": {
-                    "$ref": "#/definitions/api.WorkerStats"
+                    "$ref": "#/definitions/api.WorkerPerformanceStatsContainer"
                 },
                 "prices": {
                     "type": "object",
@@ -861,7 +861,7 @@ const docTemplate = `{
                 "result": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/api.WorkerStats"
+                        "$ref": "#/definitions/api.PerformanceStats"
                     }
                 },
                 "success": {
@@ -987,6 +987,23 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
+                }
+            }
+        },
+        "api.PerformanceStats": {
+            "type": "object",
+            "properties": {
+                "created": {
+                    "type": "string"
+                },
+                "hashrate": {
+                    "type": "number"
+                },
+                "reportedHashrate": {
+                    "type": "number"
+                },
+                "sharesPerSecond": {
+                    "type": "number"
                 }
             }
         },
@@ -1204,7 +1221,7 @@ const docTemplate = `{
                 "result": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/api.WorkerStats"
+                        "$ref": "#/definitions/api.PerformanceStats"
                     }
                 },
                 "success": {
@@ -1226,7 +1243,7 @@ const docTemplate = `{
                 }
             }
         },
-        "api.WorkerStats": {
+        "api.WorkerPerformanceStatsContainer": {
             "type": "object",
             "properties": {
                 "created": {

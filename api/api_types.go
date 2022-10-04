@@ -123,18 +123,18 @@ type MinerRes struct {
 }
 
 type Miner struct {
-	PendingShares   float64          `json:"pendingShares"`
-	PendingBalance  float64          `json:"pendingBalance"`
-	TotalPaid       float64          `json:"totalPaid"`
-	TodayPaid       float64          `json:"todayPaid"`
-	LastPayment     *time.Time       `json:"lastPayment"`
-	LastPaymentLink string           `json:"lastPaymentLink"`
-	Performance     *WorkerStats     `json:"performance"`
-	Prices          map[string]Price `json:"prices"`
-	Coin            string           `json:"coin"`
+	PendingShares   float64                          `json:"pendingShares"`
+	PendingBalance  float64                          `json:"pendingBalance"`
+	TotalPaid       float64                          `json:"totalPaid"`
+	TodayPaid       float64                          `json:"todayPaid"`
+	LastPayment     *time.Time                       `json:"lastPayment"`
+	LastPaymentLink string                           `json:"lastPaymentLink"`
+	Performance     *WorkerPerformanceStatsContainer `json:"performance"`
+	Prices          map[string]Price                 `json:"prices"`
+	Coin            string                           `json:"coin"`
 }
 
-type WorkerStats struct {
+type WorkerPerformanceStatsContainer struct {
 	Created time.Time                          `json:"created"`
 	Workers map[string]*WorkerPerformanceStats `json:"workers"`
 }
@@ -143,6 +143,13 @@ type WorkerPerformanceStats struct {
 	Hashrate         *float64 `json:"hashrate"`
 	ReportedHashrate *float64 `json:"reportedHashrate"`
 	SharesPerSecond  *float64 `json:"sharesPerSecond"`
+}
+
+type PerformanceStats struct {
+	Created          time.Time `json:"created"`
+	Hashrate         *float64  `json:"hashrate"`
+	ReportedHashrate *float64  `json:"reportedHashrate"`
+	SharesPerSecond  *float64  `json:"sharesPerSecond"`
 }
 
 type BalanceChangesRes struct {
@@ -170,7 +177,7 @@ type DailyEarningRes struct {
 
 type MinerPerformanceRes struct {
 	*Meta
-	Result []*WorkerStats `json:"result"`
+	Result []*PerformanceStats `json:"result"`
 }
 
 type MinerSettingsRes struct {
@@ -189,5 +196,5 @@ type MinerSettingsReq struct {
 
 type WorkerPerformanceRes struct {
 	*Meta
-	Result []*WorkerStats `json:"result"`
+	Result []*PerformanceStats `json:"result"`
 }

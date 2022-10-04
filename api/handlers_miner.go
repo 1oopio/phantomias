@@ -112,7 +112,7 @@ func dbMinerStatsToAPIMiner(stats *database.MinerStats) *Miner {
 		TodayPaid:      utils.ValueOrZero(stats.TodayPaid),
 	}
 	if stats.Performance != nil {
-		workerStats := &WorkerStats{
+		workerStats := &WorkerPerformanceStatsContainer{
 			Created: stats.Performance.Created,
 			Workers: dbWorkersStatsToAPIWorkerStats(stats.Performance.Workers),
 		}
@@ -327,12 +327,14 @@ func (s *Server) getMinerPerformanceHandler(c *fiber.Ctx) error {
 	})
 }
 
-func dbPerformanceToAPIPerformance(stats []*database.WorkerPerformanceStatsContainer) []*WorkerStats {
-	res := make([]*WorkerStats, len(stats))
+func dbPerformanceToAPIPerformance(stats []*database.PerformanceStats) []*PerformanceStats {
+	res := make([]*PerformanceStats, len(stats))
 	for i, s := range stats {
-		res[i] = &WorkerStats{
-			Created: s.Created,
-			Workers: dbWorkersStatsToAPIWorkerStats(s.Workers),
+		res[i] = &PerformanceStats{
+			Created:          s.Created,
+			Hashrate:         s.Hashrate,
+			ReportedHashrate: s.ReportedHashrate,
+			SharesPerSecond:  s.SharesPerSecond,
 		}
 	}
 	return res

@@ -129,12 +129,12 @@ func getPerformanceRange(mode database.SampleRange) (start, end time.Time) {
 	}
 }
 
-func (s *Server) getMinerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr string) ([]*database.WorkerPerformanceStatsContainer, error) {
+func (s *Server) getMinerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr string) ([]*database.PerformanceStats, error) {
 	start, end := getPerformanceRange(mode)
 	return s.db.GetMinerPerformanceBetweenTenMinutely(ctx, poolCfg.ID, addr, start, end)
 }
 
-func (s *Server) getWorkerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr, worker string) ([]*database.WorkerPerformanceStatsContainer, error) {
+func (s *Server) getWorkerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr, worker string) ([]*database.PerformanceStats, error) {
 	start, end := getPerformanceRange(mode)
 	return s.db.GetWorkerPerformanceBetweenTenMinutely(ctx, poolCfg.ID, addr, worker, start, end)
 }
