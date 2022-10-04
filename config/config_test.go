@@ -58,6 +58,9 @@ func TestLoadConfig(t *testing.T) {
 	assert.Equal(t, true, cfg.Pools[0].Ports["4300"].TLS)
 	assert.Equal(t, true, cfg.Pools[0].Ports["4300"].TLSAuto)
 
+	assert.Equal(t, "deroxyz", cfg.Pools[0].Address)
+	assert.Equal(t, 0.2, cfg.Pools[0].MinPayout)
+
 }
 
 func TestLoadNoFileConfig(t *testing.T) {

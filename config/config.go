@@ -44,6 +44,8 @@ type Pool struct {
 	TxLink      string          `mapstructure:"tx_link"`      // transaction link (explorer)
 	AddressLink string          `mapstructure:"address_link"` // address link (explorer)
 	Ports       map[string]Port `mapstructure:"ports"`        // ports
+	Address     string          `mapstructure:"address"`      // address of the pool
+	MinPayout   float64         `mapstructure:"min_payout"`   // minimum payout
 }
 
 // Port represents a pool port

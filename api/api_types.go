@@ -38,6 +38,8 @@ type PoolExtendedRes struct {
 
 type PoolExtended struct {
 	*Pool
+	Address            string                           `json:"address"`
+	MinPayout          float64                          `json:"minPayout"`
 	Ports              map[string]*PoolEndpoint         `json:"ports"`
 	TotalBlocksFound   uint                             `json:"totalBlocksFound"`
 	TotalPayments      float64                          `json:"totalPayments"`
