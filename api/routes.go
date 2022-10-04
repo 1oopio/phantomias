@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/swagger"
 	"github.com/gofiber/websocket/v2"
 )
 
@@ -59,7 +58,7 @@ func (s *Server) wsRoute(middleware ...fiber.Handler) {
 }
 
 func (s *Server) swaggerRoute(middleware ...fiber.Handler) {
-	s.api.Get("/swagger/*", append(middleware, swagger.HandlerDefault)...)
+	s.api.Get("/swagger/*", append(middleware, s.swagger())...)
 }
 
 // @Summary Teapot
