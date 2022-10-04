@@ -66,6 +66,18 @@ const docTemplate = `{
                         "name": "pool_id",
                         "in": "path",
                         "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Range in hours to fetch the top miners from (default=1)",
+                        "name": "topMinersRange",
+                        "in": "query"
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Range in blocks to fetch the average effort from (default=50)",
+                        "name": "effortRange",
+                        "in": "query"
                     }
                 ],
                 "responses": {
@@ -1074,6 +1086,9 @@ const docTemplate = `{
         "api.PoolExtended": {
             "type": "object",
             "properties": {
+                "address": {
+                    "type": "string"
+                },
                 "algorithm": {
                     "type": "string"
                 },
@@ -1082,6 +1097,9 @@ const docTemplate = `{
                 },
                 "coin": {
                     "type": "string"
+                },
+                "effort": {
+                    "type": "number"
                 },
                 "fee": {
                     "type": "number"
@@ -1097,6 +1115,9 @@ const docTemplate = `{
                 },
                 "lastBlockFoundTime": {
                     "type": "string"
+                },
+                "minPayout": {
+                    "type": "number"
                 },
                 "miners": {
                     "type": "integer"

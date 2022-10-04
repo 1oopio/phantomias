@@ -71,6 +71,18 @@ func getTopMinersRange(c *fiber.Ctx) int {
 	return topMinersRange
 }
 
+func getEffortRange(c *fiber.Ctx) int {
+	effortRangeString := c.Query("effortRange", "50")
+	effortRange, err := strconv.Atoi(effortRangeString)
+	if err != nil {
+		return 50
+	}
+	if effortRange < 1 {
+		effortRange = 50
+	}
+	return effortRange
+}
+
 func getPerformanceModeQuery(c *fiber.Ctx) database.SampleRange {
 	switch c.Query("perfMode", "day") {
 	case "hour":
