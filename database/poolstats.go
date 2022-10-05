@@ -12,6 +12,7 @@ type PoolStats struct {
 	ID                   int64
 	PoolID               string
 	ConnectedMiners      int32
+	ConnectedWorkers     int32
 	PoolHashrate         float64
 	SharesPerSecond      float64
 	NetworkHashrate      float64
