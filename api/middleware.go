@@ -1,6 +1,8 @@
 package api
 
 import (
+	_ "embed"
+	"html/template"
 	"time"
 	"unsafe"
 
@@ -8,6 +10,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cache"
 	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/swagger"
 )
 
 func (s *Server) recover() fiber.Handler {
@@ -40,4 +43,13 @@ func (s *Server) cache() fiber.Handler {
 		return c.Path() + *(*string)(unsafe.Pointer(&q))
 	}
 	return cache.New(cfg)
+}
+
+//go:embed swagger/main.css
+var customSwaggerStyle string
+
+func (s *Server) swagger() fiber.Handler {
+	cfg := swagger.ConfigDefault
+	cfg.CustomStyle = template.CSS(customSwaggerStyle)
+	return swagger.New(cfg)
 }

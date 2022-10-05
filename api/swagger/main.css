@@ -1,0 +1,69 @@
+.swagger-ui .topbar { display: none }
+
+.swagger-ui { color: #d8d4cf } 
+
+html, body { background-color: #313041 }
+
+.swagger-ui .info .title { color: #d8d4cf }
+
+.swagger-ui a.nostyle, .swagger-ui a.nostyle:visited { color: #d8d4cf; }
+
+.swagger-ui .opblock .opblock-summary-description { color: #d8d4cf }
+
+.swagger-ui .opblock-description-wrapper p, .swagger-ui .opblock-external-docs-wrapper p, .swagger-ui .opblock-title_normal p { color: rgb(188, 182, 173) }
+
+.swagger-ui .opblock .opblock-section-header { background: #313041 }
+
+.swagger-ui .opblock .opblock-section-header h4 { color: #d8d4cf }
+
+.swagger-ui .info li, .swagger-ui .info p, .swagger-ui .info table { color: #A1A0BA }
+
+.swagger-ui .info .base-url { color: #39FF14 }
+
+.swagger-ui .opblock-tag { border-bottom: 1px solid #A1A0BA }
+
+.swagger-ui table thead tr td, .swagger-ui table thead tr th { color: #d8d4cf }
+
+.swagger-ui .response-col_status { color: #d8d4cf }
+
+.swagger-ui .response-col_status { color: #d8d4cf }
+
+.swagger-ui .tab li { color: #7B61FF }
+
+.swagger-ui .parameter__name { color: #A1A0BA }
+
+.swagger-ui .parameter__type { color: #A1A0BA }
+
+.swagger-ui .opblock .opblock-section-header > label { color: #d8d4cf }
+
+.swagger-ui select {
+    background-color: #313041;
+    border-color: #A1A0BA;
+    box-shadow: #313041 0px 1px 2px 0px;
+    color: #A1A0BA;
+}
+
+.swagger-ui .btn {
+    background: transparent;
+    border: 2px solid grey;
+    border-radius: 4px;
+    box-shadow: 0 1px 2px #313041;
+    color: #A1A0BA;
+    font-family: sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 5px 23px;
+    transition: all .3s;
+}
+
+.swagger-ui .model-box-control, .swagger-ui .models-control, .swagger-ui .opblock-summary-control { color: #d8d4cf }
+
+.swagger-ui .model-title { color: rgb(188, 182, 173) }
+
+.swagger-ui section.models { border-color: #A1A0BA }
+
+.swagger-ui .model { color: #d8d4cf }
+
+.swagger-ui section.models.is-open h4 { border-bottom-color: #A1A0BA }
+
+.swagger-ui .responses-inner h4, .swagger-ui .responses-inner h5 { color: rgb(188, 182, 173) }
