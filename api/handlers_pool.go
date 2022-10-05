@@ -102,7 +102,12 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
-	poolExtended := PoolExtended{Pool: poolStats, TopMiners: minersByHashrate}
+	poolExtended := PoolExtended{
+		Pool:      poolStats,
+		TopMiners: minersByHashrate,
+		Address:   poolCfg.Address,
+		MinPayout: poolCfg.MinPayout,
+	}
 
 	totalPaid, err := s.db.GetTotalPoolPayments(c.Context(), c.Params("id"))
 	if err != nil {

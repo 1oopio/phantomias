@@ -51,3 +51,5 @@ pools:
         var_diff: true
         tls: true
         tls_auto: true
+    address: deroxyz
+    min_payout: 0.2
