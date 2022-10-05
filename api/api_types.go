@@ -23,6 +23,7 @@ type Pool struct {
 	Name              string           `json:"name"`
 	Hashrate          float64          `json:"hashrate"`
 	Miners            int32            `json:"miners"`
+	Workers           int32            `json:"workers"`
 	Fee               float64          `json:"fee"`
 	FeeType           string           `json:"feeType"`
 	BlockHeight       int64            `json:"blockHeight"`

@@ -55,6 +55,7 @@ func (s *Server) gatherPoolStats(ctx context.Context, p *config.Pool) (*Pool, er
 	pool.Fee = p.Fee
 	pool.FeeType = p.FeeType
 	pool.Miners = stats.ConnectedMiners
+	pool.Workers = stats.ConnectedWorkers
 	pool.Hashrate = stats.PoolHashrate
 	pool.BlockHeight = stats.BlockHeight
 	pool.NetworkHashrate = stats.NetworkHashrate
