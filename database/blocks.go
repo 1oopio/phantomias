@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -65,4 +66,16 @@ func (d *DB) PageBlocks(ctx context.Context, poolID string, status []BlockStatus
 		err = d.sql.SelectContext(ctx, &blocks, s.String(), status, page*pageSize, pageSize)
 	}
 	return blocks, err
+}
+
+func (d *DB) GetPoolEffort(ctx context.Context, poolID string, blocksCount int) (float32, error) {
+	var effort float32
+	err := d.sql.GetContext(ctx, &effort, `
+	SELECT avg(effort) FROM (
+		SELECT effort FROM blocks WHERE poolid = $1 AND effort IS NOT NULL ORDER BY created DESC FETCH NEXT $2 ROWS ONLY
+	) as x;`, poolID, blocksCount)
+	if err != nil {
+		return 0, fmt.Errorf("failed to get pool effort: %w", err)
+	}
+	return effort, nil
 }

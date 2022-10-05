@@ -81,11 +81,14 @@ func (s Server) getPrices(name string) (priceRes map[string]Price) {
 // @Tags Pools
 // @Produce  json
 // @Param pool_id path string true "ID of the pool"
+// @Param topMinersRange query int false "Range in hours to fetch the top miners from (default=1)"
+// @Param effortRange query int false "Range in blocks to fetch the average effort from (default=50)"
 // @Success 200 {object} api.PoolExtendedRes
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id} [get]
 func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 	topMinersRange := getTopMinersRange(c)
+	effortRange := getEffortRange(c)
 
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
 	if poolCfg == nil {
@@ -98,7 +101,7 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 	}
 
 	from := time.Now().Add(-time.Duration(topMinersRange) * time.Hour)
-	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.Context(), c.Params("id"), from, 0, 15)
+	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.Context(), poolCfg.ID, from, 0, 15)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -109,23 +112,29 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 		MinPayout: poolCfg.MinPayout,
 	}
 
-	totalPaid, err := s.db.GetTotalPoolPayments(c.Context(), c.Params("id"))
+	totalPaid, err := s.db.GetTotalPoolPayments(c.Context(), poolCfg.ID)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 	poolExtended.TotalPayments = totalPaid.InexactFloat64()
 
-	totalBlocks, err := s.db.GetPoolBlockCount(c.Context(), c.Params("id"))
+	totalBlocks, err := s.db.GetPoolBlockCount(c.Context(), poolCfg.ID)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 	poolExtended.TotalBlocksFound = totalBlocks
 
-	lastPoolBlockTime, err := s.db.GetLastPoolBlockTime(c.Context(), c.Params("id"))
+	lastPoolBlockTime, err := s.db.GetLastPoolBlockTime(c.Context(), poolCfg.ID)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 	poolExtended.LastBlockFoundTime = lastPoolBlockTime
+
+	effort, err := s.db.GetPoolEffort(c.Context(), poolCfg.ID, effortRange)
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+	poolExtended.Effort = effort
 
 	res := &PoolExtendedRes{
 		Meta: &Meta{
