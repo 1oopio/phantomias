@@ -130,11 +130,17 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 	}
 	poolExtended.LastBlockFoundTime = lastPoolBlockTime
 
-	effort, err := s.db.GetPoolEffort(c.Context(), poolCfg.ID, effortRange)
+	avgEffort, err := s.db.GetPoolEffort(c.Context(), poolCfg.ID, effortRange)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
-	poolExtended.Effort = effort
+	poolExtended.AverageEffort = avgEffort
+
+	currentEffort, err := s.db.GetEffortBetweenCreated(c.Context(), poolCfg.ID, poolCfg.ShareMultiplier, lastPoolBlockTime, time.Now())
+	if err != nil {
+		return handleAPIError(c, http.StatusInternalServerError, err)
+	}
+	poolExtended.Effort = currentEffort
 
 	res := &PoolExtendedRes{
 		Meta: &Meta{

@@ -53,3 +53,4 @@ pools:
         tls_auto: true
     address: deroxyz
     min_payout: 0.2
+    share_multiplier: 10

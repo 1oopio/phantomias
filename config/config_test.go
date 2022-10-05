@@ -60,6 +60,7 @@ func TestLoadConfig(t *testing.T) {
 
 	assert.Equal(t, "deroxyz", cfg.Pools[0].Address)
 	assert.Equal(t, 0.2, cfg.Pools[0].MinPayout)
+	assert.Equal(t, float64(10), cfg.Pools[0].ShareMultiplier)
 
 }
 

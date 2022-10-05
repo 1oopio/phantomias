@@ -31,21 +31,22 @@ type DB struct {
 
 // Pool represents the config for a single pool
 type Pool struct {
-	ID          string          `mapstructure:"id"`           // pool id
-	Enabled     bool            `mapstructure:"enabled"`      // pool enabled
-	Type        string          `mapstructure:"type"`         // coinfamily
-	RPC         string          `mapstructure:"rpc"`          // rpc url
-	Algorithm   string          `mapstructure:"algorithm"`    // algorithm
-	Name        string          `mapstructure:"name"`         // pool name
-	Coin        string          `mapstructure:"coin"`         // coin name
-	Fee         float64         `mapstructure:"fee"`          // pool fee
-	FeeType     string          `mapstructure:"fee_type"`     // pool fee type
-	BlockLink   string          `mapstructure:"block_link"`   // block link (explorer)
-	TxLink      string          `mapstructure:"tx_link"`      // transaction link (explorer)
-	AddressLink string          `mapstructure:"address_link"` // address link (explorer)
-	Ports       map[string]Port `mapstructure:"ports"`        // ports
-	Address     string          `mapstructure:"address"`      // address of the pool
-	MinPayout   float64         `mapstructure:"min_payout"`   // minimum payout
+	ID              string          `mapstructure:"id"`               // pool id
+	Enabled         bool            `mapstructure:"enabled"`          // pool enabled
+	Type            string          `mapstructure:"type"`             // coinfamily
+	RPC             string          `mapstructure:"rpc"`              // rpc url
+	Algorithm       string          `mapstructure:"algorithm"`        // algorithm
+	Name            string          `mapstructure:"name"`             // pool name
+	Coin            string          `mapstructure:"coin"`             // coin name
+	Fee             float64         `mapstructure:"fee"`              // pool fee
+	FeeType         string          `mapstructure:"fee_type"`         // pool fee type
+	BlockLink       string          `mapstructure:"block_link"`       // block link (explorer)
+	TxLink          string          `mapstructure:"tx_link"`          // transaction link (explorer)
+	AddressLink     string          `mapstructure:"address_link"`     // address link (explorer)
+	Ports           map[string]Port `mapstructure:"ports"`            // ports
+	Address         string          `mapstructure:"address"`          // address of the pool
+	MinPayout       float64         `mapstructure:"min_payout"`       // minimum payout
+	ShareMultiplier float64         `mapstructure:"share_multiplier"` // share multiplier
 }
 
 // Port represents a pool port
