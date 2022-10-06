@@ -155,7 +155,7 @@ func (d *DB) GetMinerStats(ctx context.Context, poolID string, miner string) (*M
 	err = d.sql.GetContext(ctx, &lastUpdated, `
 	SELECT created FROM minerstats WHERE poolid = $1 AND miner = $2 AND hashratetype = 'actual' ORDER BY created DESC LIMIT 1;
 	`, poolID, miner)
-	if err != nil {
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, fmt.Errorf("failed to get miner last updated: %w", err)
 	}
 
