@@ -23,28 +23,28 @@ func (s *Server) setupRoutes() {
 	s.teaPot(ratelimiter)
 }
 
-func (s *Server) apiRoutes(middleware ...fiber.Handler) {
-	api := s.api.Group("/api", middleware...)
-	v1 := api.Group("/v1")
-	v1.Get("/pools", s.getPoolsHandler)
+func (s *Server) apiRoutes(cache, ratelimiter fiber.Handler) {
+	api := s.api.Group("/api")
+	v1 := api.Group("/v1", ratelimiter)
+	v1.Get("/pools", cache, s.getPoolsHandler)
 	v1.Get("/pools/:id", s.getPoolHandler)
 	v1.Get("pools/:id/blocks", s.getBlocksHandler)
 	v1.Get("pools/:id/payments", s.getPaymentsHandler)
-	v1.Get("pools/:id/performance", s.getPoolPerformanceHandler)
+	v1.Get("pools/:id/performance", cache, s.getPoolPerformanceHandler)
 	v1.Get("pools/:id/miners", s.getMinersHandler)
 	v1.Get("pools/:id/miners/:miner_addr", s.getMinerHandler)
 	v1.Get("pools/:id/miners/:miner_addr/payments", s.getMinerPaymentsHandler)
 	v1.Get("pools/:id/miners/:miner_addr/balancechanges", s.getMinerBalanceChangesHandler)
 	v1.Get("pools/:id/miners/:miner_addr/earnings/daily", s.getMinerDailyEarningsHandler)
-	v1.Get("pools/:id/miners/:miner_addr/performance", s.getMinerPerformanceHandler)
+	v1.Get("pools/:id/miners/:miner_addr/performance", cache, s.getMinerPerformanceHandler)
 	v1.Get("pools/:id/miners/:miner_addr/settings", s.getMinerSettingsHandler)
 	v1.Post("pools/:id/miners/:miner_addr/settings", s.postMinerSettingsHandler)
-	v1.Get("pools/:id/miners/:miner_addr/workers/:worker_name/performance", s.getWorkerHandler)
+	v1.Get("pools/:id/miners/:miner_addr/workers/:worker_name/performance", cache, s.getWorkerHandler)
 }
 
 func (s *Server) wsRoute(middleware ...fiber.Handler) {
 	// require a connection upgrade to websocket
-	s.api.Use("/ws", func(c *fiber.Ctx) error {
+	s.api.Use("/v1/ws", func(c *fiber.Ctx) error {
 		if websocket.IsWebSocketUpgrade(c) {
 			c.Locals("allowed", true)
 			return c.Next()
@@ -52,7 +52,7 @@ func (s *Server) wsRoute(middleware ...fiber.Handler) {
 		return fiber.ErrUpgradeRequired
 	})
 
-	s.api.Get("/ws", append(middleware, websocket.New(s.wsHandler, websocket.Config{
+	s.api.Get("/v1/ws", append(middleware, websocket.New(s.wsHandler, websocket.Config{
 		HandshakeTimeout: wsHandshakeTimeout,
 	}))...)
 }
