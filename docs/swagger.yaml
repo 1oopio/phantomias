@@ -235,6 +235,8 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/api.Price'
         type: object
+      workers:
+        type: integer
     type: object
   api.PoolEndpoint:
     properties:
@@ -253,6 +255,8 @@ definitions:
         type: string
       algorithm:
         type: string
+      averageEffort:
+        type: number
       blockHeight:
         type: integer
       coin:
@@ -295,6 +299,8 @@ definitions:
         type: integer
       totalPayments:
         type: number
+      workers:
+        type: integer
     type: object
   api.PoolExtendedRes:
     properties:
@@ -346,6 +352,26 @@ definitions:
         type: number
       priceChangePercentage24H:
         type: number
+    type: object
+  api.Stats:
+    properties:
+      paymentsToday:
+        type: integer
+      totalMiners:
+        type: integer
+      totalSharesPerSecond:
+        type: number
+      totalWorkers:
+        type: integer
+    type: object
+  api.StatsRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        $ref: '#/definitions/api.Stats'
+      success:
+        type: boolean
     type: object
   api.WorkerPerformanceRes:
     properties:
@@ -845,6 +871,23 @@ paths:
       summary: Get a list of performance samples
       tags:
       - Pools
+  /api/v1/stats:
+    get:
+      description: Get stats for all pools
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.StatsRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get overall stats
+      tags:
+      - Overall
   /teapot:
     get:
       produces:

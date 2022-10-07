@@ -31,6 +31,13 @@ type AggregatedPoolStats struct {
 	Created           time.Time
 }
 
+type OverallPoolStats struct {
+	TotalMiners          int32
+	TotalWorkers         int32
+	TotalSharesPerSecond float64
+	PaymentsToday        int32
+}
+
 func (d *DB) GetLastPoolStats(ctx context.Context, poolID string) (*PoolStats, error) {
 	var stats PoolStats
 	err := d.sql.GetContext(ctx, &stats, "SELECT * FROM poolstats WHERE poolid = $1 ORDER BY created DESC FETCH NEXT 1 ROWS ONLY", poolID)
@@ -85,4 +92,35 @@ func (d *DB) GetPoolPerformanceBetween(ctx context.Context, poolID string, inter
 		ORDER BY created;
 	`, trunc, trunc), poolID, start, end)
 	return stats, err
+}
+
+func (d *DB) GetOverallPoolStats(ctx context.Context) (OverallPoolStats, error) {
+	var stats OverallPoolStats
+	err := d.sql.GetContext(ctx, &stats, `
+	WITH 
+	stats AS (
+		SELECT
+			connectedminers,
+			connectedworkers,
+			sharespersecond,
+			ROW_NUMBER() OVER (PARTITION BY poolid ORDER BY created DESC) AS row_number
+		FROM poolstats
+		WHERE created > (NOW() - INTERVAL '20 minutes')
+	),
+	pmts AS (
+		SELECT COUNT(*) AS paymentstoday FROM payments WHERE created > DATE_TRUNC('day', NOW())
+	)
+	SELECT 
+		SUM(s.connectedminers) AS totalminers, 
+		SUM(s.connectedworkers) AS totalworkers, 
+		SUM(s.sharespersecond) AS totalsharespersecond,
+		p.paymentstoday
+	FROM stats s, pmts p
+	WHERE row_number = 1
+	GROUP BY p.paymentstoday;
+	`)
+	if err != nil {
+		return OverallPoolStats{}, fmt.Errorf("failed to get overall pool stats: %w", err)
+	}
+	return stats, nil
 }

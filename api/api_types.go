@@ -11,6 +11,18 @@ type Meta struct {
 	Success   bool `json:"success"`
 }
 
+type StatsRes struct {
+	*Meta
+	Result Stats `json:"result"`
+}
+
+type Stats struct {
+	TotalMiners          int32
+	TotalWorkers         int32
+	TotalSharesPerSecond float64
+	PaymentsToday        int32
+}
+
 type PoolsRes struct {
 	*Meta
 	Result []*Pool `json:"result"`
