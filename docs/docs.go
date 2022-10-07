@@ -682,6 +682,32 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/stats": {
+            "get": {
+                "description": "Get stats for all pools",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Overall"
+                ],
+                "summary": "Get overall stats",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.StatsRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/teapot": {
             "get": {
                 "produces": [
@@ -1063,6 +1089,9 @@ const docTemplate = `{
                     "additionalProperties": {
                         "$ref": "#/definitions/api.Price"
                     }
+                },
+                "workers": {
+                    "type": "integer"
                 }
             }
         },
@@ -1091,6 +1120,9 @@ const docTemplate = `{
                 },
                 "algorithm": {
                     "type": "string"
+                },
+                "averageEffort": {
+                    "type": "number"
                 },
                 "blockHeight": {
                     "type": "integer"
@@ -1154,6 +1186,9 @@ const docTemplate = `{
                 },
                 "totalPayments": {
                     "type": "number"
+                },
+                "workers": {
+                    "type": "integer"
                 }
             }
         },
@@ -1233,6 +1268,37 @@ const docTemplate = `{
                 },
                 "priceChangePercentage24H": {
                     "type": "number"
+                }
+            }
+        },
+        "api.Stats": {
+            "type": "object",
+            "properties": {
+                "paymentsToday": {
+                    "type": "integer"
+                },
+                "totalMiners": {
+                    "type": "integer"
+                },
+                "totalSharesPerSecond": {
+                    "type": "number"
+                },
+                "totalWorkers": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.StatsRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "$ref": "#/definitions/api.Stats"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },

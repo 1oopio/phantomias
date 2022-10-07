@@ -26,11 +26,18 @@ func (s *Server) setupRoutes() {
 func (s *Server) apiRoutes(cache, ratelimiter fiber.Handler) {
 	api := s.api.Group("/api")
 	v1 := api.Group("/v1", ratelimiter)
+
+	// overall
+	v1.Get("/stats", cache, s.getOverallPoolStatsHandler)
+
+	// pools
 	v1.Get("/pools", cache, s.getPoolsHandler)
 	v1.Get("/pools/:id", s.getPoolHandler)
 	v1.Get("pools/:id/blocks", s.getBlocksHandler)
 	v1.Get("pools/:id/payments", s.getPaymentsHandler)
 	v1.Get("pools/:id/performance", cache, s.getPoolPerformanceHandler)
+
+	// miners
 	v1.Get("pools/:id/miners", s.getMinersHandler)
 	v1.Get("pools/:id/miners/:miner_addr", s.getMinerHandler)
 	v1.Get("pools/:id/miners/:miner_addr/payments", s.getMinerPaymentsHandler)
@@ -39,6 +46,8 @@ func (s *Server) apiRoutes(cache, ratelimiter fiber.Handler) {
 	v1.Get("pools/:id/miners/:miner_addr/performance", cache, s.getMinerPerformanceHandler)
 	v1.Get("pools/:id/miners/:miner_addr/settings", s.getMinerSettingsHandler)
 	v1.Post("pools/:id/miners/:miner_addr/settings", s.postMinerSettingsHandler)
+
+	// workers
 	v1.Get("pools/:id/miners/:miner_addr/workers/:worker_name/performance", cache, s.getWorkerHandler)
 }
 
