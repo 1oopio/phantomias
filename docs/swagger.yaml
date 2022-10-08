@@ -393,6 +393,13 @@ definitions:
       success:
         type: boolean
     type: object
+  api.Worker:
+    properties:
+      hashrate:
+        type: number
+      sharesPerSecond:
+        type: number
+    type: object
   api.WorkerPerformanceRes:
     properties:
       pageCount:
@@ -421,6 +428,15 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/api.WorkerPerformanceStats'
         type: object
+    type: object
+  api.WorkerRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        $ref: '#/definitions/api.Worker'
+      success:
+        type: boolean
     type: object
   database.MinerPerformanceStats:
     properties:
@@ -792,9 +808,43 @@ paths:
       summary: Update settings
       tags:
       - Miners
-  /api/v1/pools/{pool_id}/miners/{miner_addr}/workers/{worker_name}/performance:
+  /api/v1/pools/{pool_id}/miners/{miner_addr}/workers/{worker_name}:
     get:
       description: Get a specific worker from a specific miner from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Address of the miner
+        in: path
+        name: miner_addr
+        required: true
+        type: string
+      - description: Name of the worker
+        in: path
+        name: worker_name
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.WorkerRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get a worker
+      tags:
+      - Workers
+  /api/v1/pools/{pool_id}/miners/{miner_addr}/workers/{worker_name}/performance:
+    get:
+      description: Get the performance from a specific worker from a specific miner
+        from a specific pool
       parameters:
       - description: ID of the pool
         in: path
@@ -826,7 +876,7 @@ paths:
           description: Bad Request
           schema:
             $ref: '#/definitions/utils.APIError'
-      summary: Get a worker
+      summary: Get performance stats of a worker
       tags:
       - Workers
   /api/v1/pools/{pool_id}/payments:

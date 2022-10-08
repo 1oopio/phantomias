@@ -227,3 +227,13 @@ type WorkerPerformanceRes struct {
 	*Meta
 	Result []*PerformanceStats `json:"result"`
 }
+
+type Worker struct {
+	Hashrate        float64
+	SharesPerSecond float64
+}
+
+type WorkerRes struct {
+	*Meta
+	Result *Worker `json:"result"`
+}

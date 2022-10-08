@@ -2,9 +2,16 @@ package database
 
 import (
 	"context"
+	"database/sql"
+	"errors"
 	"fmt"
 	"time"
 )
+
+type WorkerStats struct {
+	Hashrate        *float64
+	SharesPerSecond *float64
+}
 
 func (d *DB) GetWorkerPerformanceBetweenTenMinutely(ctx context.Context, poolID, miner, worker string, start, end time.Time) ([]*PerformanceStatsEntity, error) {
 	var stats []*PerformanceStatsEntity
@@ -25,6 +32,28 @@ func (d *DB) GetWorkerPerformanceBetweenTenMinutely(ctx context.Context, poolID,
 	}
 	for _, stat := range stats {
 		stat.Created = stat.Created.Add(time.Duration(stat.Partition) * 10 * time.Minute)
+	}
+	return stats, nil
+}
+
+func (d *DB) GetWorkerStats(ctx context.Context, poolID, miner, worker string) (WorkerStats, error) {
+	var stats WorkerStats
+	err := d.sql.GetContext(ctx, &stats, `
+	SELECT
+		hashrate,
+		sharespersecond
+	FROM minerstats
+	WHERE
+		poolid = $1 AND
+		miner = $2 AND
+		worker = $3 AND
+		hashratetype = 'actual'
+	ORDER BY
+		created DESC
+	LIMIT 1;
+	`, poolID, miner, worker)
+	if err != nil && !errors.Is(err, sql.ErrNoRows) {
+		return WorkerStats{}, fmt.Errorf("failed to get worker stats: %w", err)
 	}
 	return stats, nil
 }

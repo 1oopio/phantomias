@@ -533,7 +533,7 @@ const docTemplate = `{
                 }
             }
         },
-        "/api/v1/pools/{pool_id}/miners/{miner_addr}/workers/{worker_name}/performance": {
+        "/api/v1/pools/{pool_id}/miners/{miner_addr}/workers/{worker_name}": {
             "get": {
                 "description": "Get a specific worker from a specific miner from a specific pool",
                 "produces": [
@@ -543,6 +543,55 @@ const docTemplate = `{
                     "Workers"
                 ],
                 "summary": "Get a worker",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address of the miner",
+                        "name": "miner_addr",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Name of the worker",
+                        "name": "worker_name",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.WorkerRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/pools/{pool_id}/miners/{miner_addr}/workers/{worker_name}/performance": {
+            "get": {
+                "description": "Get the performance from a specific worker from a specific miner from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Workers"
+                ],
+                "summary": "Get performance stats of a worker",
                 "parameters": [
                     {
                         "type": "string",
@@ -1368,6 +1417,17 @@ const docTemplate = `{
                 }
             }
         },
+        "api.Worker": {
+            "type": "object",
+            "properties": {
+                "hashrate": {
+                    "type": "number"
+                },
+                "sharesPerSecond": {
+                    "type": "number"
+                }
+            }
+        },
         "api.WorkerPerformanceRes": {
             "type": "object",
             "properties": {
@@ -1410,6 +1470,20 @@ const docTemplate = `{
                     "additionalProperties": {
                         "$ref": "#/definitions/api.WorkerPerformanceStats"
                     }
+                }
+            }
+        },
+        "api.WorkerRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "$ref": "#/definitions/api.Worker"
+                },
+                "success": {
+                    "type": "boolean"
                 }
             }
         },
