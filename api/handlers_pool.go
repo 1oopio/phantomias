@@ -88,8 +88,8 @@ func (s Server) getPrices(name string) (priceRes map[string]Price) {
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id} [get]
 func (s *Server) getPoolHandler(c *fiber.Ctx) error {
-	topMinersRange := getTopMinersRange(c)
-	effortRange := getEffortRange(c)
+	topMinersRange := getTopMinersRangeQuery(c)
+	effortRange := getEffortRangeQuery(c)
 
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
 	if poolCfg == nil {
@@ -206,7 +206,7 @@ func (s *Server) getBlocksHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 
-	page, pageSize := getPageParams(c)
+	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
 	blocks, err := s.db.PageBlocks(c.Context(), c.Params("id"), params.BlockStatus, page, pageSize)
@@ -271,7 +271,7 @@ func (s *Server) getPaymentsHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 
-	page, pageSize := getPageParams(c)
+	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
 	payments, err := s.db.PagePayments(c.Context(), pool.ID, "", page, pageSize)

@@ -21,7 +21,7 @@ import (
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id}/miners [get]
 func (s *Server) getMinersHandler(c *fiber.Ctx) error {
-	topMinersRange := getTopMinersRange(c)
+	topMinersRange := getTopMinersRangeQuery(c)
 
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
 	if poolCfg == nil {
@@ -34,7 +34,7 @@ func (s *Server) getMinersHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 
-	page, pageSize := getPageParams(c)
+	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
 	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.Context(), poolCfg.ID, from, page, pageSize)
@@ -74,7 +74,7 @@ func (s *Server) getMinerHandler(c *fiber.Ctx) error {
 	if poolCfg == nil {
 		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	addr := getMinerAddress(c, poolCfg)
+	addr := getMinerAddressParam(c, poolCfg)
 	if addr == "" {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
@@ -149,7 +149,7 @@ func (s *Server) getMinerPaymentsHandler(c *fiber.Ctx) error {
 	if poolCfg == nil {
 		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	addr := getMinerAddress(c, poolCfg)
+	addr := getMinerAddressParam(c, poolCfg)
 	if addr == "" {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
@@ -159,7 +159,7 @@ func (s *Server) getMinerPaymentsHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 
-	page, pageSize := getPageParams(c)
+	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
 	payments, err := s.db.PagePayments(c.Context(), poolCfg.ID, addr, page, pageSize)
@@ -193,7 +193,7 @@ func (s *Server) getMinerBalanceChangesHandler(c *fiber.Ctx) error {
 	if poolCfg == nil {
 		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	addr := getMinerAddress(c, poolCfg)
+	addr := getMinerAddressParam(c, poolCfg)
 	if addr == "" {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
@@ -203,7 +203,7 @@ func (s *Server) getMinerBalanceChangesHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 
-	page, pageSize := getPageParams(c)
+	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
 	balanceChanges, err := s.db.PageBalanceChanges(c.Context(), poolCfg.ID, addr, page, pageSize)
@@ -251,7 +251,7 @@ func (s *Server) getMinerDailyEarningsHandler(c *fiber.Ctx) error {
 	if poolCfg == nil {
 		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	addr := getMinerAddress(c, poolCfg)
+	addr := getMinerAddressParam(c, poolCfg)
 	if addr == "" {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
@@ -261,7 +261,7 @@ func (s *Server) getMinerDailyEarningsHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 
-	page, pageSize := getPageParams(c)
+	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
 	earnings, err := s.db.PageMinerPaymentsByDay(c.Context(), poolCfg.ID, addr, page, pageSize)
@@ -309,7 +309,7 @@ func (s *Server) getMinerPerformanceHandler(c *fiber.Ctx) error {
 	if poolCfg == nil {
 		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	addr := getMinerAddress(c, poolCfg)
+	addr := getMinerAddressParam(c, poolCfg)
 	if addr == "" {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}

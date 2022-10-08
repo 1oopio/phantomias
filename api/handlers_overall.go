@@ -27,3 +27,7 @@ func (s *Server) getOverallPoolStatsHandler(c *fiber.Ctx) error {
 	}
 	return c.JSON(res)
 }
+
+func (s *Server) getSearchMinerAddress(c *fiber.Ctx) error {
+	return nil
+}
