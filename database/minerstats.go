@@ -59,14 +59,6 @@ type WorkerPerformanceStats struct {
 	SharesPerSecond  *float64
 }
 
-type PerformanceStats struct {
-	Hashrate         *float64
-	ReportedHashrate *float64
-	SharesPerSecond  *float64
-	WorkersOnline    uint
-	Created          time.Time
-}
-
 type WorkerPerformanceStatsContainer struct {
 	Created time.Time
 	Workers map[string]*WorkerPerformanceStats
