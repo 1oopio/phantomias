@@ -2,6 +2,7 @@ package database
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/jmoiron/sqlx"
 
@@ -38,6 +39,8 @@ func (d *DB) Connect() error {
 	if err := d.sql.Ping(); err != nil {
 		return fmt.Errorf("failed to ping database: %w", err)
 	}
+	d.sql.SetMaxIdleConns(10)
+	d.sql.SetConnMaxIdleTime(5 * time.Minute)
 	return nil
 }
 
