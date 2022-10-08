@@ -104,6 +104,10 @@ func getMinerAddressParam(c *fiber.Ctx, poolCfg *config.Pool) string {
 	return addr
 }
 
+func getAddressQuery(c *fiber.Ctx) string {
+	return c.Query("address")
+}
+
 func getWorkerNameParam(c *fiber.Ctx) string {
 	return c.Params("worker_name")
 }

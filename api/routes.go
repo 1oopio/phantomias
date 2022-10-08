@@ -29,7 +29,7 @@ func (s *Server) apiRoutes(cache, ratelimiter fiber.Handler) {
 
 	// overall
 	v1.Get("/stats", cache, s.getOverallPoolStatsHandler)
-
+	v1.Get("/search", s.getSearchMinerAddress)
 	// pools
 	v1.Get("/pools", cache, s.getPoolsHandler)
 	v1.Get("/pools/:id", s.getPoolHandler)
