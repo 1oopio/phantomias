@@ -23,6 +23,17 @@ type Stats struct {
 	PaymentsToday        int32
 }
 
+type MinerSearchRes struct {
+	*Meta
+	Result []MinerSearch `json:"result"`
+}
+
+type MinerSearch struct {
+	Address string
+	PoolID  string
+	FeeType string
+}
+
 type PoolsRes struct {
 	*Meta
 	Result []*Pool `json:"result"`

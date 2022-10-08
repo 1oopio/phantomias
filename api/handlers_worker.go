@@ -23,11 +23,11 @@ func (s *Server) getWorkerHandler(c *fiber.Ctx) error {
 	if poolCfg == nil {
 		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
-	addr := getMinerAddress(c, poolCfg)
+	addr := getMinerAddressParam(c, poolCfg)
 	if addr == "" {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
-	worker := getWorkerName(c)
+	worker := getWorkerNameParam(c)
 	if worker == "" {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidWorkerName)
 	}

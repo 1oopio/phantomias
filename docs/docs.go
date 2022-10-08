@@ -682,6 +682,41 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/search": {
+            "get": {
+                "description": "Get stats for all pools",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Overall"
+                ],
+                "summary": "Get overall stats",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Address to search for",
+                        "name": "address",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.MinerSearchRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/stats": {
             "get": {
                 "description": "Get stats for all pools",
@@ -915,6 +950,37 @@ const docTemplate = `{
                 },
                 "result": {
                     "$ref": "#/definitions/api.Miner"
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "api.MinerSearch": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "feeType": {
+                    "type": "string"
+                },
+                "poolID": {
+                    "type": "string"
+                }
+            }
+        },
+        "api.MinerSearchRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.MinerSearch"
+                    }
                 },
                 "success": {
                     "type": "boolean"

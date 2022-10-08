@@ -125,6 +125,26 @@ definitions:
       success:
         type: boolean
     type: object
+  api.MinerSearch:
+    properties:
+      address:
+        type: string
+      feeType:
+        type: string
+      poolID:
+        type: string
+    type: object
+  api.MinerSearchRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.MinerSearch'
+        type: array
+      success:
+        type: boolean
+    type: object
   api.MinerSettings:
     properties:
       paymentThreshold:
@@ -871,6 +891,29 @@ paths:
       summary: Get a list of performance samples
       tags:
       - Pools
+  /api/v1/search:
+    get:
+      description: Get stats for all pools
+      parameters:
+      - description: Address to search for
+        in: query
+        name: address
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.MinerSearchRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get overall stats
+      tags:
+      - Overall
   /api/v1/stats:
     get:
       description: Get stats for all pools

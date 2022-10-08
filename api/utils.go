@@ -29,7 +29,7 @@ func getPoolCfgByID(id string, pools []*config.Pool) *config.Pool {
 	return nil
 }
 
-func getPageParams(c *fiber.Ctx) (int, int) {
+func getPageQueries(c *fiber.Ctx) (int, int) {
 	page, err := strconv.Atoi(c.Query("page", "0"))
 	if err != nil || page < 0 {
 		page = 0
@@ -59,7 +59,7 @@ func handlePaginationQueries(c *fiber.Ctx) map[string]string {
 	return params
 }
 
-func getTopMinersRange(c *fiber.Ctx) int {
+func getTopMinersRangeQuery(c *fiber.Ctx) int {
 	topMinersRangeString := c.Query("topMinersRange", "1")
 	topMinersRange, err := strconv.Atoi(topMinersRangeString)
 	if err != nil {
@@ -71,7 +71,7 @@ func getTopMinersRange(c *fiber.Ctx) int {
 	return topMinersRange
 }
 
-func getEffortRange(c *fiber.Ctx) int {
+func getEffortRangeQuery(c *fiber.Ctx) int {
 	effortRangeString := c.Query("effortRange", "50")
 	effortRange, err := strconv.Atoi(effortRangeString)
 	if err != nil {
@@ -96,7 +96,7 @@ func getPerformanceModeQuery(c *fiber.Ctx) database.SampleRange {
 	}
 }
 
-func getMinerAddress(c *fiber.Ctx, poolCfg *config.Pool) string {
+func getMinerAddressParam(c *fiber.Ctx, poolCfg *config.Pool) string {
 	addr := c.Params("miner_addr")
 	if strings.EqualFold(poolCfg.Type, "ethereum") {
 		addr = strings.ToLower(addr)
@@ -104,7 +104,11 @@ func getMinerAddress(c *fiber.Ctx, poolCfg *config.Pool) string {
 	return addr
 }
 
-func getWorkerName(c *fiber.Ctx) string {
+func getAddressQuery(c *fiber.Ctx) string {
+	return c.Query("address")
+}
+
+func getWorkerNameParam(c *fiber.Ctx) string {
 	return c.Params("worker_name")
 }
 
