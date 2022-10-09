@@ -27,7 +27,7 @@ func (s *Server) getPoolsHandler(c *fiber.Ctx) error {
 		if !p.Enabled {
 			continue
 		}
-		pool, err := s.gatherPoolStats(c.Context(), p)
+		pool, err := s.gatherPoolStats(c.UserContext(), p)
 		if err != nil {
 			return handleAPIError(c, http.StatusInternalServerError, err)
 		}
@@ -96,13 +96,13 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
 
-	poolStats, err := s.gatherPoolStats(c.Context(), poolCfg)
+	poolStats, err := s.gatherPoolStats(c.UserContext(), poolCfg)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 
 	from := time.Now().Add(-time.Duration(topMinersRange) * time.Hour)
-	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.Context(), poolCfg.ID, from, 0, 15)
+	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.UserContext(), poolCfg.ID, from, 0, 15)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -113,31 +113,31 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 		MinPayout: poolCfg.MinPayout,
 	}
 
-	totalPaid, err := s.db.GetTotalPoolPayments(c.Context(), poolCfg.ID)
+	totalPaid, err := s.db.GetTotalPoolPayments(c.UserContext(), poolCfg.ID)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 	poolExtended.TotalPayments = totalPaid.InexactFloat64()
 
-	totalBlocks, err := s.db.GetPoolBlockCount(c.Context(), poolCfg.ID)
+	totalBlocks, err := s.db.GetPoolBlockCount(c.UserContext(), poolCfg.ID)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 	poolExtended.TotalBlocksFound = totalBlocks
 
-	lastPoolBlockTime, err := s.db.GetLastPoolBlockTime(c.Context(), poolCfg.ID)
+	lastPoolBlockTime, err := s.db.GetLastPoolBlockTime(c.UserContext(), poolCfg.ID)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 	poolExtended.LastBlockFoundTime = lastPoolBlockTime
 
-	avgEffort, err := s.db.GetPoolEffort(c.Context(), poolCfg.ID, effortRange)
+	avgEffort, err := s.db.GetPoolEffort(c.UserContext(), poolCfg.ID, effortRange)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
 	poolExtended.AverageEffort = avgEffort
 
-	currentEffort, err := s.db.GetEffortBetweenCreated(c.Context(), poolCfg.ID, poolCfg.ShareMultiplier, lastPoolBlockTime, time.Now())
+	currentEffort, err := s.db.GetEffortBetweenCreated(c.UserContext(), poolCfg.ID, poolCfg.ShareMultiplier, lastPoolBlockTime, time.Now())
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -201,7 +201,7 @@ func (s *Server) getBlocksHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
 
-	pageCount, err := s.db.GetPoolBlockCount(c.Context(), pool.ID)
+	pageCount, err := s.db.GetPoolBlockCount(c.UserContext(), pool.ID)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -209,7 +209,7 @@ func (s *Server) getBlocksHandler(c *fiber.Ctx) error {
 	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
-	blocks, err := s.db.PageBlocks(c.Context(), c.Params("id"), params.BlockStatus, page, pageSize)
+	blocks, err := s.db.PageBlocks(c.UserContext(), c.Params("id"), params.BlockStatus, page, pageSize)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -266,7 +266,7 @@ func (s *Server) getPaymentsHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
 	}
 
-	pageCount, err := s.db.GetPaymentsCount(c.Context(), pool.ID, "")
+	pageCount, err := s.db.GetPaymentsCount(c.UserContext(), pool.ID, "")
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -274,7 +274,7 @@ func (s *Server) getPaymentsHandler(c *fiber.Ctx) error {
 	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
-	payments, err := s.db.PagePayments(c.Context(), pool.ID, "", page, pageSize)
+	payments, err := s.db.PagePayments(c.UserContext(), pool.ID, "", page, pageSize)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -342,7 +342,7 @@ func (s *Server) getPoolPerformanceHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidRange)
 	}
 
-	stats, err := s.db.GetPoolPerformanceBetween(c.Context(), pool.ID, database.SampleInterval(performanceInterval), start, end)
+	stats, err := s.db.GetPoolPerformanceBetween(c.UserContext(), pool.ID, database.SampleInterval(performanceInterval), start, end)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}

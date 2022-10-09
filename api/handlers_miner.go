@@ -29,7 +29,7 @@ func (s *Server) getMinersHandler(c *fiber.Ctx) error {
 	}
 
 	from := time.Now().Add(-time.Duration(topMinersRange) * time.Hour)
-	pageCount, err := s.db.GetMinersCount(c.Context(), poolCfg.ID, from)
+	pageCount, err := s.db.GetMinersCount(c.UserContext(), poolCfg.ID, from)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -37,7 +37,7 @@ func (s *Server) getMinersHandler(c *fiber.Ctx) error {
 	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
-	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.Context(), poolCfg.ID, from, page, pageSize)
+	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.UserContext(), poolCfg.ID, from, page, pageSize)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -79,7 +79,7 @@ func (s *Server) getMinerHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
 
-	stats, err := s.db.GetMinerStats(c.Context(), poolCfg.ID, addr)
+	stats, err := s.db.GetMinerStats(c.UserContext(), poolCfg.ID, addr)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -154,7 +154,7 @@ func (s *Server) getMinerPaymentsHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
 
-	pageCount, err := s.db.GetPaymentsCount(c.Context(), poolCfg.ID, addr)
+	pageCount, err := s.db.GetPaymentsCount(c.UserContext(), poolCfg.ID, addr)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -162,7 +162,7 @@ func (s *Server) getMinerPaymentsHandler(c *fiber.Ctx) error {
 	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
-	payments, err := s.db.PagePayments(c.Context(), poolCfg.ID, addr, page, pageSize)
+	payments, err := s.db.PagePayments(c.UserContext(), poolCfg.ID, addr, page, pageSize)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -198,7 +198,7 @@ func (s *Server) getMinerBalanceChangesHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
 
-	pageCount, err := s.db.GetBalanceChangesCount(c.Context(), poolCfg.ID, addr)
+	pageCount, err := s.db.GetBalanceChangesCount(c.UserContext(), poolCfg.ID, addr)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -206,7 +206,7 @@ func (s *Server) getMinerBalanceChangesHandler(c *fiber.Ctx) error {
 	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
-	balanceChanges, err := s.db.PageBalanceChanges(c.Context(), poolCfg.ID, addr, page, pageSize)
+	balanceChanges, err := s.db.PageBalanceChanges(c.UserContext(), poolCfg.ID, addr, page, pageSize)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -256,7 +256,7 @@ func (s *Server) getMinerDailyEarningsHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
 
-	pageCount, err := s.db.GetMinerPaymentsByDayCount(c.Context(), poolCfg.ID, addr)
+	pageCount, err := s.db.GetMinerPaymentsByDayCount(c.UserContext(), poolCfg.ID, addr)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -264,7 +264,7 @@ func (s *Server) getMinerDailyEarningsHandler(c *fiber.Ctx) error {
 	page, pageSize := getPageQueries(c)
 	pageCount = uint(math.Floor(float64(pageCount) / float64(pageSize)))
 
-	earnings, err := s.db.PageMinerPaymentsByDay(c.Context(), poolCfg.ID, addr, page, pageSize)
+	earnings, err := s.db.PageMinerPaymentsByDay(c.UserContext(), poolCfg.ID, addr, page, pageSize)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -315,7 +315,7 @@ func (s *Server) getMinerPerformanceHandler(c *fiber.Ctx) error {
 	}
 	mode := getPerformanceModeQuery(c)
 
-	stats, err := s.getMinerPerformanceInternal(c.Context(), mode, poolCfg, addr)
+	stats, err := s.getMinerPerformanceInternal(c.UserContext(), mode, poolCfg, addr)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -338,7 +338,7 @@ func (s *Server) getMinerPerformanceHandler(c *fiber.Ctx) error {
 // @Router /api/v1/pools/{pool_id}/miners/{miner_addr}/settings [get]
 func (s *Server) getMinerSettingsHandler(c *fiber.Ctx) error {
 	var settings MinerSettings
-	code, err := s.mc.UnmarshalMinerSettings(c.Context(), c.Params("id"), c.Params("miner_addr"), &settings)
+	code, err := s.mc.UnmarshalMinerSettings(c.UserContext(), c.Params("id"), c.Params("miner_addr"), &settings)
 	if err != nil {
 		return handleAPIError(c, code, err)
 	}
@@ -366,7 +366,7 @@ func (s *Server) postMinerSettingsHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusBadRequest, err)
 	}
 	var settings MinerSettings
-	code, err := s.mc.UnmarshalPostMinerSettings(c.Context(), c.Params("id"), c.Params("miner_addr"), &req, &settings)
+	code, err := s.mc.UnmarshalPostMinerSettings(c.UserContext(), c.Params("id"), c.Params("miner_addr"), &req, &settings)
 	if err != nil {
 		return handleAPIError(c, code, err)
 	}

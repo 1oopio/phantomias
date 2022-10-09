@@ -4,10 +4,15 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/timeout"
 	"github.com/gofiber/websocket/v2"
 )
 
-var wsHandshakeTimeout = time.Second * 20
+var (
+	wsHandshakeTimeout = time.Second * 20
+	shortTimeout       = time.Second * 20
+	longTimeout        = time.Minute * 3
+)
 
 func (s *Server) setupRoutes() {
 	cache := s.cache()
@@ -28,28 +33,68 @@ func (s *Server) apiRoutes(cache, ratelimiter fiber.Handler) {
 	v1 := api.Group("/v1", ratelimiter)
 
 	// overall
-	v1.Get("/stats", cache, s.getOverallPoolStatsHandler)
-	v1.Get("/search", s.getSearchMinerAddress)
+	v1.Get("/stats",
+		cache,
+		timeout.New(s.getOverallPoolStatsHandler, shortTimeout),
+	)
+	v1.Get("/search",
+		timeout.New(s.getSearchMinerAddress, shortTimeout),
+	)
+
 	// pools
-	v1.Get("/pools", cache, s.getPoolsHandler)
-	v1.Get("/pools/:id", s.getPoolHandler)
-	v1.Get("pools/:id/blocks", s.getBlocksHandler)
-	v1.Get("pools/:id/payments", s.getPaymentsHandler)
-	v1.Get("pools/:id/performance", cache, s.getPoolPerformanceHandler)
+	v1.Get("/pools",
+		cache,
+		timeout.New(s.getPoolsHandler, shortTimeout),
+	)
+	v1.Get("/pools/:id",
+		timeout.New(s.getPoolHandler, shortTimeout),
+	)
+	v1.Get("pools/:id/blocks",
+		timeout.New(s.getBlocksHandler, shortTimeout),
+	)
+	v1.Get("pools/:id/payments",
+		timeout.New(s.getPaymentsHandler, shortTimeout),
+	)
+	v1.Get("pools/:id/performance",
+		cache,
+		timeout.New(s.getPoolPerformanceHandler, longTimeout),
+	)
 
 	// miners
-	v1.Get("pools/:id/miners", s.getMinersHandler)
-	v1.Get("pools/:id/miners/:miner_addr", s.getMinerHandler)
-	v1.Get("pools/:id/miners/:miner_addr/payments", s.getMinerPaymentsHandler)
-	v1.Get("pools/:id/miners/:miner_addr/balancechanges", s.getMinerBalanceChangesHandler)
-	v1.Get("pools/:id/miners/:miner_addr/earnings/daily", s.getMinerDailyEarningsHandler)
-	v1.Get("pools/:id/miners/:miner_addr/performance", cache, s.getMinerPerformanceHandler)
-	v1.Get("pools/:id/miners/:miner_addr/settings", s.getMinerSettingsHandler)
-	v1.Post("pools/:id/miners/:miner_addr/settings", s.postMinerSettingsHandler)
+	v1.Get("pools/:id/miners",
+		timeout.New(s.getMinersHandler, shortTimeout),
+	)
+	v1.Get("pools/:id/miners/:miner_addr",
+		timeout.New(s.getMinerHandler, shortTimeout),
+	)
+	v1.Get("pools/:id/miners/:miner_addr/payments",
+		timeout.New(s.getMinerPaymentsHandler, shortTimeout),
+	)
+	v1.Get("pools/:id/miners/:miner_addr/balancechanges",
+		timeout.New(s.getMinerBalanceChangesHandler, shortTimeout),
+	)
+	v1.Get("pools/:id/miners/:miner_addr/earnings/daily",
+		timeout.New(s.getMinerDailyEarningsHandler, shortTimeout),
+	)
+	v1.Get("pools/:id/miners/:miner_addr/performance",
+		cache,
+		timeout.New(s.getMinerPerformanceHandler, longTimeout),
+	)
+	v1.Get("pools/:id/miners/:miner_addr/settings",
+		timeout.New(s.getMinerSettingsHandler, shortTimeout),
+	)
+	v1.Post("pools/:id/miners/:miner_addr/settings",
+		timeout.New(s.postMinerSettingsHandler, shortTimeout),
+	)
 
 	// workers
-	v1.Get("pools/:id/miners/:miner_addr/workers/:worker_name/performance", cache, s.getWorkerPerformanceHandler)
-	v1.Get("pools/:id/miners/:miner_addr/workers/:worker_name", s.getWorkerHandler)
+	v1.Get("pools/:id/miners/:miner_addr/workers/:worker_name/performance",
+		cache,
+		timeout.New(s.getWorkerPerformanceHandler, shortTimeout),
+	)
+	v1.Get("pools/:id/miners/:miner_addr/workers/:worker_name",
+		timeout.New(s.getWorkerHandler, longTimeout),
+	)
 }
 
 func (s *Server) wsRoute(middleware ...fiber.Handler) {
@@ -68,7 +113,7 @@ func (s *Server) wsRoute(middleware ...fiber.Handler) {
 }
 
 func (s *Server) swaggerRoute(middleware ...fiber.Handler) {
-	s.api.Get("/swagger/*", append(middleware, s.swagger())...)
+	s.api.Get("/swagger/*", append(middleware, timeout.New(s.swagger(), shortTimeout))...)
 }
 
 // @Summary Teapot
@@ -77,7 +122,7 @@ func (s *Server) swaggerRoute(middleware ...fiber.Handler) {
 // @Success 418 {string} string "I'm a teapot"
 // @Router /teapot [get]
 func (s *Server) teaPot(middleware ...fiber.Handler) {
-	s.api.Get("/teapot", append(middleware, func(c *fiber.Ctx) error {
+	s.api.Get("/teapot", append(middleware, timeout.New(func(c *fiber.Ctx) error {
 		return c.SendStatus(fiber.StatusTeapot)
-	})...)
+	}, time.Second*10))...)
 }

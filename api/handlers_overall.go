@@ -15,7 +15,7 @@ import (
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/stats [get]
 func (s *Server) getOverallPoolStatsHandler(c *fiber.Ctx) error {
-	stats, err := s.db.GetOverallPoolStats(c.Context())
+	stats, err := s.db.GetOverallPoolStats(c.UserContext())
 	if err != nil {
 		return utils.SendAPIError(c, http.StatusInternalServerError, err)
 	}
@@ -41,7 +41,7 @@ func (s *Server) getSearchMinerAddress(c *fiber.Ctx) error {
 	if addr == "" {
 		return utils.SendAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
-	addresses, err := s.db.SearchMinerByAddress(c.Context(), addr)
+	addresses, err := s.db.SearchMinerByAddress(c.UserContext(), addr)
 	if err != nil {
 		return utils.SendAPIError(c, http.StatusInternalServerError, err)
 	}

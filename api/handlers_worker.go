@@ -32,7 +32,7 @@ func (s *Server) getWorkerHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidWorkerName)
 	}
 
-	stats, err := s.db.GetWorkerStats(c.Context(), poolCfg.ID, addr, worker)
+	stats, err := s.db.GetWorkerStats(c.UserContext(), poolCfg.ID, addr, worker)
 	if err != nil {
 		return handleAPIError(c, 0, err)
 	}
@@ -77,7 +77,7 @@ func (s *Server) getWorkerPerformanceHandler(c *fiber.Ctx) error {
 	}
 	mode := getPerformanceModeQuery(c)
 
-	stats, err := s.getWorkerPerformanceInternal(c.Context(), mode, poolCfg, addr, worker)
+	stats, err := s.getWorkerPerformanceInternal(c.UserContext(), mode, poolCfg, addr, worker)
 	if err != nil {
 		return handleAPIError(c, http.StatusInternalServerError, err)
 	}
