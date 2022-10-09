@@ -1014,7 +1014,7 @@ const docTemplate = `{
                 "feeType": {
                     "type": "string"
                 },
-                "poolID": {
+                "poolId": {
                     "type": "string"
                 }
             }

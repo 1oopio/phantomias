@@ -17,10 +17,10 @@ type StatsRes struct {
 }
 
 type Stats struct {
-	TotalMiners          int32
-	TotalWorkers         int32
-	TotalSharesPerSecond float64
-	PaymentsToday        int32
+	TotalMiners          int32   `json:"totalMiners"`
+	TotalWorkers         int32   `json:"totalWorkers"`
+	TotalSharesPerSecond float64 `json:"totalSharesPerSecond"`
+	PaymentsToday        int32   `json:"paymentsToday"`
 }
 
 type MinerSearchRes struct {
@@ -29,9 +29,9 @@ type MinerSearchRes struct {
 }
 
 type MinerSearch struct {
-	Address string
-	PoolID  string
-	FeeType string
+	Address string `json:"address"`
+	PoolID  string `json:"poolId"`
+	FeeType string `json:"feeType"`
 }
 
 type PoolsRes struct {
@@ -229,8 +229,8 @@ type WorkerPerformanceRes struct {
 }
 
 type Worker struct {
-	Hashrate        float64
-	SharesPerSecond float64
+	Hashrate        float64 `json:"hashrate"`
+	SharesPerSecond float64 `json:"sharesPerSecond"`
 }
 
 type WorkerRes struct {

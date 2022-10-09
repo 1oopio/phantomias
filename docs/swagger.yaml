@@ -131,7 +131,7 @@ definitions:
         type: string
       feeType:
         type: string
-      poolID:
+      poolId:
         type: string
     type: object
   api.MinerSearchRes:
