@@ -1,8 +1,10 @@
 package api
 
 import (
+	"bytes"
 	"errors"
-	"os"
+	"fmt"
+	"net/url"
 	"time"
 
 	"github.com/caarlos0/duration"
@@ -18,15 +20,6 @@ const (
 	csvDataPayouts  csvDataValue = "payouts"
 	csvDataEarnings csvDataValue = "earnings"
 )
-
-const tmpCSVDir = "./tmp_csv"
-
-func init() {
-	// make sure ./tmp directory exists
-	if err := os.MkdirAll(tmpCSVDir, 0755); err != nil {
-		panic(err)
-	}
-}
 
 func (s *Server) getCSVDownloadHandler(c *fiber.Ctx) error {
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
@@ -60,17 +53,13 @@ func (s *Server) getCSVDownloadHandler(c *fiber.Ctx) error {
 			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 		}
 
-		f, err := os.CreateTemp(tmpCSVDir, "csv-download")
-		if err != nil {
+		buff := bytes.NewBuffer(nil)
+		if err := gocsv.Marshal(payments, buff); err != nil {
 			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 		}
-		defer os.Remove(f.Name())
-		defer f.Close()
 
-		if err := gocsv.Marshal(payments, f); err != nil {
-			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
-		}
-		return c.Download(f.Name(), "payouts.csv")
+		setCSVFileNameHeader(c, "payouts.csv")
+		return c.SendStream(buff)
 
 	case csvDataEarnings:
 		earnings, err := s.db.GetMinerPaymentsByDayBetween(c.UserContext(), poolCfg.ID, addr, start, end)
@@ -78,17 +67,13 @@ func (s *Server) getCSVDownloadHandler(c *fiber.Ctx) error {
 			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 		}
 
-		f, err := os.CreateTemp(tmpCSVDir, "csv-download")
-		if err != nil {
+		buff := bytes.NewBuffer(nil)
+		if err := gocsv.Marshal(earnings, buff); err != nil {
 			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 		}
-		defer os.Remove(f.Name())
-		defer f.Close()
 
-		if err := gocsv.Marshal(earnings, f); err != nil {
-			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
-		}
-		return c.Download(f.Name(), "earnings.csv")
+		setCSVFileNameHeader(c, "earnings.csv")
+		return c.SendStream(buff)
 	}
 
 	return nil
@@ -117,4 +102,9 @@ func getCSVStartEndTime(c *fiber.Ctx) (time.Time, time.Time, error) {
 		return time.Time{}, time.Time{}, err
 	}
 	return startTime, endTime, nil
+}
+
+func setCSVFileNameHeader(c *fiber.Ctx, name string) {
+	c.Response().Header.Set(fiber.HeaderContentType, "text/csv")
+	c.Response().Header.Set(fiber.HeaderContentDisposition, fmt.Sprintf("attachment; filename=%s", url.QueryEscape(name)))
 }
