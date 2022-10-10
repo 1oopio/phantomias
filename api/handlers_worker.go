@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/stratumfarm/phantomias/database"
 	"github.com/stratumfarm/phantomias/utils"
@@ -21,15 +19,15 @@ import (
 func (s *Server) getWorkerHandler(c *fiber.Ctx) error {
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
 	if poolCfg == nil {
-		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
+		return handleAPIError(c, fiber.StatusNotFound, utils.ErrPoolNotFound)
 	}
 	addr := getMinerAddressParam(c, poolCfg)
 	if addr == "" {
-		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
+		return handleAPIError(c, fiber.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
 	worker := getWorkerNameParam(c)
 	if worker == "" {
-		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidWorkerName)
+		return handleAPIError(c, fiber.StatusBadRequest, utils.ErrInvalidWorkerName)
 	}
 
 	stats, err := s.db.GetWorkerStats(c.UserContext(), poolCfg.ID, addr, worker)
@@ -65,21 +63,21 @@ func dbWorkerToAPIWorker(w *database.WorkerStats) *Worker {
 func (s *Server) getWorkerPerformanceHandler(c *fiber.Ctx) error {
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
 	if poolCfg == nil {
-		return handleAPIError(c, http.StatusNotFound, utils.ErrPoolNotFound)
+		return handleAPIError(c, fiber.StatusNotFound, utils.ErrPoolNotFound)
 	}
 	addr := getMinerAddressParam(c, poolCfg)
 	if addr == "" {
-		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
+		return handleAPIError(c, fiber.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
 	worker := getWorkerNameParam(c)
 	if worker == "" {
-		return handleAPIError(c, http.StatusBadRequest, utils.ErrInvalidWorkerName)
+		return handleAPIError(c, fiber.StatusBadRequest, utils.ErrInvalidWorkerName)
 	}
 	mode := getPerformanceModeQuery(c)
 
 	stats, err := s.getWorkerPerformanceInternal(c.UserContext(), mode, poolCfg, addr, worker)
 	if err != nil {
-		return handleAPIError(c, http.StatusInternalServerError, err)
+		return handleAPIError(c, fiber.StatusInternalServerError, err)
 	}
 	return c.JSON(&WorkerPerformanceRes{
 		Meta: &Meta{

@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/limiter"
 	"github.com/gofiber/fiber/v2/middleware/timeout"
 	"github.com/gofiber/websocket/v2"
 )
@@ -94,6 +95,20 @@ func (s *Server) apiRoutes(cache, ratelimiter fiber.Handler) {
 	)
 	v1.Get("pools/:id/miners/:miner_addr/workers/:worker_name",
 		timeout.New(s.getWorkerHandler, longTimeout),
+	)
+
+	// CSV
+	v1.Get("pools/:id/miners/:miner_addr/csv",
+		// use a stricter rate limit for CSV downloads
+		limiter.New(limiter.Config{
+			Next: func(c *fiber.Ctx) bool {
+				return c.IP() == "127.0.0.1"
+			},
+			Max:               30,
+			Expiration:        time.Second * 60,
+			LimiterMiddleware: limiter.FixedWindow{},
+		}),
+		timeout.New(s.getCSVDownloadHandler, longTimeout),
 	)
 }
 

@@ -1,8 +1,6 @@
 package api
 
 import (
-	"net/http"
-
 	"github.com/gofiber/fiber/v2"
 	"github.com/stratumfarm/phantomias/utils"
 )
@@ -17,7 +15,7 @@ import (
 func (s *Server) getOverallPoolStatsHandler(c *fiber.Ctx) error {
 	stats, err := s.db.GetOverallPoolStats(c.UserContext())
 	if err != nil {
-		return utils.SendAPIError(c, http.StatusInternalServerError, err)
+		return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 	}
 	res := &StatsRes{
 		Meta: &Meta{
@@ -39,11 +37,11 @@ func (s *Server) getOverallPoolStatsHandler(c *fiber.Ctx) error {
 func (s *Server) getSearchMinerAddress(c *fiber.Ctx) error {
 	addr := getAddressQuery(c)
 	if addr == "" {
-		return utils.SendAPIError(c, http.StatusBadRequest, utils.ErrInvalidMinerAddress)
+		return utils.SendAPIError(c, fiber.StatusBadRequest, utils.ErrInvalidMinerAddress)
 	}
 	addresses, err := s.db.SearchMinerByAddress(c.UserContext(), addr)
 	if err != nil {
-		return utils.SendAPIError(c, http.StatusInternalServerError, err)
+		return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 	}
 	searchResults := make([]MinerSearch, 0, len(addresses))
 	for _, a := range addresses {

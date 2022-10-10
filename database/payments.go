@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -9,7 +10,7 @@ import (
 )
 
 type PaymentSchema struct {
-	ID                          int64
+	ID                          int64 `csv:"-"`
 	PoolID                      string
 	Coin                        string
 	Address                     string
@@ -70,4 +71,22 @@ func (d *DB) PageMinerPaymentsByDay(ctx context.Context, poolID, address string,
 	SELECT SUM(amount) AS amount, date_trunc('day', created) AS date FROM payments WHERE poolid = $1
 		AND address = $2 GROUP BY date ORDER BY date DESC OFFSET $3 FETCH NEXT $4 ROWS ONLY;`, poolID, address, page*pageSize, pageSize)
 	return payments, err
+}
+
+func (d *DB) GetMinerPaymentsBetween(ctx context.Context, poolID, address string, start, end time.Time) ([]*Payment, error) {
+	var payments []*Payment
+	fmt.Println(start.Month())
+	err := d.sql.SelectContext(ctx, &payments, `
+	SELECT * FROM payments
+	WHERE
+		poolid = $1 AND
+		address = $2 AND
+		created >= $3 AND
+		created <= $4
+	ORDER BY created DESC;
+	`, poolID, address, start, end)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get miner payments between: %v", err)
+	}
+	return payments, nil
 }

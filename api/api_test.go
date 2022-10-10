@@ -48,7 +48,7 @@ func TestMain(m *testing.M) {
 			return func(w http.ResponseWriter, r *http.Request) {
 				data, err := os.ReadFile(file)
 				if err != nil {
-					w.WriteHeader(http.StatusInternalServerError)
+					w.WriteHeader(fiber.StatusInternalServerError)
 					return
 				}
 				w.Write(data)
@@ -110,7 +110,7 @@ func TestHandlers(t *testing.T) {
 			description:   "not found",
 			route:         "/notfound",
 			expectedError: false,
-			expectedCode:  http.StatusNotFound,
+			expectedCode:  fiber.StatusNotFound,
 		},
 		{
 			description:   "get all pools",
