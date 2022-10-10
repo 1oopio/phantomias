@@ -2,7 +2,6 @@ package api
 
 import (
 	"errors"
-	"fmt"
 	"os"
 	"time"
 
@@ -66,14 +65,30 @@ func (s *Server) getCSVDownloadHandler(c *fiber.Ctx) error {
 			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 		}
 		defer os.Remove(f.Name())
+		defer f.Close()
 
 		if err := gocsv.Marshal(payments, f); err != nil {
 			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 		}
-
 		return c.Download(f.Name(), "payouts.csv")
 
 	case csvDataEarnings:
+		earnings, err := s.db.GetMinerPaymentsByDayBetween(c.UserContext(), poolCfg.ID, addr, start, end)
+		if err != nil {
+			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
+		}
+
+		f, err := os.CreateTemp(tmpCSVDir, "csv-download")
+		if err != nil {
+			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
+		}
+		defer os.Remove(f.Name())
+		defer f.Close()
+
+		if err := gocsv.Marshal(earnings, f); err != nil {
+			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
+		}
+		return c.Download(f.Name(), "earnings.csv")
 	}
 
 	return nil
@@ -93,7 +108,6 @@ func getCSVDataQuery(c *fiber.Ctx) csvDataValue {
 func getCSVStartEndTime(c *fiber.Ctx) (time.Time, time.Time, error) {
 	start := c.Query("start")
 	end := c.Query("end")
-	fmt.Println(start, end)
 	startTime, err := time.Parse(time.RFC3339, start)
 	if err != nil {
 		return time.Time{}, time.Time{}, err

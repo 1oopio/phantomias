@@ -26,6 +26,14 @@ type AmountByDate struct {
 	Date   time.Time
 }
 
+type Earning struct {
+	PoolID  string
+	Coin    string
+	Address string
+	Amount  decimal.Decimal
+	Date    time.Time
+}
+
 func (d *DB) PagePayments(ctx context.Context, poolID, address string, page int, pageSize int) ([]*Payment, error) {
 	var payments []*Payment
 	var s strings.Builder
@@ -75,7 +83,6 @@ func (d *DB) PageMinerPaymentsByDay(ctx context.Context, poolID, address string,
 
 func (d *DB) GetMinerPaymentsBetween(ctx context.Context, poolID, address string, start, end time.Time) ([]*Payment, error) {
 	var payments []*Payment
-	fmt.Println(start.Month())
 	err := d.sql.SelectContext(ctx, &payments, `
 	SELECT * FROM payments
 	WHERE
@@ -89,4 +96,26 @@ func (d *DB) GetMinerPaymentsBetween(ctx context.Context, poolID, address string
 		return nil, fmt.Errorf("failed to get miner payments between: %v", err)
 	}
 	return payments, nil
+}
+
+func (d *DB) GetMinerPaymentsByDayBetween(ctx context.Context, poolID, address string, start, end time.Time) ([]*Earning, error) {
+	var payments []*Earning
+	err := d.sql.SelectContext(ctx, &payments, `
+	SELECT
+		min(poolid) AS poolid,
+		min(coin) AS coin,
+		min(address) AS address,
+		SUM(amount) AS amount,
+		date_trunc('day', created) AS date
+	FROM payments
+	WHERE
+		poolid = $1 AND
+		address = $2 AND
+		created >= $3 AND
+		created <= $4
+	GROUP BY
+		date
+	ORDER BY date DESC;
+	`, poolID, address, start, end)
+	return payments, err
 }
