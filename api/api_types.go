@@ -68,7 +68,7 @@ type PoolExtended struct {
 	TotalBlocksFound   uint                             `json:"totalBlocksFound"`
 	TotalPayments      float64                          `json:"totalPayments"`
 	LastBlockFoundTime time.Time                        `json:"lastBlockFoundTime"`
-	AverageEffort      float32                          `json:"averageEffort"`
+	AverageEffort      *float32                         `json:"averageEffort"`
 	Effort             float32                          `json:"effort"`
 	TopMiners          []database.MinerPerformanceStats `json:"topMiners"`
 }

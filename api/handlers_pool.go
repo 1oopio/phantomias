@@ -3,6 +3,7 @@ package api
 import (
 	"context"
 	"fmt"
+	"log"
 	"math"
 	"net/http"
 	"strings"
@@ -115,7 +116,7 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 
 	totalPaid, err := s.db.GetTotalPoolPayments(c.UserContext(), poolCfg.ID)
 	if err != nil {
-		return handleAPIError(c, http.StatusInternalServerError, err)
+		log.Printf("error getting total pool payments: %v", err)
 	}
 	poolExtended.TotalPayments = totalPaid.InexactFloat64()
 
