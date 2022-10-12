@@ -202,7 +202,7 @@ func (d *DB) GetMinerPerformanceBetweenTenMinutely(ctx context.Context, poolID, 
 			x.worker, AVG(x.hs) AS hashrate, AVG(x.rhs) AS reportedhashrate, AVG(x.sharespersecond) AS sharespersecond
 			FROM (
 				SELECT created, hashrate as hs, null as rhs, sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND created >= $3 AND created <= $4 AND hashratetype = 'actual'
-				UNION 
+				UNION
 				SELECT created, null as hs, hashrate as rhs, null as sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND created >= $3 AND created <= $4 AND hashratetype = 'reported'
 			) as x
 			GROUP BY 1, 2, worker
@@ -216,6 +216,29 @@ func (d *DB) GetMinerPerformanceBetweenTenMinutely(ctx context.Context, poolID, 
 	}
 	for _, stat := range stats {
 		stat.Created = stat.Created.Add(time.Duration(stat.Partition) * 10 * time.Minute)
+	}
+	return stats, nil
+}
+
+func (d *DB) GetMinerPerformanceBetweenDaily(ctx context.Context, poolID, miner string, start, end time.Time) ([]*PerformanceStatsEntity, error) {
+	var stats []*PerformanceStatsEntity
+	err := d.sql.SelectContext(ctx, &stats, `
+	SELECT created, SUM(hashrate) AS hashrate, SUM(reportedhashrate) AS reportedhashrate, SUM(sharespersecond) AS sharespersecond, COUNT(DISTINCT worker) as workersonline FROM (
+		SELECT date_trunc('day', x.created) AS created,
+			x.worker, AVG(x.hs) AS hashrate, AVG(x.rhs) AS reportedhashrate, AVG(x.sharespersecond) AS sharespersecond
+			FROM (
+				SELECT created, hashrate as hs, null as rhs, sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND created >= $3 AND created <= $4 AND hashratetype = 'actual'
+				UNION
+				SELECT created, null as hs, hashrate as rhs, null as sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND created >= $3 AND created <= $4 AND hashratetype = 'reported'
+			) as x
+			GROUP BY 1, worker
+			ORDER BY 1
+	) as res
+	GROUP BY created
+	ORDER BY created;
+	`, poolID, miner, start, end)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get miner performance stats: %w", err)
 	}
 	return stats, nil
 }

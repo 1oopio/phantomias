@@ -11,8 +11,9 @@ import (
 
 var (
 	wsHandshakeTimeout = time.Second * 20
-	shortTimeout       = time.Second * 20
+	shortTimeout       = time.Minute * 1
 	longTimeout        = time.Minute * 3
+	extremeTimeout     = time.Minute * 10
 )
 
 func (s *Server) setupRoutes() {
@@ -108,7 +109,7 @@ func (s *Server) apiRoutes(cache, ratelimiter fiber.Handler) {
 			Expiration:        time.Second * 60,
 			LimiterMiddleware: limiter.FixedWindow{},
 		}),
-		timeout.New(s.getCSVDownloadHandler, longTimeout),
+		timeout.New(s.getCSVDownloadHandler, extremeTimeout),
 	)
 }
 

@@ -10,16 +10,19 @@ import (
 	"github.com/caarlos0/duration"
 	"github.com/gocarina/gocsv"
 	"github.com/gofiber/fiber/v2"
+	"github.com/stratumfarm/phantomias/database"
 	"github.com/stratumfarm/phantomias/utils"
 )
 
 type csvDataValue string
 
 const (
-	csvDataHashrate csvDataValue = "hashrate"
+	csvDataStats    csvDataValue = "stats"
 	csvDataPayouts  csvDataValue = "payouts"
 	csvDataEarnings csvDataValue = "earnings"
 )
+
+var maxCSVDataAge = duration.Month
 
 func (s *Server) getCSVDownloadHandler(c *fiber.Ctx) error {
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
@@ -41,25 +44,46 @@ func (s *Server) getCSVDownloadHandler(c *fiber.Ctx) error {
 	if start.After(end) {
 		return utils.SendAPIError(c, fiber.StatusBadRequest, errors.New("start time cannot be after end time"))
 	}
-	if end.Sub(start) > duration.Month {
-		return utils.SendAPIError(c, fiber.StatusBadRequest, errors.New("time range cannot be greater than 1 month"))
+	if end.Sub(start) > maxCSVDataAge {
+		return utils.SendAPIError(c, fiber.StatusBadRequest, fmt.Errorf("time range cannot be greater than %s", maxCSVDataAge))
 	}
 
 	switch dataQuery {
-	case csvDataHashrate:
+	case csvDataStats:
+		var statsEntity []*database.PerformanceStatsEntity
+		var err error
+
+		if end.Sub(start) > duration.Week {
+			statsEntity, err = s.db.GetMinerPerformanceBetweenDaily(c.UserContext(), poolCfg.ID, addr, start, end)
+		} else {
+			statsEntity, err = s.db.GetMinerPerformanceBetweenTenMinutely(c.UserContext(), poolCfg.ID, addr, start, end)
+		}
+		if err != nil {
+			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
+		}
+		stats := dbPerformanceToAPIPerformance(statsEntity)
+
+		var buf bytes.Buffer
+		if err := gocsv.Marshal(stats, &buf); err != nil {
+			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
+		}
+
+		setCSVFileNameHeader(c, "stats.csv")
+		return c.SendStream(&buf)
+
 	case csvDataPayouts:
 		payments, err := s.db.GetMinerPaymentsBetween(c.UserContext(), poolCfg.ID, addr, start, end)
 		if err != nil {
 			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 		}
 
-		buff := bytes.NewBuffer(nil)
-		if err := gocsv.Marshal(payments, buff); err != nil {
+		var buf bytes.Buffer
+		if err := gocsv.Marshal(payments, &buf); err != nil {
 			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 		}
 
 		setCSVFileNameHeader(c, "payouts.csv")
-		return c.SendStream(buff)
+		return c.SendStream(&buf)
 
 	case csvDataEarnings:
 		earnings, err := s.db.GetMinerPaymentsByDayBetween(c.UserContext(), poolCfg.ID, addr, start, end)
@@ -67,21 +91,20 @@ func (s *Server) getCSVDownloadHandler(c *fiber.Ctx) error {
 			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 		}
 
-		buff := bytes.NewBuffer(nil)
-		if err := gocsv.Marshal(earnings, buff); err != nil {
+		var buf bytes.Buffer
+		if err := gocsv.Marshal(earnings, &buf); err != nil {
 			return utils.SendAPIError(c, fiber.StatusInternalServerError, err)
 		}
 
 		setCSVFileNameHeader(c, "earnings.csv")
-		return c.SendStream(buff)
+		return c.SendStream(&buf)
 	}
-
 	return nil
 }
 
 func getCSVDataQuery(c *fiber.Ctx) csvDataValue {
 	if data := c.Query("data"); data != "" {
-		for _, v := range []csvDataValue{csvDataHashrate, csvDataPayouts, csvDataEarnings} {
+		for _, v := range []csvDataValue{csvDataStats, csvDataPayouts, csvDataEarnings} {
 			if csvDataValue(data) == v {
 				return csvDataValue(data)
 			}

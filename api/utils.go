@@ -151,6 +151,10 @@ func (s *Server) getMinerPerformanceInternal(ctx context.Context, mode database.
 	if err != nil {
 		return nil, err
 	}
+	return dbPerformanceToAPIPerformance(stats), nil
+}
+
+func dbPerformanceToAPIPerformance(stats []*database.PerformanceStatsEntity) []*PerformanceStats {
 	res := make([]*PerformanceStats, len(stats))
 	for i, s := range stats {
 		res[i] = &PerformanceStats{
@@ -161,7 +165,7 @@ func (s *Server) getMinerPerformanceInternal(ctx context.Context, mode database.
 			WorkersOnline:    s.WorkersOnline,
 		}
 	}
-	return res, nil
+	return res
 }
 
 func (s *Server) getWorkerPerformanceInternal(ctx context.Context, mode database.SampleRange, poolCfg *config.Pool, addr, worker string) ([]*PerformanceStats, error) {
