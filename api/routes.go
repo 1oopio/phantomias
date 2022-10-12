@@ -11,7 +11,7 @@ import (
 
 var (
 	wsHandshakeTimeout = time.Second * 20
-	shortTimeout       = time.Minute * 1
+	shortTimeout       = time.Second * 30
 	longTimeout        = time.Minute * 3
 	extremeTimeout     = time.Minute * 10
 )
@@ -67,7 +67,7 @@ func (s *Server) apiRoutes(cache, ratelimiter fiber.Handler) {
 		timeout.New(s.getMinersHandler, shortTimeout),
 	)
 	v1.Get("pools/:id/miners/:miner_addr",
-		timeout.New(s.getMinerHandler, shortTimeout),
+		timeout.New(s.getMinerHandler, longTimeout),
 	)
 	v1.Get("pools/:id/miners/:miner_addr/payments",
 		timeout.New(s.getMinerPaymentsHandler, shortTimeout),
