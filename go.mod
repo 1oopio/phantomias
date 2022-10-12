@@ -6,6 +6,7 @@ require (
 	github.com/ansrivas/fiberprometheus v0.3.2
 	github.com/caarlos0/duration v0.0.0-20220103233809-8df7c22fe305
 	github.com/esenmx/gocko v0.0.0-20220329072259-1b4c5af85101
+	github.com/gocarina/gocsv v0.0.0-20220927221512-ad3251f9fa25
 	github.com/goccy/go-json v0.9.11
 	github.com/gofiber/adaptor/v2 v2.1.26
 	github.com/gofiber/fiber/v2 v2.37.0

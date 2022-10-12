@@ -2,6 +2,7 @@ package database
 
 import (
 	"context"
+	"fmt"
 	"strings"
 	"time"
 
@@ -9,7 +10,7 @@ import (
 )
 
 type PaymentSchema struct {
-	ID                          int64
+	ID                          int64 `csv:"-"`
 	PoolID                      string
 	Coin                        string
 	Address                     string
@@ -23,6 +24,14 @@ type Payment PaymentSchema
 type AmountByDate struct {
 	Amount decimal.Decimal
 	Date   time.Time
+}
+
+type Earning struct {
+	PoolID  string
+	Coin    string
+	Address string
+	Amount  decimal.Decimal
+	Date    time.Time
 }
 
 func (d *DB) PagePayments(ctx context.Context, poolID, address string, page int, pageSize int) ([]*Payment, error) {
@@ -69,5 +78,44 @@ func (d *DB) PageMinerPaymentsByDay(ctx context.Context, poolID, address string,
 	err := d.sql.SelectContext(ctx, &payments, `
 	SELECT SUM(amount) AS amount, date_trunc('day', created) AS date FROM payments WHERE poolid = $1
 		AND address = $2 GROUP BY date ORDER BY date DESC OFFSET $3 FETCH NEXT $4 ROWS ONLY;`, poolID, address, page*pageSize, pageSize)
+	return payments, err
+}
+
+func (d *DB) GetMinerPaymentsBetween(ctx context.Context, poolID, address string, start, end time.Time) ([]*Payment, error) {
+	var payments []*Payment
+	err := d.sql.SelectContext(ctx, &payments, `
+	SELECT * FROM payments
+	WHERE
+		poolid = $1 AND
+		address = $2 AND
+		created >= $3 AND
+		created <= $4
+	ORDER BY created DESC;
+	`, poolID, address, start, end)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get miner payments between: %v", err)
+	}
+	return payments, nil
+}
+
+func (d *DB) GetMinerPaymentsByDayBetween(ctx context.Context, poolID, address string, start, end time.Time) ([]*Earning, error) {
+	var payments []*Earning
+	err := d.sql.SelectContext(ctx, &payments, `
+	SELECT
+		min(poolid) AS poolid,
+		min(coin) AS coin,
+		min(address) AS address,
+		SUM(amount) AS amount,
+		date_trunc('day', created) AS date
+	FROM payments
+	WHERE
+		poolid = $1 AND
+		address = $2 AND
+		created >= $3 AND
+		created <= $4
+	GROUP BY
+		date
+	ORDER BY date DESC;
+	`, poolID, address, start, end)
 	return payments, err
 }
