@@ -290,7 +290,7 @@ const docTemplate = `{
             "get": {
                 "description": "Download miner specific data as CSV",
                 "produces": [
-                    "application/json"
+                    "multipart/form-data"
                 ],
                 "tags": [
                     "CSV"

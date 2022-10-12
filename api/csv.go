@@ -27,7 +27,7 @@ var maxCSVDataAge = duration.Month
 // @Summary Download data as CSV
 // @Description Download miner specific data as CSV
 // @Tags CSV
-// @Produce json
+// @Produce multipart/form-data
 // @Param pool_id path string true "ID of the pool"
 // @Param miner_addr path string true "Address of the miner"
 // @Param data query string true "Specify the data type (stats, payouts, earnings)"
