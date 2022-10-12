@@ -33,9 +33,9 @@ var maxCSVDataAge = duration.Month
 // @Param data query string true "Specify the data type (stats, payouts, earnings)"
 // @Param start query string true "Start time (RFC3339 format)"
 // @Param end query string true "End time (RFC3339 format)"
-// @Success 200 {object} api.MinerPerformanceRes
+// @Success 200
 // @Failure 400 {object} utils.APIError
-// @Router /api/v1/pools/{pool_id}/miners/{miner_addr}/performance [get]
+// @Router /api/v1/pools/{pool_id}/miners/{miner_addr}/csv [get]
 func (s *Server) getCSVDownloadHandler(c *fiber.Ctx) error {
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
 	if poolCfg == nil {

@@ -279,6 +279,66 @@
                 }
             }
         },
+        "/api/v1/pools/{pool_id}/miners/{miner_addr}/csv": {
+            "get": {
+                "description": "Download miner specific data as CSV",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "CSV"
+                ],
+                "summary": "Download data as CSV",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Address of the miner",
+                        "name": "miner_addr",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Specify the data type (stats, payouts, earnings)",
+                        "name": "data",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "Start time (RFC3339 format)",
+                        "name": "start",
+                        "in": "query",
+                        "required": true
+                    },
+                    {
+                        "type": "string",
+                        "description": "End time (RFC3339 format)",
+                        "name": "end",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": ""
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/pools/{pool_id}/miners/{miner_addr}/earnings/daily": {
             "get": {
                 "description": "Get a list of daily earnings from a specific miner from a specific pool",

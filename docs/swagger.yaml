@@ -641,6 +641,47 @@ paths:
       summary: Get balance changes
       tags:
       - Miners
+  /api/v1/pools/{pool_id}/miners/{miner_addr}/csv:
+    get:
+      description: Download miner specific data as CSV
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Address of the miner
+        in: path
+        name: miner_addr
+        required: true
+        type: string
+      - description: Specify the data type (stats, payouts, earnings)
+        in: query
+        name: data
+        required: true
+        type: string
+      - description: Start time (RFC3339 format)
+        in: query
+        name: start
+        required: true
+        type: string
+      - description: End time (RFC3339 format)
+        in: query
+        name: end
+        required: true
+        type: string
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: ""
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Download data as CSV
+      tags:
+      - CSV
   /api/v1/pools/{pool_id}/miners/{miner_addr}/earnings/daily:
     get:
       description: Get a list of daily earnings from a specific miner from a specific
