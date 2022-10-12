@@ -24,6 +24,18 @@ const (
 
 var maxCSVDataAge = duration.Month
 
+// @Summary Download data as CSV
+// @Description Download miner specific data as CSV
+// @Tags CSV
+// @Produce json
+// @Param pool_id path string true "ID of the pool"
+// @Param miner_addr path string true "Address of the miner"
+// @Param data query string true "Specify the data type (stats, payouts, earnings)"
+// @Param start query string true "Start time (RFC3339 format)"
+// @Param end query string true "End time (RFC3339 format)"
+// @Success 200 {object} api.MinerPerformanceRes
+// @Failure 400 {object} utils.APIError
+// @Router /api/v1/pools/{pool_id}/miners/{miner_addr}/performance [get]
 func (s *Server) getCSVDownloadHandler(c *fiber.Ctx) error {
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
 	if poolCfg == nil {
