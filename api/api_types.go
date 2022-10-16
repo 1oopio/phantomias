@@ -2,8 +2,6 @@ package api
 
 import (
 	"time"
-
-	"github.com/stratumfarm/phantomias/database"
 )
 
 type Meta struct {
@@ -62,15 +60,14 @@ type PoolExtendedRes struct {
 
 type PoolExtended struct {
 	*Pool
-	Address            string                           `json:"address"`
-	MinPayout          float64                          `json:"minPayout"`
-	Ports              map[string]*PoolEndpoint         `json:"ports"`
-	TotalBlocksFound   uint                             `json:"totalBlocksFound"`
-	TotalPayments      float64                          `json:"totalPayments"`
-	LastBlockFoundTime time.Time                        `json:"lastBlockFoundTime"`
-	AverageEffort      *float32                         `json:"averageEffort"`
-	Effort             float32                          `json:"effort"`
-	TopMiners          []database.MinerPerformanceStats `json:"topMiners"`
+	Address            string                   `json:"address"`
+	MinPayout          float64                  `json:"minPayout"`
+	Ports              map[string]*PoolEndpoint `json:"ports"`
+	TotalBlocksFound   uint                     `json:"totalBlocksFound"`
+	TotalPayments      float64                  `json:"totalPayments"`
+	LastBlockFoundTime time.Time                `json:"lastBlockFoundTime"`
+	AverageEffort      *float32                 `json:"averageEffort"`
+	Effort             float32                  `json:"effort"`
 }
 
 type Price struct {
@@ -236,4 +233,17 @@ type Worker struct {
 type WorkerRes struct {
 	*Meta
 	Result *Worker `json:"result"`
+}
+
+type TopMinersRes struct {
+	*Meta
+	Result []*TopMiner `json:"result"`
+}
+
+type TopMiner struct {
+	Miner     string    `json:"miner"`
+	Hashrate  float64   `json:"hashrate"`
+	Workers   int       `json:"workers"`
+	TotalPaid float64   `json:"totalPaid"`
+	Joined    time.Time `json:"joined"`
 }

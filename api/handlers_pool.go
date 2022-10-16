@@ -82,13 +82,11 @@ func (s Server) getPrices(name string) (priceRes map[string]Price) {
 // @Tags Pools
 // @Produce  json
 // @Param pool_id path string true "ID of the pool"
-// @Param topMinersRange query int false "Range in hours to fetch the top miners from (default=1)"
 // @Param effortRange query int false "Range in blocks to fetch the average effort from (default=50)"
 // @Success 200 {object} api.PoolExtendedRes
 // @Failure 400 {object} utils.APIError
 // @Router /api/v1/pools/{pool_id} [get]
 func (s *Server) getPoolHandler(c *fiber.Ctx) error {
-	topMinersRange := getTopMinersRangeQuery(c)
 	effortRange := getEffortRangeQuery(c)
 
 	poolCfg := getPoolCfgByID(c.Params("id"), s.pools)
@@ -101,14 +99,8 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 		return handleAPIError(c, fiber.StatusInternalServerError, err)
 	}
 
-	from := time.Now().Add(-time.Duration(topMinersRange) * time.Hour)
-	minersByHashrate, err := s.db.PagePoolMinersByHashrate(c.UserContext(), poolCfg.ID, from, 0, 15)
-	if err != nil {
-		return handleAPIError(c, fiber.StatusInternalServerError, err)
-	}
 	poolExtended := PoolExtended{
 		Pool:      poolStats,
-		TopMiners: minersByHashrate,
 		Address:   poolCfg.Address,
 		MinPayout: poolCfg.MinPayout,
 	}
@@ -361,4 +353,43 @@ func dbPoolPerformanceToAPIPerformance(stats []*database.AggregatedPoolStats) []
 		perfStats[i] = &s
 	}
 	return perfStats
+}
+
+// @Summary Get the top miners from a pool
+// @Description Get the top miners from a specific pool
+// @Tags Pools
+// @Produce json
+// @Param pool_id path string true "ID of the pool"
+// @Param range query int false "Range in hours to fetch the top miners from (default=1)"
+// @Success 200 {object} api.TopMinersRes
+// @Failure 400 {object} utils.APIError
+// @Router /api/v1/pools/{pool_id}/topminers [get]
+func (s *Server) getTopMinersHandler(c *fiber.Ctx) error {
+	topMinersRange := getTopMinersRangeQuery(c)
+
+	pool := getPoolCfgByID(c.Params("id"), s.pools)
+	if pool == nil {
+		return handleAPIError(c, fiber.StatusNotFound, utils.ErrPoolNotFound)
+	}
+
+	from := time.Now().Add(-time.Duration(topMinersRange) * time.Hour)
+	stats, err := s.db.GetTopMinerStats(c.UserContext(), pool.ID, from, 0, 15)
+	if err != nil {
+		return handleAPIError(c, fiber.StatusInternalServerError, err)
+	}
+	return c.JSON(&TopMinersRes{
+		Meta: &Meta{
+			Success: true,
+		},
+		Result: dbTopMinersToAPITopMiner(stats),
+	})
+}
+
+func dbTopMinersToAPITopMiner(stats []*database.TopMinerStats) []*TopMiner {
+	topMiners := make([]*TopMiner, len(stats))
+	for i, stat := range stats {
+		s := TopMiner(*stat)
+		topMiners[i] = &s
+	}
+	return topMiners
 }

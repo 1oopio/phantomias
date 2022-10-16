@@ -311,10 +311,6 @@ definitions:
         additionalProperties:
           $ref: '#/definitions/api.Price'
         type: object
-      topMiners:
-        items:
-          $ref: '#/definitions/database.MinerPerformanceStats'
-        type: array
       totalBlocksFound:
         type: integer
       totalPayments:
@@ -393,6 +389,30 @@ definitions:
       success:
         type: boolean
     type: object
+  api.TopMiner:
+    properties:
+      hashrate:
+        type: number
+      joined:
+        type: string
+      miner:
+        type: string
+      totalPaid:
+        type: number
+      workers:
+        type: integer
+    type: object
+  api.TopMinersRes:
+    properties:
+      pageCount:
+        type: integer
+      result:
+        items:
+          $ref: '#/definitions/api.TopMiner'
+        type: array
+      success:
+        type: boolean
+    type: object
   api.Worker:
     properties:
       hashrate:
@@ -437,15 +457,6 @@ definitions:
         $ref: '#/definitions/api.Worker'
       success:
         type: boolean
-    type: object
-  database.MinerPerformanceStats:
-    properties:
-      hashrate:
-        type: number
-      miner:
-        type: string
-      sharesPerSecond:
-        type: number
     type: object
   utils.APIError:
     properties:
@@ -492,10 +503,6 @@ paths:
         name: pool_id
         required: true
         type: string
-      - description: Range in hours to fetch the top miners from (default=1)
-        in: query
-        name: topMinersRange
-        type: integer
       - description: Range in blocks to fetch the average effort from (default=50)
         in: query
         name: effortRange
@@ -980,6 +987,33 @@ paths:
           schema:
             $ref: '#/definitions/utils.APIError'
       summary: Get a list of performance samples
+      tags:
+      - Pools
+  /api/v1/pools/{pool_id}/topminers:
+    get:
+      description: Get the top miners from a specific pool
+      parameters:
+      - description: ID of the pool
+        in: path
+        name: pool_id
+        required: true
+        type: string
+      - description: Range in hours to fetch the top miners from (default=1)
+        in: query
+        name: range
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/api.TopMinersRes'
+        "400":
+          description: Bad Request
+          schema:
+            $ref: '#/definitions/utils.APIError'
+      summary: Get the top miners from a pool
       tags:
       - Pools
   /api/v1/search:

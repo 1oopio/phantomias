@@ -69,12 +69,6 @@ const docTemplate = `{
                     },
                     {
                         "type": "integer",
-                        "description": "Range in hours to fetch the top miners from (default=1)",
-                        "name": "topMinersRange",
-                        "in": "query"
-                    },
-                    {
-                        "type": "integer",
                         "description": "Range in blocks to fetch the average effort from (default=50)",
                         "name": "effortRange",
                         "in": "query"
@@ -791,6 +785,47 @@ const docTemplate = `{
                 }
             }
         },
+        "/api/v1/pools/{pool_id}/topminers": {
+            "get": {
+                "description": "Get the top miners from a specific pool",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "Pools"
+                ],
+                "summary": "Get the top miners from a pool",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "ID of the pool",
+                        "name": "pool_id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "type": "integer",
+                        "description": "Range in hours to fetch the top miners from (default=1)",
+                        "name": "range",
+                        "in": "query"
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/api.TopMinersRes"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.APIError"
+                        }
+                    }
+                }
+            }
+        },
         "/api/v1/search": {
             "get": {
                 "description": "Get stats for all pools",
@@ -1350,12 +1385,6 @@ const docTemplate = `{
                         "$ref": "#/definitions/api.Price"
                     }
                 },
-                "topMiners": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/database.MinerPerformanceStats"
-                    }
-                },
                 "totalBlocksFound": {
                     "type": "integer"
                 },
@@ -1477,6 +1506,43 @@ const docTemplate = `{
                 }
             }
         },
+        "api.TopMiner": {
+            "type": "object",
+            "properties": {
+                "hashrate": {
+                    "type": "number"
+                },
+                "joined": {
+                    "type": "string"
+                },
+                "miner": {
+                    "type": "string"
+                },
+                "totalPaid": {
+                    "type": "number"
+                },
+                "workers": {
+                    "type": "integer"
+                }
+            }
+        },
+        "api.TopMinersRes": {
+            "type": "object",
+            "properties": {
+                "pageCount": {
+                    "type": "integer"
+                },
+                "result": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/api.TopMiner"
+                    }
+                },
+                "success": {
+                    "type": "boolean"
+                }
+            }
+        },
         "api.Worker": {
             "type": "object",
             "properties": {
@@ -1544,20 +1610,6 @@ const docTemplate = `{
                 },
                 "success": {
                     "type": "boolean"
-                }
-            }
-        },
-        "database.MinerPerformanceStats": {
-            "type": "object",
-            "properties": {
-                "hashrate": {
-                    "type": "number"
-                },
-                "miner": {
-                    "type": "string"
-                },
-                "sharesPerSecond": {
-                    "type": "number"
                 }
             }
         },

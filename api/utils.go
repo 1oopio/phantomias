@@ -60,7 +60,7 @@ func handlePaginationQueries(c *fiber.Ctx) map[string]string {
 }
 
 func getTopMinersRangeQuery(c *fiber.Ctx) int {
-	topMinersRangeString := c.Query("topMinersRange", "1")
+	topMinersRangeString := c.Query("range", "1")
 	topMinersRange, err := strconv.Atoi(topMinersRangeString)
 	if err != nil {
 		return 1

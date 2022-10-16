@@ -53,6 +53,14 @@ type MinerPerformanceStats struct {
 	SharesPerSecond float64
 }
 
+type TopMinerStats struct {
+	Miner     string
+	Hashrate  float64
+	Workers   int
+	TotalPaid float64
+	Joined    time.Time
+}
+
 type WorkerPerformanceStats struct {
 	Hashrate         *float64
 	ReportedHashrate *float64
@@ -73,7 +81,7 @@ type MinerStats struct {
 	Performance    *WorkerPerformanceStatsContainer
 }
 
-func (d *DB) PagePoolMinersByHashrate(ctx context.Context, poolID string, from time.Time, page int, pageSite int) ([]MinerPerformanceStats, error) {
+func (d *DB) PagePoolMinersByHashrate(ctx context.Context, poolID string, from time.Time, page int, pageSize int) ([]MinerPerformanceStats, error) {
 	var miners []MinerPerformanceStats
 	err := d.sql.SelectContext(ctx, &miners, `
 		WITH tmp AS
@@ -92,7 +100,7 @@ func (d *DB) PagePoolMinersByHashrate(ctx context.Context, poolID string, from t
 		WHERE t.rk = 1
 		ORDER by t.hashrate DESC
 		OFFSET $3 FETCH NEXT $4 ROWS ONLY;
-	`, poolID, from, page*pageSite, pageSite)
+	`, poolID, from, page*pageSize, pageSize)
 	return miners, err
 }
 
@@ -239,6 +247,98 @@ func (d *DB) GetMinerPerformanceBetweenDaily(ctx context.Context, poolID, miner 
 	`, poolID, miner, start, end)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get miner performance stats: %w", err)
+	}
+	return stats, nil
+}
+func (d *DB) GetTopMinerStats(ctx context.Context, poolID string, from time.Time, page int, pageSize int) ([]*TopMinerStats, error) {
+	var stats []*TopMinerStats
+	err := d.sql.SelectContext(ctx, &stats, `
+	WITH
+  /*
+   * The minerstats table contains all statistics from the miners
+   * So, in this query you get sum of the hashrates and count of online workers per pool, miner and create date.
+   */
+	mis AS (
+    	SELECT
+        	ms.poolid,
+            ms.miner,
+            ms.hashrate,
+			ms.workers,
+            ROW_NUMBER() OVER(PARTITION BY ms.miner ORDER BY ms.hashrate DESC) AS rk
+		FROM  (
+        	SELECT
+            	poolid,
+                miner,
+                SUM(hashrate) AS hashrate,
+                COUNT(DISTINCT worker) AS workers
+          	FROM minerstats
+            WHERE 
+            	poolid = $1 AND
+                created >= $2 AND
+                hashratetype = 'actual'
+           	GROUP BY poolid, miner, created
+		) ms
+	),
+  /*
+   * The table payments contains all payments to the miners.
+   * The miners are called address in this table (very important fact).
+   * So in this query you get all payments per poolid and address (miner) as sum
+   */
+	pmts AS  (
+  		SELECT
+    		pmt.poolid,
+        	pmt.address,
+        	pmt.totalpaid
+    	FROM  (
+    		SELECT
+        		poolid,
+            	address,
+            	SUM(amount) AS totalpaid 
+        	FROM payments
+        	WHERE
+        		poolid = $1
+        	GROUP BY poolid, address
+        ) pmt
+	),
+  /*
+   * The table balances contains all balances of the miners.
+   * The miners are called address in this table (very important fact).
+   * So in this query returns the date when the first balance was recorded.
+   * We use this date as an indicator to determine when a miner joined the pool.
+   */
+	blcs AS (
+		SELECT
+			poolid,
+			address,
+			created
+		FROM balances
+		WHERE
+			poolid = $1
+		GROUP BY poolid, address
+	)
+   /*
+    * In this final query you JOIN the minerstats with the payments by poolid and miner=address.
+    * So you get the sum of the hashrates and the shares per seconds from the minerstats and the sum of the payments for each selected miner
+    */
+	SELECT
+     	m.miner,
+		m.hashrate,
+      	m.workers,
+      	p.totalpaid,
+      	b.created AS joined
+    FROM mis m, pmts p, blcs b
+    WHERE
+    	m.rk = 1 AND
+      	m.poolid = p.poolid AND
+      	m.poolid = b.poolid AND
+      	m.miner = p.address AND
+      	m.miner = b.address
+    ORDER by
+    	m.hashrate DESC
+    OFFSET $3 FETCH NEXT $4 ROWS ONLY;
+	`, poolID, from, page, pageSize)
+	if err != nil {
+		return nil, fmt.Errorf("failed to get top miner stats: %w", err)
 	}
 	return stats, nil
 }

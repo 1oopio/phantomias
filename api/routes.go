@@ -61,6 +61,10 @@ func (s *Server) apiRoutes(cache, ratelimiter fiber.Handler) {
 		cache,
 		timeout.New(s.getPoolPerformanceHandler, longTimeout),
 	)
+	v1.Get("pools/:id/topminers",
+		cache,
+		timeout.New(s.getTopMinersHandler, shortTimeout),
+	)
 
 	// miners
 	v1.Get("pools/:id/miners",
