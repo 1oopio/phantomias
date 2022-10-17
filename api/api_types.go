@@ -241,9 +241,9 @@ type TopMinersRes struct {
 }
 
 type TopMiner struct {
-	Miner     string    `json:"miner"`
-	Hashrate  float64   `json:"hashrate"`
-	Workers   int       `json:"workers"`
-	TotalPaid float64   `json:"totalPaid"`
-	Joined    time.Time `json:"joined"`
+	Miner     string     `json:"miner"`
+	Hashrate  float64    `json:"hashrate"`
+	Workers   int        `json:"workers"`
+	TotalPaid float64    `json:"totalPaid"`
+	Joined    *time.Time `json:"joined"`
 }
