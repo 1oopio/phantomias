@@ -254,58 +254,58 @@ func (d *DB) GetTopMinerStats(ctx context.Context, poolID string, from time.Time
 	var stats []*TopMinerStats
 	err := d.sql.SelectContext(ctx, &stats, `
 	WITH
-  /*
-   * The minerstats table contains all statistics from the miners
-   * So, in this query you get sum of the hashrates and count of online workers per pool, miner and create date.
-   */
+	/*
+	 * The minerstats table contains all statistics from the miners
+	 * So, in this query you get sum of the hashrates and count of online workers per pool, miner and create date.
+	 */
 	mis AS (
-    	SELECT
-        	ms.poolid,
-            ms.miner,
-            ms.hashrate,
+		SELECT
+			ms.poolid,
+			ms.miner,
+			ms.hashrate,
 			ms.workers,
-            ROW_NUMBER() OVER(PARTITION BY ms.miner ORDER BY ms.hashrate DESC) AS rk
+			ROW_NUMBER() OVER(PARTITION BY ms.miner ORDER BY ms.hashrate DESC) AS rk
 		FROM  (
-        	SELECT
-            	poolid,
-                miner,
-                SUM(hashrate) AS hashrate,
-                COUNT(DISTINCT worker) AS workers
-          	FROM minerstats
-            WHERE 
-            	poolid = $1 AND
-                created >= $2 AND
-                hashratetype = 'actual'
-           	GROUP BY poolid, miner, created
+			SELECT
+				poolid,
+				miner,
+				SUM(hashrate) AS hashrate,
+				COUNT(DISTINCT worker) AS workers
+			FROM minerstats
+			WHERE 
+				poolid = $1 AND
+				created >= $2 AND
+				hashratetype = 'actual'
+			GROUP BY poolid, miner, created
 		) ms
 	),
-  /*
-   * The table payments contains all payments to the miners.
-   * The miners are called address in this table (very important fact).
-   * So in this query you get all payments per poolid and address (miner) as sum
-   */
+	/*
+	 * The table payments contains all payments to the miners.
+	 * The miners are called address in this table (very important fact).
+	 * So in this query you get all payments per poolid and address (miner) as sum
+	 */
 	pmts AS  (
-  		SELECT
-    		pmt.poolid,
-        	pmt.address,
-        	pmt.totalpaid
-    	FROM  (
-    		SELECT
-        		poolid,
-            	address,
-            	SUM(amount) AS totalpaid 
-        	FROM payments
-        	WHERE
-        		poolid = $1
-        	GROUP BY poolid, address
-        ) pmt
+		SELECT
+			pmt.poolid,
+			pmt.address,
+			pmt.totalpaid
+		FROM  (
+			SELECT
+				poolid,
+				address,
+				SUM(amount) AS totalpaid 
+			FROM payments
+			WHERE
+				poolid = $1
+			GROUP BY poolid, address
+		) pmt
 	),
-  /*
-   * The table balances contains all balances of the miners.
-   * The miners are called address in this table (very important fact).
-   * So in this query returns the date when the first balance was recorded.
-   * We use this date as an indicator to determine when a miner joined the pool.
-   */
+	/*
+	 * The table balances contains all balances of the miners.
+	 * The miners are called address in this table (very important fact).
+	 * So in this query returns the date when the first balance was recorded.
+	 * We use this date as an indicator to determine when a miner joined the pool.
+	 */
 	blcs AS (
 		SELECT
 			poolid,
@@ -316,24 +316,24 @@ func (d *DB) GetTopMinerStats(ctx context.Context, poolID string, from time.Time
 			poolid = $1
 		GROUP BY poolid, address
 	)
-   /*
-    * In this final query you JOIN the minerstats with the payments by poolid and miner=address.
-    * So you get the sum of the hashrates and the shares per seconds from the minerstats and the sum of the payments for each selected miner
-    */
+	/*
+	 * In this final query you JOIN the minerstats with the payments by poolid and miner=address.
+	 * So you get the sum of the hashrates and the shares per seconds from the minerstats and the sum of the payments for each selected miner
+	 */
 	SELECT
-     	m.miner,
+		m.miner,
 		m.hashrate,
-      	m.workers,
+		m.workers,
 		coalesce(p.totalpaid, 0) as totalpaid,
 		b.created as joined
-    FROM mis m
+	FROM mis m
 	LEFT JOIN pmts p ON p.poolid = m.poolid AND p.address = m.miner
-    LEFT JOIN blcs b ON b.poolid = m.poolid AND b.address = m.miner
-    WHERE
-    	m.rk = 1
-    ORDER by
-    	m.hashrate DESC
-    OFFSET $3 FETCH NEXT $4 ROWS ONLY;
+	LEFT JOIN blcs b ON b.poolid = m.poolid AND b.address = m.miner
+	WHERE
+		m.rk = 1
+	ORDER by
+		m.hashrate DESC
+	OFFSET $3 FETCH NEXT $4 ROWS ONLY;
 	`, poolID, from, page, pageSize)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get top miner stats: %w", err)
