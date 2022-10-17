@@ -105,7 +105,7 @@ func (d *DB) GetOverallPoolStats(ctx context.Context) (OverallPoolStats, error) 
 			sharespersecond,
 			ROW_NUMBER() OVER (PARTITION BY poolid ORDER BY created DESC) AS row_number
 		FROM poolstats
-		WHERE created > (NOW() - INTERVAL '20 minutes')
+		WHERE created > (NOW() - INTERVAL '60 minutes')
 	),
 	pmts AS (
 		SELECT COUNT(*) AS paymentstoday FROM payments WHERE created > DATE_TRUNC('day', NOW())
