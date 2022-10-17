@@ -58,7 +58,7 @@ type TopMinerStats struct {
 	Hashrate  float64
 	Workers   int
 	TotalPaid float64
-	Joined    time.Time
+	Joined    *time.Time
 }
 
 type WorkerPerformanceStats struct {
@@ -324,15 +324,13 @@ func (d *DB) GetTopMinerStats(ctx context.Context, poolID string, from time.Time
      	m.miner,
 		m.hashrate,
       	m.workers,
-      	p.totalpaid,
-      	b.created AS joined
-    FROM mis m, pmts p, blcs b
+		coalesce(p.totalpaid, 0) as totalpaid,
+		b.created as joined
+    FROM mis m
+	LEFT JOIN pmts p ON p.poolid = m.poolid AND p.address = m.miner
+    LEFT JOIN blcs b ON b.poolid = m.poolid AND b.address = m.miner
     WHERE
-    	m.rk = 1 AND
-      	m.poolid = p.poolid AND
-      	m.poolid = b.poolid AND
-      	m.miner = p.address AND
-      	m.miner = b.address
+    	m.rk = 1
     ORDER by
     	m.hashrate DESC
     OFFSET $3 FETCH NEXT $4 ROWS ONLY;
