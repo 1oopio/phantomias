@@ -133,7 +133,7 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 	if err != nil {
 		return handleAPIError(c, fiber.StatusInternalServerError, err)
 	}
-	poolExtended.Effort = currentEffort
+	poolExtended.Effort = utils.ValueOrZero(currentEffort)
 
 	res := &PoolExtendedRes{
 		Meta: &Meta{
