@@ -30,8 +30,21 @@ type BalanceChange struct {
 func (d *DB) PageBalanceChanges(ctx context.Context, poolID, miner string, page, pageSize int) ([]*BalanceChange, error) {
 	var rawBalanceChanges []*BalanceChangeSchema
 	err := d.sql.SelectContext(ctx, &rawBalanceChanges, `
-	SELECT * FROM balance_changes WHERE poolid = $1 AND address = $2
-		ORDER BY created DESC OFFSET $3 FETCH NEXT $4 ROWS ONLY;
+	SELECT
+		id,
+		poolid,
+		address,
+		amount,
+		usage,
+		tags,
+		created
+	FROM balance_changes 
+	WHERE 
+		poolid = $1 AND 
+		address = $2
+	ORDER BY 
+		created DESC 
+	OFFSET $3 FETCH NEXT $4 ROWS ONLY;
 	`, poolID, miner, page*pageSize, pageSize)
 	if err != nil {
 		return nil, fmt.Errorf("failed to select balance_changes: %v", err)

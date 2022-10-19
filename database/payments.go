@@ -38,7 +38,7 @@ func (d *DB) PagePayments(ctx context.Context, poolID, address string, page int,
 	var payments []*Payment
 	var s strings.Builder
 
-	s.WriteString("SELECT * FROM payments WHERE poolid = $1")
+	s.WriteString("SELECT id, poolid, coin, address, amount, transactionconfirmationdata, created FROM payments WHERE poolid = $1")
 	if address != "" {
 		s.WriteString(" AND address = $2 ORDER BY created DESC OFFSET $3 FETCH NEXT $4 ROWS ONLY;")
 	} else {
@@ -84,7 +84,15 @@ func (d *DB) PageMinerPaymentsByDay(ctx context.Context, poolID, address string,
 func (d *DB) GetMinerPaymentsBetween(ctx context.Context, poolID, address string, start, end time.Time) ([]*Payment, error) {
 	var payments []*Payment
 	err := d.sql.SelectContext(ctx, &payments, `
-	SELECT * FROM payments
+	SELECT 
+		id, 
+		poolid, 
+		coin, 
+		address, 
+		amount, 
+		transactionconfirmationdata, 
+		created 
+	FROM payments
 	WHERE
 		poolid = $1 AND
 		address = $2 AND

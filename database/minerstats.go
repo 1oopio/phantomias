@@ -140,7 +140,7 @@ func (d *DB) GetMinerStats(ctx context.Context, poolID string, miner string) (*M
 
 	stats.LastPayment = new(Payment)
 	err = d.sql.GetContext(ctx, stats.LastPayment, `
-	SELECT * FROM payments WHERE poolid = $1 AND address = $2 ORDER BY created DESC LIMIT 1;
+	SELECT id, poolid, coin, address, amount, transactionconfirmationdata, created FROM payments WHERE poolid = $1 AND address = $2 ORDER BY created DESC LIMIT 1;
 	`, poolID, miner)
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {

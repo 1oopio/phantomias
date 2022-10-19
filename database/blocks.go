@@ -53,7 +53,7 @@ func (d *DB) PageBlocks(ctx context.Context, poolID string, status []BlockStatus
 		blocks []*Block
 		s      strings.Builder
 	)
-	s.WriteString("SELECT * FROM blocks WHERE ")
+	s.WriteString("SELECT id, poolid, blockheight, networkdifficulty, status, type, confirmationprogress, effort, transactionconfirmationdata, miner, reward, source, hash, created FROM blocks WHERE ")
 	if poolID != "" {
 		s.WriteString("poolid = $1 AND status = ANY($2) ORDER BY created DESC OFFSET $3 FETCH NEXT $4 ROWS ONLY;")
 	} else {

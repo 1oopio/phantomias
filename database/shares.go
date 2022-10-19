@@ -24,10 +24,23 @@ func (d *DB) GetRecentyUsedIPAddresses(ctx context.Context, poolID, miner string
 	err := d.sql.SelectContext(ctx, &ips, `
 		SELECT DISTINCT s.ipaddress 
 		FROM (
-			SELECT * FROM shares
-			WHERE poolid = $1 
-			AND miner = $2 
-			ORDER BY CREATED DESC 
+			SELECT
+				poolid,
+				blockheight,
+				difficulty,
+				networkdifficulty,
+				miner,
+				worker,
+				useragent,
+				ipaddress,
+				source,
+				created
+			FROM shares
+			WHERE 
+				poolid = $1 AND 
+				miner = $2 
+			ORDER BY 
+				created DESC 
 			LIMIT 100
 		) s;
 	`, poolID, miner)

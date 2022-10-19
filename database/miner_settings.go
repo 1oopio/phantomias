@@ -20,7 +20,7 @@ type MinerSettings MinerSettingsSchema
 
 func (d *DB) GetSettings(ctx context.Context, poolID, miner string) (MinerSettings, error) {
 	var settings MinerSettings
-	err := d.sql.GetContext(ctx, &settings, "SELECT * FROM miner_settings WHERE poolid = $1 AND address = $2", poolID, miner)
+	err := d.sql.GetContext(ctx, &settings, "SELECT poolid, address, paymentthreshold, created, updated FROM miner_settings WHERE poolid = $1 AND address = $2", poolID, miner)
 	if err != nil {
 		return MinerSettings{}, fmt.Errorf("failed to get miner settings: %w", err)
 	}

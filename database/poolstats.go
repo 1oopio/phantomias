@@ -40,7 +40,27 @@ type OverallPoolStats struct {
 
 func (d *DB) GetLastPoolStats(ctx context.Context, poolID string) (*PoolStats, error) {
 	var stats PoolStats
-	err := d.sql.GetContext(ctx, &stats, "SELECT * FROM poolstats WHERE poolid = $1 ORDER BY created DESC FETCH NEXT 1 ROWS ONLY", poolID)
+	err := d.sql.GetContext(ctx, &stats, `
+	SELECT 
+		id,
+		poolid,
+		connectedminers,
+		poolhashrate,
+		sharespersecond,
+		networkhashrate,
+		networkdifficulty,
+		lastnetworkblocktime,
+		blockheight,
+		connectedpeers,
+		created,
+		connectedworkers
+	FROM poolstats 
+	WHERE 
+		poolid = $1 
+	ORDER BY 
+		created DESC 
+	FETCH NEXT 1 ROWS ONLY
+	`, poolID)
 	if err != nil {
 		return nil, err
 	}
