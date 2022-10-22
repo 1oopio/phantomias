@@ -100,6 +100,7 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 	}
 
 	poolExtended := PoolExtended{
+		Type:      poolCfg.Type,
 		Pool:      poolStats,
 		Address:   poolCfg.Address,
 		MinPayout: poolCfg.MinPayout,

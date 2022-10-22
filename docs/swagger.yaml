@@ -315,6 +315,8 @@ definitions:
         type: integer
       totalPayments:
         type: number
+      type:
+        type: string
       workers:
         type: integer
     type: object

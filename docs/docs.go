@@ -1391,6 +1391,9 @@ const docTemplate = `{
                 "totalPayments": {
                     "type": "number"
                 },
+                "type": {
+                    "type": "string"
+                },
                 "workers": {
                     "type": "integer"
                 }
