@@ -158,7 +158,7 @@ func cfgPortsToAPIPoolPorts(p map[string]config.Port) map[string]*PoolEndpoint {
 func cfgPortToAPIPoolPort(p config.Port) *PoolEndpoint {
 	e := &PoolEndpoint{
 		Difficulty: p.Difficulty,
-		VarDiff:    true,
+		VarDiff:    p.VarDiff,
 		TLS:        p.TLS,
 		TLSAuto:    p.TLSAuto,
 	}
