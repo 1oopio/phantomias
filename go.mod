@@ -13,7 +13,7 @@ require (
 	github.com/gofiber/swagger v0.1.1
 	github.com/gofiber/websocket/v2 v2.0.25
 	github.com/gorilla/websocket v1.5.0
-	github.com/jackc/pgx/v4 v4.17.1
+	github.com/jackc/pgx/v4 v4.17.2
 	github.com/jmoiron/sqlx v1.3.5
 	github.com/jpillora/backoff v1.0.0
 	github.com/prometheus/client_golang v1.13.0
