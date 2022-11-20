@@ -1,4 +1,5 @@
 /config.yml
+/config_devel.yml
 tmp/
 todo.txt
 dist/
