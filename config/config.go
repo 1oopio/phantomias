@@ -27,6 +27,7 @@ type DB struct {
 	User     string `mapstructure:"user"`     // database user
 	Password string `mapstructure:"password"` // database password
 	Dbname   string `mapstructure:"dbname"`   // database name
+	SSLMode  string `mapstructure:"ssl"`      // ssl mode
 }
 
 // Pool represents the config for a single pool

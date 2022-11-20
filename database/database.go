@@ -15,21 +15,26 @@ type DB struct {
 	user     string
 	password string
 	dbname   string
+	sslmode  string
 	sql      *sqlx.DB
 }
 
-func New(host string, port int, user, password, dbname string) *DB {
+func New(host string, port int, user, password, dbname string, sslmode string) *DB {
 	return &DB{
 		host:     host,
 		port:     port,
 		user:     user,
 		password: password,
 		dbname:   dbname,
+		sslmode:  sslmode,
 	}
 }
 
 func (d *DB) Connect() error {
-	psqlconn := fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=require", d.host, d.port, d.user, d.password, d.dbname)
+	psqlconn := fmt.Sprintf(
+		"host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		d.host, d.port, d.user, d.password, d.dbname, d.sslmode,
+	)
 	db, err := sqlx.Open("pgx", psqlconn)
 	if err != nil {
 		return err

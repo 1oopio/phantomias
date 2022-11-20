@@ -47,6 +47,8 @@ func init() {
 	rootCmd.Flags().StringArray("trusted-proxies", nil, "a list of trusted proxy IPs")
 	rootCmd.Flags().Bool("enable-metrics", false, "enable the metrics dashboard")
 
+	rootCmd.Flags().String("database-sslmode", "require", "database sslmode (pgsql)")
+
 	rootCmd.Flags().String("miningcore-url", "", "url of the miningcore api")
 	rootCmd.Flags().Bool("miningcore-ignore-tls", false, "ignore invalid tls configuration")
 	rootCmd.Flags().String("miningcore-ws", "", "url of the miningcore websocket api")
@@ -67,6 +69,7 @@ func init() {
 	viper.BindPFlag("proxy.cert_key", rootCmd.Flags().Lookup("cert-key"))
 	viper.BindPFlag("proxy.trusted_proxy_check", rootCmd.Flags().Lookup("trusted-proxy-check"))
 	viper.BindPFlag("proxy.trusted_proxies", rootCmd.Flags().Lookup("trusted-proxies"))
+	viper.BindPFlag("database.sslmode", rootCmd.Flags().Lookup("database-sslmode"))
 	viper.BindPFlag("miningcore.url", rootCmd.Flags().Lookup("miningcore-url"))
 	viper.BindPFlag("miningcore.ignore_tls", rootCmd.Flags().Lookup("miningcore-ignore-tls"))
 	viper.BindPFlag("miningcore.ws", rootCmd.Flags().Lookup("miningcore-ws"))
@@ -96,7 +99,7 @@ func root(cmd *cobra.Command, args []string) {
 	}
 
 	// connect to the database
-	db := database.New(cfg.DB.Host, cfg.DB.Port, cfg.DB.User, cfg.DB.Password, cfg.DB.Dbname)
+	db := database.New(cfg.DB.Host, cfg.DB.Port, cfg.DB.User, cfg.DB.Password, cfg.DB.Dbname, cfg.DB.SSLMode)
 	if err := db.Connect(); err != nil {
 		log.Fatalln(fmt.Errorf("failed to connect to database: %w", err))
 	}
