@@ -22,7 +22,7 @@ require (
 	github.com/spf13/viper v1.13.0
 	github.com/stratumfarm/go-miningcore-client v0.3.4
 	github.com/stretchr/testify v1.8.1
-	github.com/swaggo/swag v1.8.5
+	github.com/swaggo/swag v1.8.8
 )
 
 replace github.com/ansrivas/fiberprometheus => ./submodules/fiberprometheus
@@ -74,10 +74,10 @@ require (
 	github.com/valyala/fasthttp v1.39.0 // indirect
 	github.com/valyala/tcplisten v1.0.0 // indirect
 	golang.org/x/crypto v0.0.0-20220722155217-630584e8d5aa // indirect
-	golang.org/x/net v0.0.0-20220520000938-2e3eb7b945c2 // indirect
-	golang.org/x/sys v0.0.0-20220520151302-bc2c85ada10a // indirect
+	golang.org/x/net v0.0.0-20220722155237-a158d28d115b // indirect
+	golang.org/x/sys v0.0.0-20220722155257-8c9f86f7a55f // indirect
 	golang.org/x/text v0.3.7 // indirect
-	golang.org/x/tools v0.1.10 // indirect
+	golang.org/x/tools v0.1.12 // indirect
 	google.golang.org/protobuf v1.28.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
