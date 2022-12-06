@@ -19,7 +19,6 @@ type MinerStatsSchema struct {
 	Hashrate        float64
 	SharesPerSecond float64
 	Created         time.Time
-	HashrateType    string
 }
 
 type MinerWorkerPerformanceStats struct {
@@ -27,7 +26,6 @@ type MinerWorkerPerformanceStats struct {
 	Miner            string
 	Worker           string
 	Hashrate         *float64
-	HashrateType     string
 	SharesPerSecond  *float64
 	Created          time.Time
 	ReportedHashrate *float64
@@ -93,7 +91,7 @@ func (d *DB) PagePoolMinersByHashrate(ctx context.Context, poolID string, from t
 				ROW_NUMBER() OVER(PARTITION BY ms.miner ORDER BY ms.hashrate DESC) AS rk
 			FROM (SELECT miner, SUM(hashrate) AS hashrate, SUM(sharespersecond) AS sharespersecond
 				FROM minerstats
-				WHERE poolid = $1 AND created >= $2 AND hashratetype = 'actual' GROUP BY miner, created) ms
+				WHERE poolid = $1 AND created >= $2 GROUP BY miner, created) ms
 		)
 		SELECT t.miner, t.hashrate, t.sharespersecond
 		FROM tmp t
@@ -116,7 +114,7 @@ func (d *DB) GetMinersCount(ctx context.Context, poolID string, from time.Time) 
 				ROW_NUMBER() OVER(PARTITION BY ms.miner ORDER BY ms.hashrate DESC) AS rk
 			FROM (SELECT miner, SUM(hashrate) AS hashrate, SUM(sharespersecond) AS sharespersecond
 				FROM minerstats
-				WHERE poolid = $1 AND created >= $2 AND hashratetype = 'actual' GROUP BY miner, created) ms
+				WHERE poolid = $1 AND created >= $2 GROUP BY miner, created) ms
 		)
 		SELECT count(t.miner)
 		FROM tmp t
@@ -153,7 +151,7 @@ func (d *DB) GetMinerStats(ctx context.Context, poolID string, miner string) (*M
 
 	var lastUpdated time.Time
 	err = d.sql.GetContext(ctx, &lastUpdated, `
-	SELECT created FROM minerstats WHERE poolid = $1 AND miner = $2 AND hashratetype = 'actual' ORDER BY created DESC LIMIT 1;
+	SELECT created FROM minerstats WHERE poolid = $1 AND miner = $2 ORDER BY created DESC LIMIT 1;
 	`, poolID, miner)
 	if err != nil && !errors.Is(err, sql.ErrNoRows) {
 		return nil, fmt.Errorf("failed to get miner last updated: %w", err)
@@ -168,10 +166,40 @@ func (d *DB) GetMinerStats(ctx context.Context, poolID string, miner string) (*M
 	var performanceStats []*MinerWorkerPerformanceStats
 	err = d.sql.SelectContext(ctx, &performanceStats, `
 	SELECT ms.created, ms.poolid, ms.miner, ms.worker,
-		(SELECT hashrate FROM minerstats hms WHERE hms.hashrateType = 'actual' AND hms.worker = ms.worker AND hms.miner = ms.miner AND hms.poolid = ms.poolid AND hms.created = ms.created ORDER BY hms.created DESC LIMIT 1),
-		(SELECT sharespersecond FROM minerstats hms WHERE hms.hashrateType = 'actual' AND hms.worker = ms.worker AND hms.miner = ms.miner AND hms.poolid = ms.poolid AND hms.created = ms.created ORDER BY hms.created DESC LIMIT 1),
-		(SELECT hashrate FROM minerstats hms WHERE hms.hashrateType = 'reported' AND hms.worker = ms.worker AND hms.miner = ms.miner AND hms.poolid = ms.poolid AND hms.created > $1 ORDER BY hms.created DESC LIMIT 1) as reportedHashrate
-	FROM minerstats ms WHERE ms.poolid = $2 AND ms.miner = $3 AND ms.created = $4 GROUP BY ms.poolid, ms.miner, ms.worker, ms.created;
+	(
+		SELECT hashrate FROM minerstats hms 
+		WHERE 
+			hms.worker = ms.worker AND 
+			hms.miner = ms.miner AND 
+			hms.poolid = ms.poolid AND 
+			hms.created = ms.created 
+		ORDER BY hms.created DESC LIMIT 1
+	),
+	(
+		SELECT sharespersecond FROM minerstats hms 
+		WHERE
+			hms.worker = ms.worker AND 
+			hms.miner = ms.miner AND 
+			hms.poolid = ms.poolid AND 
+			hms.created = ms.created 
+		ORDER BY hms.created DESC LIMIT 1
+	),
+	(
+		SELECT hashrate FROM reported_hashrate rh 
+		WHERE
+			rh.worker = ms.worker AND 
+			rh.miner = ms.miner AND 
+			rh.poolid = ms.poolid AND 
+			rh.created > $1
+		ORDER BY rh.created DESC LIMIT 1
+	) 
+	as reportedHashrate
+	FROM minerstats ms 
+	WHERE 
+		ms.poolid = $2 AND 
+		ms.miner = $3 AND 
+		ms.created = $4
+	GROUP BY ms.poolid, ms.miner, ms.worker, ms.created;
 	`, lastReportedUpdate, poolID, miner, lastUpdated)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get miner performance stats: %w", err)
@@ -205,16 +233,32 @@ func (d *DB) GetMinerPerformanceBetweenTenMinutely(ctx context.Context, poolID, 
 	var stats []*PerformanceStatsEntity
 	err := d.sql.SelectContext(ctx, &stats, `
 	SELECT created, partition, SUM(hashrate) AS hashrate, SUM(reportedhashrate) AS reportedhashrate, SUM(sharespersecond) AS sharespersecond, COUNT(DISTINCT worker) as workersonline FROM (
-		SELECT date_trunc('hour', x.created) AS created,
+		SELECT 
+			date_trunc('hour', x.created) AS created,
 			(extract(minute FROM x.created)::int / 10) AS partition,
-			x.worker, AVG(x.hs) AS hashrate, AVG(x.rhs) AS reportedhashrate, AVG(x.sharespersecond) AS sharespersecond
-			FROM (
-				SELECT created, hashrate as hs, null as rhs, sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND created >= $3 AND created <= $4 AND hashratetype = 'actual'
-				UNION
-				SELECT created, null as hs, hashrate as rhs, null as sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND created >= $3 AND created <= $4 AND hashratetype = 'reported'
-			) as x
-			GROUP BY 1, 2, worker
-			ORDER BY 1, 2, worker
+			x.worker, 
+			AVG(x.hs) AS hashrate, 
+			AVG(x.rhs) AS reportedhashrate, 
+			AVG(x.sharespersecond) AS sharespersecond
+		FROM (
+			SELECT created, hashrate as hs, null as rhs, sharespersecond, worker 
+			FROM minerstats 
+			WHERE 
+				poolid = $1 AND 
+				miner = $2 AND 
+				created >= $3 AND 
+				created <= $4
+		UNION 
+			SELECT created, null as hs, hashrate as rhs, null as sharespersecond, worker 
+			FROM reported_hashrate 
+			WHERE 
+				poolid = $1 AND 
+				miner = $2 AND 
+				created >= $3 AND 
+				created <= $4
+		) as x
+		GROUP BY 1, 2, worker
+		ORDER BY 1, 2, worker
 	) as res
 	GROUP BY 1, 2
 	ORDER BY 1, 2;
@@ -232,15 +276,32 @@ func (d *DB) GetMinerPerformanceBetweenDaily(ctx context.Context, poolID, miner 
 	var stats []*PerformanceStatsEntity
 	err := d.sql.SelectContext(ctx, &stats, `
 	SELECT created, SUM(hashrate) AS hashrate, SUM(reportedhashrate) AS reportedhashrate, SUM(sharespersecond) AS sharespersecond, COUNT(DISTINCT worker) as workersonline FROM (
-		SELECT date_trunc('day', x.created) AS created,
-			x.worker, AVG(x.hs) AS hashrate, AVG(x.rhs) AS reportedhashrate, AVG(x.sharespersecond) AS sharespersecond
-			FROM (
-				SELECT created, hashrate as hs, null as rhs, sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND created >= $3 AND created <= $4 AND hashratetype = 'actual'
-				UNION
-				SELECT created, null as hs, hashrate as rhs, null as sharespersecond, worker FROM minerstats WHERE poolid = $1 AND miner = $2 AND created >= $3 AND created <= $4 AND hashratetype = 'reported'
-			) as x
-			GROUP BY 1, worker
-			ORDER BY 1
+		SELECT 
+			date_trunc('day', x.created) AS created,
+			x.worker, 
+			AVG(x.hs) AS hashrate, 
+			AVG(x.rhs) AS reportedhashrate, 
+			AVG(x.sharespersecond) AS sharespersecond
+		FROM (
+			SELECT created, hashrate as hs, null as rhs, sharespersecond, worker 
+			FROM minerstats 
+			WHERE 
+				poolid = $1 AND 
+				miner = $2 AND 
+				created >= $3 AND 
+				created <= $4
+		UNION 
+			SELECT created, null as hs, hashrate as rhs, null as sharespersecond, worker 
+			FROM reported_hashrate 
+			WHERE 
+				poolid = $1 AND 
+				miner = $2 AND 
+				created >= $3 AND 
+				created <= $4
+		) as x
+		GROUP BY 1, worker
+		ORDER BY 1
+
 	) as res
 	GROUP BY created
 	ORDER BY created;
@@ -275,7 +336,6 @@ func (d *DB) GetTopMinerStats(ctx context.Context, poolID string, from time.Time
 			WHERE 
 				poolid = $1 AND
 				created >= $2 AND
-				hashratetype = 'actual'
 			GROUP BY poolid, miner, created
 		) ms
 	),
