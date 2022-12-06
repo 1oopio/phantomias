@@ -335,7 +335,7 @@ func (d *DB) GetTopMinerStats(ctx context.Context, poolID string, from time.Time
 			FROM minerstats
 			WHERE 
 				poolid = $1 AND
-				created >= $2 AND
+				created >= $2
 			GROUP BY poolid, miner, created
 		) ms
 	),
