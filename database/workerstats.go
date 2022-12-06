@@ -63,7 +63,7 @@ func (d *DB) GetWorkerStats(ctx context.Context, poolID, miner, worker string) (
 	WHERE
 		poolid = $1 AND
 		miner = $2 AND
-		worker = $3 AND
+		worker = $3
 	ORDER BY
 		created DESC
 	LIMIT 1;
