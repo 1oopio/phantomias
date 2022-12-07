@@ -16,6 +16,8 @@ type WorkerStats struct {
 func (d *DB) GetWorkerPerformanceBetweenTenMinutely(ctx context.Context, poolID, miner, worker string, start, end time.Time) ([]*PerformanceStatsEntity, error) {
 	var stats []*PerformanceStatsEntity
 	err := d.sql.SelectContext(ctx, &stats, `
+	SELECT * FROM
+	(
 	SELECT 
 		date_trunc('hour', x.created) AS created,
 		(extract(minute FROM x.created)::int / 10) AS partition,
@@ -42,7 +44,11 @@ func (d *DB) GetWorkerPerformanceBetweenTenMinutely(ctx context.Context, poolID,
 			created <= $5
 	) as x
 	GROUP BY 1, 2
-	ORDER BY 1, 2;
+	ORDER BY 1, 2
+	) as res
+	WHERE 
+		res.hashrate IS NOT NULL OR 
+		res.reportedhashrate IS NULL;
 	`, poolID, miner, worker, start, end)
 	if err != nil {
 		return nil, fmt.Errorf("failed to get worker performance stats: %w", err)
