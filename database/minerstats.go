@@ -260,7 +260,10 @@ func (d *DB) GetMinerPerformanceBetweenTenMinutely(ctx context.Context, poolID, 
 		GROUP BY 1, 2, worker
 		ORDER BY 1, 2, worker
 	) as res
-	GROUP BY 1, 2
+	WHERE 
+		res.hashrate IS NOT NULL OR
+		res.reportedhashrate IS NULL
+	GROUP BY 1, 2 
 	ORDER BY 1, 2;
 	`, poolID, miner, start, end)
 	if err != nil {
@@ -303,6 +306,9 @@ func (d *DB) GetMinerPerformanceBetweenDaily(ctx context.Context, poolID, miner 
 		ORDER BY 1
 
 	) as res
+	WHERE 
+		res.hashrate IS NOT NULL OR
+		res.reportedhashrate IS NULL
 	GROUP BY created
 	ORDER BY created;
 	`, poolID, miner, start, end)
