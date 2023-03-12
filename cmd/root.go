@@ -161,8 +161,17 @@ func root(cmd *cobra.Command, args []string) {
 	defer wsc.Close()
 
 	go func() {
-		if err := wsc.Listen(done); err != nil {
-			log.Fatalln(err)
+		for {
+			select {
+			case <-done:
+				return
+			default:
+				if err := wsc.Listen(done); err != nil {
+					//log.Fatalln(err)
+					log.Println("[err] failed to start the websocket relay, will try again in 30 seconds...")
+				}
+				time.Sleep(time.Second * 30)
+			}
 		}
 	}()
 

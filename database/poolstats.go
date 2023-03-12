@@ -69,7 +69,7 @@ func (d *DB) GetLastPoolStats(ctx context.Context, poolID string) (*PoolStats, e
 
 func (d *DB) GetTotalPoolPayments(ctx context.Context, poolID string) (decimal.Decimal, error) {
 	var total decimal.Decimal
-	err := d.sql.GetContext(ctx, &total, "SELECT sum(amount) FROM payments WHERE poolid = $1", poolID)
+	err := d.sql.GetContext(ctx, &total, "SELECT COALESCE(sum(amount),0) FROM payments WHERE poolid = $1", poolID)
 	if err != nil {
 		return decimal.Zero, err
 	}

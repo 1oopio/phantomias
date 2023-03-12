@@ -19,7 +19,7 @@ func getBlockLink(poolCfg *config.Pool, block *database.Block) string {
 		return ""
 	}
 	switch poolCfg.Type {
-	case "ergo", "kaspa":
+	case "ergo", "kaspa", "raven":
 		var hash string
 		if block.Hash != nil {
 			hash = *block.Hash

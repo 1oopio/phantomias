@@ -114,13 +114,15 @@ func (s *Server) getPoolHandler(c *fiber.Ctx) error {
 
 	totalBlocks, err := s.db.GetPoolBlockCount(c.UserContext(), poolCfg.ID)
 	if err != nil {
-		return handleAPIError(c, fiber.StatusInternalServerError, err)
+		log.Printf("error getting total pool blocks: %v", err)
+		// return handleAPIError(c, fiber.StatusInternalServerError, err)
 	}
 	poolExtended.TotalBlocksFound = totalBlocks
 
 	lastPoolBlockTime, err := s.db.GetLastPoolBlockTime(c.UserContext(), poolCfg.ID)
 	if err != nil {
-		return handleAPIError(c, fiber.StatusInternalServerError, err)
+		log.Printf("error getting last pool block time: %v", err)
+		//return handleAPIError(c, fiber.StatusInternalServerError, err)
 	}
 	poolExtended.LastBlockFoundTime = lastPoolBlockTime
 
