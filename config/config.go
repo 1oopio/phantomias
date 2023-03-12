@@ -3,6 +3,7 @@ package config
 import (
 	"errors"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/spf13/viper"
@@ -128,6 +129,11 @@ func load(file string) (cfg *Config, err error) {
 	viper.AddConfigPath(".")
 	viper.AddConfigPath("$HOME/.config/phantomias")
 	viper.AddConfigPath("/etc/phantomias/")
+
+	viper.SetEnvPrefix("phantomias")
+	viper.SetEnvKeyReplacer(strings.NewReplacer(".", "_"))
+	viper.MustBindEnv("db.password")
+
 	if err = viper.ReadInConfig(); err != nil {
 		return
 	}

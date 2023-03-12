@@ -97,6 +97,7 @@ func root(cmd *cobra.Command, args []string) {
 	if err != nil {
 		log.Fatalln(err)
 	}
+	fmt.Println(cfg.DB.Password)
 
 	// connect to the database
 	db := database.New(cfg.DB.Host, cfg.DB.Port, cfg.DB.User, cfg.DB.Password, cfg.DB.Dbname, cfg.DB.SSLMode)
