@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/1oopio/phantomias/config"
 	fiberprom "github.com/ansrivas/fiberprometheus"
 	"github.com/gofiber/adaptor/v2"
 	"github.com/gofiber/fiber/v2"
@@ -11,7 +12,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
-	"github.com/stratumfarm/phantomias/config"
 )
 
 type Opt func(*Server)

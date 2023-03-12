@@ -5,8 +5,8 @@ import (
 	"os"
 	"time"
 
+	"github.com/1oopio/phantomias/recws"
 	"github.com/gorilla/websocket"
-	"github.com/stratumfarm/phantomias/recws"
 )
 
 type Client struct {

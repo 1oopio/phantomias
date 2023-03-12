@@ -3,13 +3,13 @@ package api
 import (
 	"context"
 
+	"github.com/1oopio/phantomias/config"
+	"github.com/1oopio/phantomias/database"
+	"github.com/1oopio/phantomias/price"
+	"github.com/1oopio/phantomias/version"
 	"github.com/goccy/go-json"
 	"github.com/gofiber/fiber/v2"
 	"github.com/stratumfarm/go-miningcore-client"
-	"github.com/stratumfarm/phantomias/config"
-	"github.com/stratumfarm/phantomias/database"
-	"github.com/stratumfarm/phantomias/price"
-	"github.com/stratumfarm/phantomias/version"
 )
 
 // Server represents the api server of the proxy.

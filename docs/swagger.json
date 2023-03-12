@@ -2,10 +2,10 @@
     "swagger": "2.0",
     "info": {
         "description": "This is the public pool api from stratum.farm",
-        "title": "StratumFarm Pool API",
+        "title": "1oop Pool API",
         "termsOfService": "https://stratum.farm/terms/",
         "contact": {
-            "name": "StratumFarm Support",
+            "name": "1oop Support",
             "email": "pool@stratum.farm"
         },
         "version": "1.0"

@@ -7,11 +7,11 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/1oopio/phantomias/database"
+	"github.com/1oopio/phantomias/utils"
 	"github.com/caarlos0/duration"
 	"github.com/gocarina/gocsv"
 	"github.com/gofiber/fiber/v2"
-	"github.com/stratumfarm/phantomias/database"
-	"github.com/stratumfarm/phantomias/utils"
 )
 
 type csvDataValue string

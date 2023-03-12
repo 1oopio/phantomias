@@ -4,8 +4,8 @@ import (
 	"testing"
 	"time"
 
-	_ "github.com/stratumfarm/phantomias/cmd"
-	"github.com/stratumfarm/phantomias/config"
+	_ "github.com/1oopio/phantomias/cmd"
+	"github.com/1oopio/phantomias/config"
 	"github.com/stretchr/testify/assert"
 )
 

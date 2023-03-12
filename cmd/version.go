@@ -3,8 +3,8 @@ package cmd
 import (
 	"fmt"
 
+	"github.com/1oopio/phantomias/version"
 	"github.com/spf13/cobra"
-	"github.com/stratumfarm/phantomias/version"
 )
 
 var versionCmd = &cobra.Command{

@@ -3,8 +3,8 @@ package api
 import (
 	"fmt"
 
-	"github.com/stratumfarm/phantomias/config"
-	"github.com/stratumfarm/phantomias/database"
+	"github.com/1oopio/phantomias/config"
+	"github.com/1oopio/phantomias/database"
 )
 
 func getTXLink(s string, args ...any) string {

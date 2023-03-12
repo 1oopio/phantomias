@@ -1,4 +1,4 @@
-module github.com/stratumfarm/phantomias
+module github.com/1oopio/phantomias
 
 go 1.19
 

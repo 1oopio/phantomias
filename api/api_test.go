@@ -12,10 +12,10 @@ package api_test
 
 	"github.com/goccy/go-json"
 	"github.com/stratumfarm/go-miningcore-client"
-	"github.com/stratumfarm/phantomias/api"
-	_ "github.com/stratumfarm/phantomias/cmd"
-	"github.com/stratumfarm/phantomias/config"
-	"github.com/stratumfarm/phantomias/price"
+	"github.com/1oopio/phantomias/api"
+	_ "github.com/1oopio/phantomias/cmd"
+	"github.com/1oopio/phantomias/config"
+	"github.com/1oopio/phantomias/price"
 	"github.com/stretchr/testify/assert"
 )
 

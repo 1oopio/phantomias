@@ -10,10 +10,10 @@ const docTemplate = `{
     "info": {
         "description": "{{escape .Description}}",
         "title": "{{.Title}}",
-        "termsOfService": "https://stratum.farm/terms/",
+        "termsOfService": "https://1oop.io/terms/",
         "contact": {
-            "name": "StratumFarm Support",
-            "email": "pool@stratum.farm"
+            "name": "1oop Support",
+            "email": "pool@1oop.io"
         },
         "version": "{{.Version}}"
     },
@@ -1636,8 +1636,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "152.228.229.130:3000",
 	BasePath:         "/",
 	Schemes:          []string{},
-	Title:            "StratumFarm Pool API",
-	Description:      "This is the public pool api from stratum.farm",
+	Title:            "1oop Pool API",
+	Description:      "This is the public pool api from 1oop.io",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 }

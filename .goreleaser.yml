@@ -4,7 +4,7 @@ builds:
   -
     main: ./main.go
     binary: phantomias
-    ldflags: -s -w -X github.com/stratumfarm/phantomias/version/version.Version={{ .Version }} -X github.com/stratumfarm/phantomias/version/version.Commit={{ .Commit }} -X github.com/stratumfarm/phantomias/version/version.Date={{ .Date }} -X github.com/stratumfarm/phantomias/version/version.BuiltBy=goreleaser
+    ldflags: -s -w -X github.com/1oopio/phantomias/version/version.Version={{ .Version }} -X github.com/1oopio/phantomias/version/version.Commit={{ .Commit }} -X github.com/1oopio/phantomias/version/version.Date={{ .Date }} -X github.com/1oopio/phantomias/version/version.BuiltBy=goreleaser
     flags:
       - -trimpath
     goos:

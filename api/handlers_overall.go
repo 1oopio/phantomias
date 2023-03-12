@@ -1,8 +1,8 @@
 package api
 
 import (
+	"github.com/1oopio/phantomias/utils"
 	"github.com/gofiber/fiber/v2"
-	"github.com/stratumfarm/phantomias/utils"
 )
 
 // @Summary Get overall stats

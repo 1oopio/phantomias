@@ -3,16 +3,16 @@ package main
 import (
 	"log"
 
-	"github.com/stratumfarm/phantomias/cmd"
-	_ "github.com/stratumfarm/phantomias/docs" // swagger docs
+	"github.com/1oopio/phantomias/cmd"
+	_ "github.com/1oopio/phantomias/docs" // swagger docs
 )
 
-// @title StratumFarm Pool API
+// @title 1oop Pool API
 // @version 1.0
-// @description This is the public pool api from stratum.farm
-// @termsOfService https://stratum.farm/terms/
-// @contact.name StratumFarm Support
-// @contact.email pool@stratum.farm
+// @description This is the public pool api from 1oop.io
+// @termsOfService https://1oop.io/terms/
+// @contact.name 1oop Support
+// @contact.email pool@1oop.io
 // @host 152.228.229.130:3000
 // @BasePath /
 

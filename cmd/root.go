@@ -10,17 +10,17 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/1oopio/phantomias/api"
+	"github.com/1oopio/phantomias/config"
+	"github.com/1oopio/phantomias/database"
+	"github.com/1oopio/phantomias/metrics"
+	"github.com/1oopio/phantomias/price"
+	"github.com/1oopio/phantomias/version"
+	"github.com/1oopio/phantomias/ws"
 	"github.com/gofiber/fiber/v2"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/stratumfarm/go-miningcore-client"
-	"github.com/stratumfarm/phantomias/api"
-	"github.com/stratumfarm/phantomias/config"
-	"github.com/stratumfarm/phantomias/database"
-	"github.com/stratumfarm/phantomias/metrics"
-	"github.com/stratumfarm/phantomias/price"
-	"github.com/stratumfarm/phantomias/version"
-	"github.com/stratumfarm/phantomias/ws"
 )
 
 var rootCmdFlags struct {

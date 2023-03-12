@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
+	"github.com/1oopio/phantomias/config"
+	"github.com/1oopio/phantomias/database"
+	"github.com/1oopio/phantomias/utils"
 	"github.com/caarlos0/duration"
 	"github.com/gofiber/fiber/v2"
-	"github.com/stratumfarm/phantomias/config"
-	"github.com/stratumfarm/phantomias/database"
-	"github.com/stratumfarm/phantomias/utils"
 )
 
 func handleAPIError(c *fiber.Ctx, code int, err error) error {
