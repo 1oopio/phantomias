@@ -470,10 +470,10 @@ definitions:
 host: 152.228.229.130:3000
 info:
   contact:
-    email: pool@stratum.farm
+    email: pool@1oop.io
     name: 1oop Support
-  description: This is the public pool api from stratum.farm
-  termsOfService: https://stratum.farm/terms/
+  description: This is the public pool api from 1oop.io
+  termsOfService: https://1oop.io/terms/
   title: 1oop Pool API
   version: "1.0"
 paths:
