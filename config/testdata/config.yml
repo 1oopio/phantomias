@@ -1,7 +1,6 @@
 ---
-proxy:
+api:
   listen: 0.0.0.0:3000
-  enable_metrics: true
   cache_ttl: 1m
   cert_file: ./cert.pem
   cert_key: ./cert.key
