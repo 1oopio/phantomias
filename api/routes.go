@@ -20,6 +20,11 @@ func (s *Server) setupRoutes() {
 	cache := s.cache()
 	ratelimiter := s.ratelimiter()
 
+	// health check
+	s.api.Get("/health", func(c *fiber.Ctx) error {
+		return c.SendStatus(fiber.StatusOK)
+	})
+
 	// pool api
 	s.apiRoutes(cache, ratelimiter)
 	// websockets
