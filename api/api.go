@@ -16,7 +16,7 @@ import (
 type Server struct {
 	ctx              context.Context
 	cancel           context.CancelFunc
-	cfg              *config.Proxy
+	cfg              *config.API
 	mc               *miningcore.Client
 	db               *database.DB
 	api              *fiber.App
@@ -27,7 +27,7 @@ type Server struct {
 }
 
 // New creates a new server.
-func New(ctx context.Context, cfg *config.Proxy, pools []*config.Pool, mc *miningcore.Client, db *database.DB, price price.Client, metricsCollector fiber.Handler) *Server {
+func New(ctx context.Context, cfg *config.API, pools []*config.Pool, mc *miningcore.Client, db *database.DB, price price.Client, metricsCollector fiber.Handler) *Server {
 	ctxc, cancel := context.WithCancel(ctx)
 	s := &Server{
 		ctx:    ctxc,

@@ -63,12 +63,12 @@ func init() {
 	rootCmd.Flags().String("metrics-user", "", "user for metrics")
 	rootCmd.Flags().String("metrics-password", "", "password for metrics")
 
-	viper.BindPFlag("proxy.listen", rootCmd.Flags().Lookup("listen"))
-	viper.BindPFlag("proxy.cache_ttl", rootCmd.Flags().Lookup("cache-ttl"))
-	viper.BindPFlag("proxy.cert_file", rootCmd.Flags().Lookup("cert-file"))
-	viper.BindPFlag("proxy.cert_key", rootCmd.Flags().Lookup("cert-key"))
-	viper.BindPFlag("proxy.trusted_proxy_check", rootCmd.Flags().Lookup("trusted-proxy-check"))
-	viper.BindPFlag("proxy.trusted_proxies", rootCmd.Flags().Lookup("trusted-proxies"))
+	viper.BindPFlag("api.listen", rootCmd.Flags().Lookup("listen"))
+	viper.BindPFlag("api.cache_ttl", rootCmd.Flags().Lookup("cache-ttl"))
+	viper.BindPFlag("api.cert_file", rootCmd.Flags().Lookup("cert-file"))
+	viper.BindPFlag("api.cert_key", rootCmd.Flags().Lookup("cert-key"))
+	viper.BindPFlag("api.trusted_proxy_check", rootCmd.Flags().Lookup("trusted-proxy-check"))
+	viper.BindPFlag("api.trusted_proxies", rootCmd.Flags().Lookup("trusted-proxies"))
 	viper.BindPFlag("database.sslmode", rootCmd.Flags().Lookup("database-sslmode"))
 	viper.BindPFlag("miningcore.url", rootCmd.Flags().Lookup("miningcore-url"))
 	viper.BindPFlag("miningcore.ignore_tls", rootCmd.Flags().Lookup("miningcore-ignore-tls"))
@@ -148,7 +148,7 @@ func root(cmd *cobra.Command, args []string) {
 	)
 
 	// start the api server
-	api := api.New(context.Background(), cfg.Proxy, cfg.Pools, mc, db, priceClient, metricsMiddleware)
+	api := api.New(context.Background(), cfg.API, cfg.Pools, mc, db, priceClient, metricsMiddleware)
 	defer api.Close()
 
 	go func() {

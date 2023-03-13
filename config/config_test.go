@@ -13,13 +13,13 @@ func TestLoadConfig(t *testing.T) {
 	cfg, err := config.Load("testdata/config.yml")
 	assert.NoError(t, err)
 	assert.NotNil(t, cfg)
-	assert.NotNil(t, cfg.Proxy)
+	assert.NotNil(t, cfg.API)
 	assert.NotNil(t, cfg.Miningcore)
 	assert.NotNil(t, cfg.Price)
 	assert.NotNil(t, cfg.Metrics)
 
-	assert.Equal(t, "0.0.0.0:3000", cfg.Proxy.Listen)
-	assert.Equal(t, time.Duration(time.Minute), cfg.Proxy.CacheTTL)
+	assert.Equal(t, "0.0.0.0:3000", cfg.API.Listen)
+	assert.Equal(t, time.Duration(time.Minute), cfg.API.CacheTTL)
 
 	assert.Equal(t, "http://localhost:5000", cfg.Miningcore.URL)
 	assert.Equal(t, "ws://localhost:5000/notifications", cfg.Miningcore.WS)
@@ -68,7 +68,7 @@ func TestLoadNoFileConfig(t *testing.T) {
 	cfg, err := config.Load("")
 	assert.NoError(t, err)
 	assert.NotNil(t, cfg)
-	assert.NotNil(t, cfg.Proxy)
+	assert.NotNil(t, cfg.API)
 	assert.NotNil(t, cfg.Miningcore)
 
 }

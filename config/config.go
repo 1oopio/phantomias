@@ -15,7 +15,7 @@ const defaultConfigFile = "config.yml"
 type Config struct {
 	Pools      []*Pool     `mapstructure:"pools"`
 	DB         *DB         `mapstructure:"db"`
-	Proxy      *Proxy      `mapstructure:"proxy"`
+	API        *API        `mapstructure:"api"`
 	Miningcore *Miningcore `mapstructure:"miningcore"`
 	Price      *Price      `mapstructure:"price"`
 	Metrics    *Metrics    `mapstructure:"metrics"`
@@ -59,8 +59,8 @@ type Port struct {
 	TLSAuto    bool    `mapstructure:"tls_auto"`   // tls auto
 }
 
-// ProxyConfig represents the configuration for the proxy.
-type Proxy struct {
+// API represents the configuration for the proxy.
+type API struct {
 	Listen            string        `mapstructure:"listen"`              // listening address e.g. 127.0.0.1:8080
 	CacheTTL          time.Duration `mapstructure:"cache_ttl"`           // cache TTL
 	CertFile          string        `mapstructure:"cert_file"`           // path to the tls certificate
