@@ -10,6 +10,8 @@ import (
 )
 
 func TestPrices(t *testing.T) {
+	t.Skip("Remove this line to run this test. It is skipped because tests hit API rate limits.")
+
 	c := New(WithCoins("dero", "kaspa", "ethereum", "ergo", "monero"), WithVSCurrencies("usd", "eur", "chf"))
 	err := c.LoadPrices()
 	assert.NoError(t, err)
@@ -27,6 +29,8 @@ func TestPrices(t *testing.T) {
 }
 
 func TestNoData(t *testing.T) {
+	t.Skip("Remove this line to run this test. It is skipped because tests hit API rate limits.")
+
 	c := New(WithCoins("ergo"), WithVSCurrencies("usd"))
 	err := c.LoadPrices()
 	assert.NoError(t, err)
@@ -39,6 +43,8 @@ func TestNoData(t *testing.T) {
 }
 
 func TestInvalidCoin(t *testing.T) {
+	t.Skip("Remove this line to run this test. It is skipped because tests hit API rate limits.")
+
 	c := New(WithCoins("no-data"), WithVSCurrencies("usd"))
 	err := c.LoadPrices()
 	assert.NoError(t, err)
@@ -51,6 +57,8 @@ func TestInvalidCoin(t *testing.T) {
 }
 
 func TestInvalidVSCurrency(t *testing.T) {
+	t.Skip("Remove this line to run this test. It is skipped because tests hit API rate limits.")
+
 	c := New(WithCoins("dero"), WithVSCurrencies("no-data"))
 	err := c.LoadPrices()
 	assert.Error(t, err)
@@ -60,6 +68,8 @@ func TestInvalidVSCurrency(t *testing.T) {
 }
 
 func TestClientLoop(t *testing.T) {
+	t.Skip("Remove this line to run this test. It is skipped because tests hit API rate limits.")
+
 	c := New(WithCoins("ethereum"), WithVSCurrencies("chf"))
 	wg := sync.WaitGroup{}
 	wg.Add(3)
@@ -86,6 +96,8 @@ func TestClientLoop(t *testing.T) {
 }
 
 func TestClientWithCtx(t *testing.T) {
+	t.Skip("Remove this line to run this test. It is skipped because tests hit API rate limits.")
+
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second*2)
 	defer cancel()
 	c := New(WithCoins("ethereum"), WithVSCurrencies("chf"), WithContext(ctx))
@@ -93,12 +105,16 @@ func TestClientWithCtx(t *testing.T) {
 }
 
 func TestNoCoins(t *testing.T) {
+	t.Skip("Remove this line to run this test. It is skipped because tests hit API rate limits.")
+
 	c := New(WithVSCurrencies("chf"))
 	err := c.LoadPrices()
 	assert.ErrorIs(t, err, ErrNoCoins)
 }
 
 func TestInvalidGet(t *testing.T) {
+	t.Skip("Remove this line to run this test. It is skipped because tests hit API rate limits.")
+
 	c := New(WithCoins("ethereum"), WithVSCurrencies("chf"))
 	err := c.LoadPrices()
 	assert.NoError(t, err)
