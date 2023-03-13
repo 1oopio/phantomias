@@ -45,7 +45,6 @@ func init() {
 	rootCmd.Flags().String("cert-key", "", "path to the tls key")
 	rootCmd.Flags().Bool("trusted-proxy-check", false, "allow requests only from trusted proxies")
 	rootCmd.Flags().StringArray("trusted-proxies", nil, "a list of trusted proxy IPs")
-	rootCmd.Flags().Bool("enable-metrics", false, "enable the metrics dashboard")
 
 	rootCmd.Flags().String("database-sslmode", "require", "database sslmode (pgsql)")
 
