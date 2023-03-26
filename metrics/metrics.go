@@ -54,7 +54,7 @@ func New(cfg *config.Metrics, opts ...Opt) *Server {
 
 	s.fiber = fiberprom.New("",
 		fiberprom.WithRegistry(s.registry),
-		fiberprom.WithNamespace("miningcore_api_proxy"),
+		fiberprom.WithNamespace("phantomias"),
 	).Middleware
 
 	s.server.Use(recover.New(recover.Config{
